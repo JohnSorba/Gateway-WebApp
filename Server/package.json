@@ -1,0 +1,30 @@
+{
+  "name": "gateway-app",
+  "version": "1.0.0",
+  "description": "School application for University Final project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnSorba/Gateway-WebApp.git"
+  },
+  "keywords": [
+    "Gateway",
+    "WebApp",
+    "FinalProject"
+  ],
+  "author": "Daniel Ndanema",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JohnSorba/Gateway-WebApp/issues"
+  },
+  "homepage": "https://github.com/JohnSorba/Gateway-WebApp#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
+  }
+}

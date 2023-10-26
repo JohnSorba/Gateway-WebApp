@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "date": "8/3/2023",
+    "period": 1,
+    "subject": "Math ",
+    "teacher": "Nikaniki Gully"
+  },
+  {
+    "id": 2,
+    "date": "5/22/2023",
+    "period": 2,
+    "subject": "Science ",
+    "teacher": "Eben Gulliman"
+  },
+  {
+    "id": 3,
+    "date": "1/31/2023",
+    "period": 3,
+    "subject": " English ",
+    "teacher": "Candida O'Hartnedy"
+  },
+  {
+    "id": 4,
+    "date": "1/7/2023",
+    "period": 4,
+    "subject": " Geography ",
+    "teacher": "Hersh Finey"
+  },
+  {
+    "id": 5,
+    "date": "11/23/2022",
+    "period": 5,
+    "subject": " Physics",
+    "teacher": "Valene Sichardt"
+  }
+]
