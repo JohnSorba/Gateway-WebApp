@@ -1,0 +1,70 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Dimmed background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1.25rem;
+  font-size: 0.5rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255);
+  width: 600px;
+  /* height: 225px; */
+  height: auto;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3),
+    -2px -2px 8px rgba(255, 255, 255, 0.3);
+  animation: popup 0.25s;
+  /* animation-delay: .5s; */
+}
+
+.modal-icon {
+  height: 48px;
+  width: 48px;
+  color: greenyellow;
+}
+
+.modal-content h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #535353;
+}
+.modal-content p {
+  font-size: 1.1rem;
+  line-height: 1.15;
+}
+
+.modal-close-button {
+  /* position: absolute; */
+  font-size: 1rem;
+  /* Styling for the close button */
+}
+
+.login .modal-content {
+  padding: 3rem 5rem;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,90 @@
+/* .progress-indicator {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1.25rem 0;
+  width: 800px;
+}
+
+.circle {
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+}
+
+.circle.current {
+  background-color: blue;
+  color: white;
+}
+
+.step .title {
+  text-align: center;
+  font-size: 1.25rem;
+  margin-top: 5px;
+  height: 20px;
+} */
+
+/* src/components/ProgressIndicator.css */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1000px;
+  margin-bottom: 6rem;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* To position the step title absolutely */
+  margin: 0 -5px; /* Give some space around circles */
+  z-index: 1; /* Place circles above lines */
+}
+
+.circle.current {
+  background-color: #007bff;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.circle.complete {
+  font-weight: 700;
+  background-color: #4bb543;
+  font-size: 1.5rem;
+}
+
+.line {
+  flex-grow: 1;
+  height: 5px;
+  background-color: #e0e0e0;
+  position: relative;
+  /* top: 15px; */
+  transition: 0.5s all;
+}
+
+.line.complete {
+  background-color: #4bb543;
+}
+
+.step-title {
+  position: absolute;
+  /* min-width: auto; */
+  min-width: 250px;
+  text-align: center;
+  font-size: 1.25rem;
+  color: #4bb543;
+  top: 60px; /* Distance from circle center to title */
+  left: 50%;
+  transform: translateX(-50%);
+}
