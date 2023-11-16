@@ -3,16 +3,18 @@ const {
   registerUserAccount,
   loginUser,
   admissionClass,
-  getId,
+  authenticateToken,
 } = require("./controllers/auth");
 
 const router = Router();
 
 // Registration Route
 router.post("/register", registerUserAccount);
-
-// Get student ID route
-router.get("/get-student-admission-id", getId);
+// protected route example
+router.get("/protected-route", authenticateToken, (req, res) => {
+  // Access user from req.user
+  res.send("This is a protected route");
+});
 
 // Login Route
 router.post("/login", loginUser);

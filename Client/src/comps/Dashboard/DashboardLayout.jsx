@@ -2,56 +2,21 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import "./DashboardLayout.css";
-import {
-  FaChevronDown,
-  FaHamburger,
-  FaTable,
-  FaUserAlt,
-  FaUserCheck,
-} from "react-icons/fa";
-import { MdDashboard, MdNotifications } from "react-icons/md";
-import { PiCardsFill, PiExamFill } from "react-icons/pi";
-import { CgTranscript } from "react-icons/cg";
-import { BiLogOut } from "react-icons/bi";
+import { FaChevronDown, FaHamburger } from "react-icons/fa";
+import { BiLogOutCircle } from "react-icons/bi";
+import { MdNotifications } from "react-icons/md";
 import { articles, events, latestNews, notice } from "./DashboardData";
-
-const sidebarLinks = [
-  {
-    link: "/dashboard",
-    icon: <MdDashboard />,
-    title: "Dashboard",
-  },
-  {
-    link: "/dashboard/attendance",
-    icon: <FaUserCheck />,
-    title: "Attendance",
-  },
-  {
-    link: "/dashboard/timetable",
-    icon: <FaTable />,
-    title: "Timetable",
-  },
-  {
-    link: "/dashboard/flashcards",
-    icon: <PiCardsFill />,
-    title: "Study Flashcards",
-  },
-  {
-    link: "/dashboard/exams",
-    icon: <PiExamFill />,
-    title: "Exams",
-  },
-  {
-    link: "/dashboard/reports",
-    icon: <CgTranscript />,
-    title: "Report Cards",
-  },
-];
+import { Navigation } from "../Navigation";
+import { AnimatePresence } from "framer-motion";
+import { useAuth } from "../../Contexts/AuthContext";
 
 const DashboardLayout = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [showShadow, setShowShadow] = useState(false);
   const containerRef = useRef(null);
+
+  const { logout, authState } = useAuth();
+  const role = authState.role;
 
   const handleScroll = () => {
     // Logic to add shadow when the scrollable content reaches the sticky header
@@ -119,23 +84,11 @@ const DashboardLayout = () => {
         </header>
 
         <section className="nav-links">
-          {sidebarLinks.map((sidelink) => (
-            <NavLink
-              key={sidelink.link}
-              to={sidelink.link}
-              end // allows the active property to not be set to the index link
-              className="nav-link"
-            >
-              {sidelink.icon}
-              {sidelink.title}
-            </NavLink>
-          ))}
+          {/* Navigation based on user role */}
+          <Navigation role={role} />
 
-          <NavLink to="/dashboard/profile" className="nav-link profile">
-            <FaUserAlt /> Profile
-          </NavLink>
-          <NavLink to="/logout" className="nav-link ">
-            <BiLogOut />
+          <NavLink to="/logout" className="nav-link mt-auto" onClick={logout}>
+            <BiLogOutCircle />
             Logout
           </NavLink>
         </section>
@@ -143,7 +96,9 @@ const DashboardLayout = () => {
 
       {/* MAIN CONTENT */}
       <main className={`main-content ${isVisible ? "push" : ""}`}>
-        <Outlet />
+        <AnimatePresence>
+          <Outlet />
+        </AnimatePresence>
       </main>
 
       {/* ASIDE RIGHT CONTENT */}
@@ -158,13 +113,17 @@ const DashboardLayout = () => {
               <img src="https://i.pravatar.cc/48?u=118556" alt="user-profile" />
               <p className="flex flex-col gap-0 justify-center">
                 <span className="flex items-center gap-4">
-                  <span className="text-md">Daniel Ndanema</span>
+                  <span className="text-md">{authState.username}</span>
                   <FaChevronDown className="w-4 h-4 text-gray-400" />
                 </span>
 
                 <span className="text-sm text-green-700">Active</span>
               </p>
             </article>
+            {/* <NavLink to="/dashboard/pupil/profile" className="nav-link profile">
+          <FaUserAlt /> Profile
+        </NavLink>
+        */}
             <article>
               <MdNotifications className="w-6 h-6 text-red-400" />
             </article>

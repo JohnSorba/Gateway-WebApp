@@ -163,7 +163,8 @@ button:focus-visible {
 }
 .navbar .nav-links li {
   display: flex;
-  gap: 2rem;
+  align-items: center;
+  gap: 0.2rem;
   padding: 0rem 0.25rem;
 }
 
@@ -250,9 +251,14 @@ form,
 .form-input {
   display: block;
   padding: 0.5rem;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 0.5rem;
-  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 2px 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+input.error {
+  border-color: red;
+  box-shadow: 2px 2px 4px -2px rgba(255, 0, 0, 0.5);
 }
 
 .form-input:focus {
@@ -380,4 +386,16 @@ form,
 .login-message.animate {
   display: block;
   animation: slideDown 0.25s forwards;
+}
+
+/* PAGE NOT FOUND */
+.page-not-found {
+  /* background-image: url("/access_denied.jpg"); */
+  background-image: url("/404_page_not_found.jpg");
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  padding-top: 1.25rem;
+  /* place-items: center; */
+  height: 100%;
 }

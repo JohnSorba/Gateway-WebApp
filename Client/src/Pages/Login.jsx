@@ -2,16 +2,22 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "./RegistrationDetails/Modal";
+import Modal from "../comps/RegistrationDetails/Modal";
 import { FaCheckCircle } from "react-icons/fa";
+import { useAuth } from "../Contexts/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 function Login({ modalOpen, setModalOpen }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({ username: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState("password");
   const [animate, setAnimate] = useState(false);
+
+  const { login, authState } = useAuth();
+  // console.log("role: ", authState.user.role);
 
   const toggleStatus = () => {
     if (showPassword) setStatus("password");
@@ -25,34 +31,69 @@ function Login({ modalOpen, setModalOpen }) {
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    navigate("/dashboard");
+    navigate(`/dashboard/${authState.role}`);
   };
 
   const navigate = useNavigate();
 
+  const validate = () => {
+    let isValid = true;
+    let newErrors = { username: false, password: false };
+
+    if (!username && !password) {
+      newErrors.username = true;
+      newErrors.password = true;
+      isValid = false;
+      setMessage("Username and Password is required");
+    } else if (!username) {
+      newErrors.username = true;
+      isValid = false;
+      setMessage("Username is required");
+    } else if (!password) {
+      newErrors.password = true;
+      isValid = false;
+      setMessage("Password is required");
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
-        username,
-        password,
-      });
+    if (validate()) {
+      try {
+        const response = await axios.post("http://localhost:3000/auth/login", {
+          username,
+          password,
+        });
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        if (response.data) {
+          const data = response.data;
 
-        setMessage(response.data.message);
-        setModalOpen(true);
+          // decode the token to access all values
+          const decodedToken = jwtDecode(data.token);
+          console.log("decoded token: ", decodedToken);
+
+          login(data.token, decodedToken.role, decodedToken.username);
+          console.log("login data: ", data);
+          // navigate(`/dashboard/${data.role}`);
+
+          // login(response.data);
+
+          setMessage(response.data.message);
+          setModalOpen(true);
+        }
+        // console.log(response.data);
+      } catch (error) {
+        setAnimate(false);
+        setTimeout(() => setAnimate(true), 10);
+        setMessage(error.data.error);
+        console.log(error.data.error);
+
+        // console.error(error);
       }
-      console.log(response.data);
-    } catch (error) {
-      setAnimate(false);
-      setTimeout(() => setAnimate(true), 10);
-      setMessage(error.response.data.error);
-      console.log(error.response.data.error);
-
-      // console.error(error);
     }
   };
 
@@ -63,7 +104,7 @@ function Login({ modalOpen, setModalOpen }) {
         <div className="form-group">
           <input
             type="text"
-            className="form-input"
+            className={`form-input ${errors.username ? "error" : ""}`}
             value={username}
             placeholder="Username"
             onChange={(e) => setUsername(e.target.value)}
@@ -74,7 +115,7 @@ function Login({ modalOpen, setModalOpen }) {
         <div className="form-group">
           <input
             type={status}
-            className="form-input"
+            className={`form-input ${errors.password ? "error" : ""}`}
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}

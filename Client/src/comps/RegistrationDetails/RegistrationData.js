@@ -2,7 +2,7 @@ export const initialFormData = {
   // Account information
   username: "",
   password: "",
-  user_type: "Student",
+  user_type: "admin",
   email: "",
   studentId: null,
 
@@ -23,5 +23,5 @@ export const initialFormData = {
   admissionId: null,
   admissionDate: new Date().toISOString().split("T")[0],
   admissionStatus: "Enrolled",
-  classCode: "101",
+  classCode: "104",
 };

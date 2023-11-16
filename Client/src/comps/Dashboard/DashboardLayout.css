@@ -110,6 +110,7 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem 0 3rem;
+  background-color: #fffbf5;
 }
 
 .aside-left div img {
@@ -157,6 +158,7 @@
 .aside {
   color: black;
   background-color: rgb(255, 255, 255);
+  background-color: rgba(239, 239, 239, 0.2);
   /* border-left: 2px solid #f0f0f0; */
   position: fixed;
   right: 0;

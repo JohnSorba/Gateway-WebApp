@@ -4,12 +4,6 @@ const jwt = require("jsonwebtoken");
 const pool = require("../../db");
 const queries = require("../queries");
 
-// Utility function to generate JWT
-const generateAuthToken = (user_id) => {
-  const expiresIn = "1h";
-  return jwt.sign({ user_id }, process.env.JWT_SECRET_KEY, { expiresIn });
-};
-
 // REGISTER USER ACCOUNT CONTROLLER
 const registerUserAccount = async (req, res) => {
   // extract/destructure object from the request body
@@ -156,14 +150,6 @@ const registerUserAccount = async (req, res) => {
       "admission_id",
     ]);
 
-    // res.status(200).send({ newStudentID, newAdmissionID });
-
-    console.log("curSiD:", studentID);
-    console.log("curAiD:", admissionID);
-    console.log("--------------------------");
-    console.log("newSiD: ", newStudentID);
-    console.log("newAiD: ", newAdmissionID);
-
     ////////////////////////////////////////////////
     // Hash password
     const hashedPassword = await bcrypt.hash(
@@ -210,11 +196,10 @@ const registerUserAccount = async (req, res) => {
 
     // Assign row data to registered user
     const user_id = result.rows[0].user_id;
-    const token = generateAuthToken(user_id);
 
     res
       .status(201)
-      .json({ user: result.rows[0], token, newStudentID, newAdmissionID });
+      .json({ user: result.rows[0], newStudentID, newAdmissionID });
   } catch (error) {
     // Roll back the transaction in the case of error
     await client.query("ROLLBACK");
@@ -266,17 +251,30 @@ const loginUser = async (req, res) => {
     const hashedPassword = result.rows[0].password;
     const matchDetails = await bcrypt.compare(password, hashedPassword);
 
-    const user_id = result.rows[0].user_id;
+    const user = result.rows[0];
+
+    // Utility function to generate JWT
+    const generateAuthToken = () => {
+      const expiresIn = "0.05h";
+      return jwt.sign(
+        { id: user.user_id, username: user.username, role: user.user_type },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn,
+        }
+      );
+    };
+
     if (matchDetails) {
-      const token = generateAuthToken(user_id);
+      // If successful, create JWT token
+      const token = generateAuthToken();
       return res.status(200).json({
         message: "Login successful!",
-        username,
         token,
       });
     } else {
       return res.status(401).json({
-        error: "Incorrect Password!",
+        error: "Invalid credentials: Incorrect Password!",
       });
     }
 
@@ -286,6 +284,22 @@ const loginUser = async (req, res) => {
     return res.status(500).json({ error: "Login Failed" });
   }
 };
+
+// Middleware to authenticate and set user from token
+function authenticateToken(req, res, next) {
+  const authHeader = req.Headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if ((token = null)) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
+
+
 
 // ADMISSION CLASS FETCH CONTROLLER
 const admissionClass = async (req, res) => {
@@ -310,5 +324,5 @@ module.exports = {
   registerUserAccount,
   loginUser,
   admissionClass,
-  getId,
+  authenticateToken,
 };

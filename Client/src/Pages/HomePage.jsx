@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../Contexts/AuthContext";
+import { BiLogIn, BiLogOut } from "react-icons/bi";
 
 function HomePage() {
   // console.log("student name: ", pupils);
+  const { authState, logout } = useAuth();
 
   return (
     <section className="homepage">
@@ -11,14 +14,39 @@ function HomePage() {
             <img src="/gateway_logo_final.png" alt="gateway logo" />
           </h1>
           <ul className="nav-links">
+            {" "}
+            {/* Links to Dashboards based on role */}
+            {authState.role === "student" && (
+              <li>
+                <Link to="/dashboard/student">Dashboard</Link>
+              </li>
+            )}
+            {authState.role === "admin" && (
+              <li>
+                <Link to="/dashboard/admin">Dashboard</Link>
+              </li>
+            )}
+            {authState.role === "teacher" && (
+              <li>
+                <Link to="/dashboard/teacher">Dashboard</Link>
+              </li>
+            )}
+            {/* Home Login/Logout Links */}
+            {!authState.token ? (
+              <li>
+                <Link to="/login">Login</Link>
+                <BiLogIn className="w-6 h-6" />
+              </li>
+            ) : (
+              <li>
+                <Link to="/login" onClick={logout}>
+                  Logout
+                </Link>
+                <BiLogOut className="w-6 h-6" />
+              </li>
+            )}
             <li>
               <Link to="/register/step-1">Register</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Go to dashboard</Link>
             </li>
             <button className="font-bold uppercase">Get App</button>
           </ul>
