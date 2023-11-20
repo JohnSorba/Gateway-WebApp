@@ -20,7 +20,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState(initialFormData);
 
-  console.log(isRegisterSuccess);
+  // console.log(isRegisterSuccess);
 
   const navigate = useNavigate();
   // console.log(formErrors);
@@ -49,6 +49,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
     setModalOpen(false);
     setCurrentStep(4);
     navigate("/register/step-4");
+    isRegisterSuccess;
   };
 
   // Account Form validation
@@ -218,7 +219,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
       <p className="text-center">
         Please Fill in the details and do not refresh this page.
       </p>
-      <h1 className="mb-8 text-4xl">User Registration - {title}</h1>
+      <h1 className="mb-6 text-4xl">User Registration - {title}</h1>
 
       <ProgressIndicator currentStep={currentStep} />
 

@@ -162,17 +162,17 @@ button:focus-visible {
   gap: 2rem;
 }
 .navbar .nav-links li {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
   padding: 0rem 0.25rem;
 }
 
 .navbar .nav-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
   color: black;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   padding: 0.25rem 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 .navbar .nav-links li a:hover {
   color: blue;
@@ -253,7 +253,7 @@ form,
   padding: 0.5rem;
   border: 2px solid #ccc;
   border-radius: 0.5rem;
-  box-shadow: 2px 2px 4px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 input.error {
@@ -348,7 +348,7 @@ input.error {
 .user-account .errors {
   position: absolute;
   right: -105%;
-  top: 15px;
+  top: 17.5px;
   width: 40ch;
   text-align: left;
 }

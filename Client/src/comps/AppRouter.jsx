@@ -38,7 +38,7 @@ function AppRouter() {
 
         {/* Registration Route */}
         <Route
-          path="register"
+          path="/register"
           element={
             <RegistrationPage
               modalOpen={modalOpen}

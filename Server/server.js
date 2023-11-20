@@ -1,12 +1,12 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
-const pool = require("./db");
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const studentRoutes = require("./student/routes");
-const { authenticateToken } = require("./student/controllers/auth");
+const authRoutes = require("./routes/auth");
+const pool = require("./db");
+
+// const { authenticateToken } = require("./middleware/authenticate");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -14,32 +14,29 @@ app.use(express.json());
 
 // Define a Route
 app.get("/", (req, res) => {
-  res.send("Hello, ES6 Express Server!");
+  res.send("<h1>Hello, ES6 Express Server!</h1>");
 });
 
-//get all pupils
-app.use("/pupils", (req, res) => {
-  pool.query("SELECT * FROM pupils", (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
-});
-
-// Example of a protected route
-app.get("/protected", authenticateToken, (req, res) => {
-  if (req.user.role === "admin") {
-    console.log("This is the admin private route");
+app.get("/api/students", async (req, res) => {
+  try {
+    // Query the database
+    const result = await pool.query("SELECT * FROM students");
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Error fetching student data: ", err);
   }
 });
 
-// Student Requests
-app.use("/auth", studentRoutes);
+// Authentication Requests
+app.use("/auth", authRoutes);
 
 // Start the Server
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+console.log("We are Live...");
 
 /*
  *

@@ -26,18 +26,18 @@ function ConfirmDetails({
       );
       console.log(response);
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-
+      if (response.data) {
         setFormData((prevFormData) => {
           return {
             ...prevFormData,
             studentId: response.data.newStudentID,
             admissionId: response.data.newAdmissionID,
+            teacherId: response.data.newTeacherID,
           };
         });
         onRegisterSuccess(true);
-        onModalOpen(true); // Open modal on success
+        onModalOpen(true);
+        // Open modal on success
         // alert(response.data.message);
       } else {
         response.data.error;
@@ -68,9 +68,21 @@ function ConfirmDetails({
           </p>
         </div>
         <div className="grow-[3] mb-6">
-          <h3 className="text-xl font-semibold mb-6">
-            Student Profile Information
-          </h3>
+          {formData.roleId === 3 ? (
+            <h3 className="text-xl font-semibold mb-6">
+              Student Profile Information
+            </h3>
+          ) : (
+            <h3 className="text-xl font-semibold mb-6">
+              Teacher Profile Information
+            </h3>
+          )}
+
+          <img
+            src={formData.profilePhoto}
+            alt={formData.firstName}
+            className="rounded-full h-24 w-24 mb-4"
+          />
           <p>
             <span>First Name:</span> {formData.firstName}
           </p>
@@ -89,12 +101,25 @@ function ConfirmDetails({
           <p>
             <span>Address:</span> {formData.address}
           </p>
-          <p>
-            <span>Parent Name:</span> {formData.parentName}
-          </p>
-          <p>
-            <span>Parent Contact:</span> {formData.parentContact}
-          </p>
+
+          {/* Student Specific Data */}
+          {formData.roleId === 3 && (
+            <>
+              <p>
+                <span>Parent Name:</span> {formData.parentName}
+              </p>
+              <p>
+                <span>Parent Contact:</span> {formData.parentContact}
+              </p>
+            </>
+          )}
+
+          {/* Teacher specific Info */}
+          {formData.roleId === 2 && (
+            <p>
+              <span>Career Qualifications:</span> {formData.qualifications}
+            </p>
+          )}
         </div>
       </section>
       <Modal isOpen={modalOpen}>{message}</Modal>

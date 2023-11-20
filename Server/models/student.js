@@ -1,0 +1,1 @@
+const getAllStudents = async () => {};

@@ -1,14 +1,24 @@
 import { Route, Routes } from "react-router-dom";
-import { motion } from "framer-motion";
+
+import AdminStudents from "../comps/DashboardAdmin/AdminStudents";
+import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers";
+import AdminExams from "../comps/DashboardAdmin/AdminExams";
+import AdminTimetable from "../comps/DashboardAdmin/AdminTimetable";
+import AdminReports from "../comps/DashboardAdmin/AdminReports";
+import AdminSupport from "../comps/DashboardAdmin/AdminSupport";
+import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
 
 function AdminDashboard() {
   return (
     <>
       <Routes>
         <Route index element={<AdminDashboardHome />} />
-        <Route path="user-management" element={<UserManagement />} />
+        <Route path="students" element={<AdminStudents />} />
+        <Route path="teachers" element={<AdminTeachers />} />
+        <Route path="timetable" element={<AdminTimetable />} />
+        <Route path="exams" element={<AdminExams />} />
         <Route path="reports" element={<AdminReports />} />
-        <Route path="settings" element={<AdminSettings />} />
+        <Route path="user-management" element={<UserManagement />} />
         <Route path="support" element={<AdminSupport />} />
       </Routes>
     </>
@@ -17,25 +27,4 @@ function AdminDashboard() {
 
 export default AdminDashboard;
 
-// Admin Components
-const AdminDashboardHome = () => {
-  const pageTransition = {
-    in: { opacity: 1, x: 0 },
-    out: { opacity: 0, x: "-100%" },
-  };
-
-  return (
-    <motion.div initial="out" animate="in" exit="out" variants={pageTransition}>
-      <div>Admin Dashboard Content</div>
-    </motion.div>
-  );
-};
-
-const UserManagement = () => (
-  <motion.div>
-    <div>Admin User Management Content</div>
-  </motion.div>
-);
-const AdminReports = () => <div>Admin Reports Content</div>;
-const AdminSettings = () => <div>Admin Settings Content</div>;
-const AdminSupport = () => <div>Admin Support Content</div>;
+const UserManagement = () => <div>Admin User Management Content</div>;

@@ -1,7 +1,12 @@
 import { CgTranscript } from "react-icons/cg";
-import { FaTable, FaUserCheck } from "react-icons/fa";
+import {
+  FaChalkboardTeacher,
+  FaTable,
+  FaUserCheck,
+  FaUserPlus,
+} from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
-import { PiCardsFill, PiExamFill } from "react-icons/pi";
+import { PiCardsFill, PiExamFill, PiStudentFill } from "react-icons/pi";
 import { NavLink } from "react-router-dom";
 
 /* eslint-disable react/prop-types */
@@ -19,14 +24,29 @@ export function Navigation({ role }) {
 export function AdminNav() {
   const adminNavLinks = [
     {
-      title: "Dashboard",
+      title: "Overview",
       link: "/dashboard/admin",
       icon: <MdDashboard />,
     },
     {
-      title: "User Management",
-      link: "/dashboard/admin/user-management",
+      title: "Students",
+      link: "/dashboard/admin/students",
+      icon: <PiStudentFill />,
+    },
+    {
+      title: "Teachers",
+      link: "/dashboard/admin/teachers",
+      icon: <FaChalkboardTeacher />,
+    },
+    {
+      link: "/dashboard/admin/timetable",
       icon: <FaTable />,
+      title: "Timetable",
+    },
+    {
+      link: "/dashboard/admin/exams",
+      icon: <PiExamFill />,
+      title: "Exams",
     },
     {
       title: "Reports",
@@ -34,10 +54,16 @@ export function AdminNav() {
       icon: <CgTranscript />,
     },
     {
-      title: "Settings",
-      link: "/dashboard/admin/settings",
-      icon: <FaUserCheck />,
+      title: "User Management",
+      link: "/dashboard/admin/user-management",
+      icon: <FaTable />,
     },
+    {
+      title: "Account Registration",
+      link: "/admin/register/step-1",
+      icon: <FaUserPlus />,
+    },
+
     {
       title: "Support",
       link: "/dashboard/admin/support",

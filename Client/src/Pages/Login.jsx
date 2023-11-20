@@ -69,9 +69,8 @@ function Login({ modalOpen, setModalOpen }) {
           password,
         });
 
+        const data = response.data;
         if (response.data) {
-          const data = response.data;
-
           // decode the token to access all values
           const decodedToken = jwtDecode(data.token);
           console.log("decoded token: ", decodedToken);
@@ -89,8 +88,8 @@ function Login({ modalOpen, setModalOpen }) {
       } catch (error) {
         setAnimate(false);
         setTimeout(() => setAnimate(true), 10);
-        setMessage(error.data.error);
-        console.log(error.data.error);
+        setMessage(error.response.data.error);
+        console.log(error.response.data.error);
 
         // console.error(error);
       }

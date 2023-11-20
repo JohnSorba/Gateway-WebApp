@@ -1,10 +1,31 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
+// import { useEffect, useState } from "react";
+
+// import axios from "axios";
 
 function HomePage() {
   // console.log("student name: ", pupils);
   const { authState, logout } = useAuth();
+  // const [message, setMessage] = useState("");
+
+  // useEffect(() => {
+  //   const getPrivateAdminRoute = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:3000/admin");
+
+  //       const data = await response.data;
+  //       console.log(response);
+
+  //       setMessage(data);
+  //     } catch (err) {
+  //       console.error("Error fetching route", err);
+  //     }
+  //   };
+
+  //   getPrivateAdminRoute();
+  // }, []);
 
   return (
     <section className="homepage">
@@ -15,6 +36,9 @@ function HomePage() {
           </h1>
           <ul className="nav-links">
             {" "}
+            <li>
+              <Link to="/home">Learn More</Link>
+            </li>
             {/* Links to Dashboards based on role */}
             {authState.role === "student" && (
               <li>
@@ -34,17 +58,22 @@ function HomePage() {
             {/* Home Login/Logout Links */}
             {!authState.token ? (
               <li>
-                <Link to="/login">Login</Link>
-                <BiLogIn className="w-6 h-6" />
+                <Link to="/login">
+                  Login
+                  <BiLogIn className="w-5 h-5" />
+                </Link>
               </li>
             ) : (
               <li>
                 <Link to="/login" onClick={logout}>
                   Logout
+                  <BiLogOut className="w-5 h-5" />
                 </Link>
-                <BiLogOut className="w-6 h-6" />
               </li>
             )}
+            {/* <li>
+              <Link to="/admin/register/step-1">Register</Link>
+            </li> */}
             <li>
               <Link to="/register/step-1">Register</Link>
             </li>
@@ -63,6 +92,7 @@ function HomePage() {
             <Link to="/" className="form-button">
               Back to Flash Screen
             </Link>
+            {/* {message} */}
           </div>
         </section>
       </header>

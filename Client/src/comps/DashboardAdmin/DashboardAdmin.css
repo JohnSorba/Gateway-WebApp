@@ -1,0 +1,95 @@
+.table-container {
+  margin: 20px;
+  /* For responsive table */
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #ddd;
+}
+
+thead,
+tbody {
+  width: 100%;
+}
+
+th,
+td {
+  /* width: 100%; */
+  text-align: left;
+  padding: 0.75rem 0.25rem;
+}
+
+th {
+  background-color: #f2f2f2c5;
+}
+
+/* tr:nth-child(even) {
+  background-color: #f9f9f9;
+} */
+
+tr:hover {
+  background-color: #f3f3f356;
+}
+
+/* Dashboard Home */
+.admin-home {
+  padding: 2rem 0;
+}
+.admin-home .header {
+  padding: 3rem 3rem;
+  margin-bottom: 2rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+}
+
+.admin-home .header h1 {
+  font-size: 2.5rem;
+  text-align: left;
+  margin: 0;
+}
+
+.header h1 > span {
+  font-size: 1.5rem;
+}
+
+.admin-home .stats {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+  /* gap: 2rem; */
+}
+.admin-home .stats article {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+}
+
+.stats article div {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.stats article span {
+  text-align: right;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.stats .icon {
+  color: white;
+  background-color: grey;
+  width: 60px;
+  height: 60px;
+  padding: 0.5rem;
+  border-radius: 50px;
+}

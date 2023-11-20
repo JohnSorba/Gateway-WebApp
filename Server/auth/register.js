@@ -1,16 +1,15 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const pool = require("../../db");
+const pool = require("../db");
 const queries = require("../queries");
 
 // REGISTER USER ACCOUNT CONTROLLER
-const registerUserAccount = async (req, res) => {
+const register = async (req, res) => {
   // extract/destructure object from the request body
   const {
     username,
     password,
-    user_type,
+    roleId,
     email,
     // studentId, (generated on the server-side)
 
@@ -22,16 +21,25 @@ const registerUserAccount = async (req, res) => {
     dateOfBirth,
     phoneNumber,
     address,
+    className,
+    profilePhoto,
+
+    // Student Info
     parentName,
     parentContact,
-    profilePhoto,
-    className,
 
     // Admission information
     // admissionId, (generated on the server-side)
     admissionDate,
     admissionStatus,
     classCode,
+
+    // Teacher Info
+    teacherId,
+    qualifications,
+    dateJoined,
+    employmentStatus,
+    additionalNotes,
   } = req.body;
 
   // Add regex patterns here for validation as constants
@@ -109,9 +117,12 @@ const registerUserAccount = async (req, res) => {
     const { rows } = await pool.query("SELECT * FROM id_storage");
     const studentID = rows[0].id_value;
     const admissionID = rows[1].id_value;
+    const teacherID = rows[2].id_value;
+
+    console.log("teacher id: ", teacherID);
 
     // Generate New StudentID
-    const generateID = (studentID, admissionID) => {
+    const generateID = (studentID, admissionID, teacherID) => {
       // student ID format: '110060XXXX'
 
       // Increment the value returned from the server
@@ -132,12 +143,30 @@ const registerUserAccount = async (req, res) => {
         .toString()
         .padStart(3, "0")}`;
 
-      return { updatedSidValue, updatedAidValue, newStudentID, newAdmissionID };
+      // teacher ID format: 'ST-1001'
+      // Increment the value returned from the server
+      const updatedTidValue = teacherID + 1;
+      const newTeacherID = `ts-${updatedTidValue.toString().padStart(4, "0")}`;
+
+      return {
+        updatedSidValue,
+        updatedAidValue,
+        updatedTidValue,
+        newStudentID,
+        newAdmissionID,
+        newTeacherID,
+      };
     };
 
     // destructure return values from generateID function
-    const { updatedSidValue, updatedAidValue, newStudentID, newAdmissionID } =
-      generateID(studentID, admissionID);
+    const {
+      updatedSidValue,
+      updatedAidValue,
+      updatedTidValue,
+      newStudentID,
+      newAdmissionID,
+      newTeacherID,
+    } = generateID(studentID, admissionID);
 
     // Increment and update the student ID in the database
     await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
@@ -148,6 +177,11 @@ const registerUserAccount = async (req, res) => {
     await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
       updatedAidValue,
       "admission_id",
+    ]);
+    // Increment and update the teacher ID in the database
+    await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
+      updatedTidValue,
+      "teacher_id",
     ]);
 
     ////////////////////////////////////////////////
@@ -186,9 +220,35 @@ const registerUserAccount = async (req, res) => {
     const result = await client.query(queries.accountQuery, [
       username,
       hashedPassword,
-      user_type,
+      roleId,
       email,
       newStudentID,
+    ]);
+
+    const userID = 1;
+
+    // Insert Teacher details
+    const query =
+      "INSERT INTO teachers (teacher_id, user_id, first_name, last_name, date_of_birth, gender, phone_number, address";
+    await client.query(query, [
+      newTeacherID,
+      userID,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      phoneNumber,
+      address,
+    ]);
+
+    const employeeQuery =
+      "INSERT INTO teacher_employee_details (teacher_id, qualifications, joining_date, profile_photo, additional_notes";
+    await client.query(employeeQuery, [
+      newTeacherID,
+      qualifications,
+      dateJoined,
+      profilePhoto,
+      additionalNotes,
     ]);
 
     // Commit the transaction
@@ -211,118 +271,6 @@ const registerUserAccount = async (req, res) => {
   }
 };
 
-// LOGIN CONTROLLER
-const loginUser = async (req, res) => {
-  const { username, password } = req.body;
-
-  // Login validation
-  // Check for form inputs
-  const validateLogin = (username, password) => {
-    const errors = [];
-
-    if (!username && !password) {
-      errors.push("Username and Password is required.");
-    } else if (!username) {
-      errors.push("Username is required.");
-    } else if (!password) {
-      errors.push("Password is required");
-    }
-
-    return errors;
-  };
-
-  const errors = validateLogin(username, password);
-
-  // If there are validation errors, return them and stop the process
-  if (errors.length > 0) {
-    return res.status(400).json({ error: errors });
-  }
-
-  try {
-    const result = await pool.query(queries.loginQuery, [username]);
-    // Check if user exists
-    if (result.rows.length === 0) {
-      return res
-        .status(401)
-        .json({ error: "Authentication Failed! User Not Found" });
-    }
-
-    // Verify password
-    const hashedPassword = result.rows[0].password;
-    const matchDetails = await bcrypt.compare(password, hashedPassword);
-
-    const user = result.rows[0];
-
-    // Utility function to generate JWT
-    const generateAuthToken = () => {
-      const expiresIn = "0.05h";
-      return jwt.sign(
-        { id: user.user_id, username: user.username, role: user.user_type },
-        process.env.JWT_SECRET_KEY,
-        {
-          expiresIn,
-        }
-      );
-    };
-
-    if (matchDetails) {
-      // If successful, create JWT token
-      const token = generateAuthToken();
-      return res.status(200).json({
-        message: "Login successful!",
-        token,
-      });
-    } else {
-      return res.status(401).json({
-        error: "Invalid credentials: Incorrect Password!",
-      });
-    }
-
-    // Error Block
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Login Failed" });
-  }
-};
-
-// Middleware to authenticate and set user from token
-function authenticateToken(req, res, next) {
-  const authHeader = req.Headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if ((token = null)) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
-
-
-
-// ADMISSION CLASS FETCH CONTROLLER
-const admissionClass = async (req, res) => {
-  try {
-    // Execute a raw SQL query to fetch classes from the database
-    const query = "SELECT * FROM classes"; // Replace 'classes' with your actual table name
-    const result = await pool.query(query);
-
-    // Check if there are rows in the result
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: "No classes found" });
-    } else {
-      res.json(result.rows);
-    }
-  } catch (error) {
-    console.error("Error fetching classes:", error);
-    res.status(500).json({ error: "Error fetching classes" });
-  }
-};
-
 module.exports = {
-  registerUserAccount,
-  loginUser,
-  admissionClass,
-  authenticateToken,
+  register,
 };

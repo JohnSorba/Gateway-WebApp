@@ -1,0 +1,7 @@
+nodemon setup
+
+npm i --save-dev nodemon
+
+"scripts": {
+    "devStart": "nodemon server.js",
+}

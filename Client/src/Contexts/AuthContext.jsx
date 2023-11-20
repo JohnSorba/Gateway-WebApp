@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
+
 // AuthContext for Global Authentication Management
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -12,7 +13,6 @@ export const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [authState, setAuthState] = useState({
-    // isAuthenticated: false,
     token: null,
     username: null,
     role: null,
@@ -36,22 +36,12 @@ export function AuthProvider({ children }) {
 
     if (token) {
       const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
 
-      if (decodedToken.exp < currentTime) {
-        localStorage.removeItem("token");
-        setAuthState({
-          token: null,
-          role: null,
-          username: null,
-        });
-      } else {
-        setAuthState({
-          token,
-          role: decodedToken.role,
-          username: decodedToken.username,
-        });
-      }
+      setAuthState({
+        token,
+        role: decodedToken.role,
+        username: decodedToken.username,
+      });
     }
 
     setIsAuthChecked(true);
