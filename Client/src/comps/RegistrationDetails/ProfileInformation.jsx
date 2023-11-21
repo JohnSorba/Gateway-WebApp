@@ -68,7 +68,14 @@ function ProfileInformation({
     const user = e.target.value;
     setFormData({
       ...formData,
-      roleId: user === "teacher" ? 2 : user === "student" ? 3 : null,
+      roleId:
+        user === "admin"
+          ? 1
+          : user === "teacher"
+          ? 2
+          : user === "student"
+          ? 3
+          : null,
     });
   };
 
@@ -157,6 +164,7 @@ function ProfileInformation({
               <option value="" disabled>
                 Select User Type
               </option>
+              <option value="admin">Admin</option>
               <option value="teacher">Teacher</option>
               <option value="student">Student</option>
             </select>

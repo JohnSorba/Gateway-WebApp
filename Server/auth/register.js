@@ -86,10 +86,9 @@ const register = async (req, res) => {
   }
 
   // Begin a transaction to ensure that user_id is not incremented on failed attempts
+  const client = await pool.connect();
 
   try {
-    const client = await pool.connect();
-
     await client.query("BEGIN");
 
     // Check for existing user email and username before attempting to insert
@@ -118,9 +117,9 @@ const register = async (req, res) => {
 
     ////////////////////////////////////////////////
     const { rows } = await pool.query("SELECT * FROM id_storage");
-    const studentID = rows[0].id_value;
-    const admissionID = rows[1].id_value;
-    const teacherID = rows[2].id_value;
+    const teacherID = rows[0].id_value;
+    const studentID = rows[1].id_value;
+    const admissionID = rows[2].id_value;
 
     // Generate New StudentID
     const generateID = (studentID, admissionID, teacherID) => {
@@ -257,11 +256,27 @@ const register = async (req, res) => {
       ]);
     };
 
+    const registerAdmin = async (adminData, userId) => {
+      await client.query(queries.registerAdminQuery, [
+        userId,
+        adminData.firstName,
+        adminData.lastName,
+        adminData.gender,
+        adminData.age,
+        adminData.dateOfBirth,
+        adminData.phoneNumber,
+        adminData.address,
+        adminData.profilePhoto,
+      ]);
+    };
+
     // conditional insertion into students or teachers table
     if (roleId === 3) {
       await registerStudent(formData, userId);
     } else if (roleId === 2) {
       await registerTeacher(formData, userId);
+    } else if (roleId === 1) {
+      await registerAdmin(formData, userId);
     }
 
     // Commit the transaction
@@ -269,7 +284,7 @@ const register = async (req, res) => {
 
     res
       .status(201)
-      .json({ user: userResult.rows[0], newStudentID, newAdmissionID });
+      .json({ message: "Registration Successful", user: userResult.rows[0] });
   } catch (error) {
     // Roll back the transaction in the case of error
     await client.query("ROLLBACK");
