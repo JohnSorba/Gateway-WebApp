@@ -112,6 +112,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
     // date of birth
 
     const dobPattern = /^\d{4}-\d{2}-\d{2}$/;
+    const qualificationsPattern = /^[\w\s]+(,\s*[\w\s]+)*$/;
 
     let errors = {};
     let isValid = true;
@@ -158,23 +159,48 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
       isValid = false;
     }
 
-    // Parent Name validation
-    if (!formData.parentName) {
-      errors.parentName = "Parent / Guardian's name is required";
-      isValid = false;
-    } else if (!namePattern.test(formData.parentName)) {
-      errors.parentName = "Name contains invalid characters.";
-      isValid = false;
-    }
+    const validateStudentFields = (formData) => {
+      let errors = {};
+      // Parent Name validation
+      if (!formData.parentName) {
+        errors.parentName = "Parent / Guardian's full name is required";
+        isValid = false;
+      } else if (!namePattern.test(formData.parentName)) {
+        errors.parentName = "Name contains invalid characters.";
+        isValid = false;
+      }
 
-    // Parent Phone Number validation
-    if (!formData.parentContact) {
-      errors.parentContact =
-        "Your parent / guardian's phone number is required";
-      isValid = false;
-    } else if (!phonePattern.test(formData.parentContact)) {
-      errors.parentContact = "phone number is not in a valid format.";
-      isValid = false;
+      // Parent Phone Number validation
+      if (!formData.parentContact) {
+        errors.parentContact =
+          "Your parent / guardian's phone number is required";
+        isValid = false;
+      } else if (!phonePattern.test(formData.parentContact)) {
+        errors.parentContact = "phone number is not in a valid format.";
+        isValid = false;
+      }
+
+      return errors;
+    };
+
+    const validateTeacherFields = (formData) => {
+      let errors = {};
+      // Parent Name validation
+      if (!formData.qualifications) {
+        errors.qualifications = "Qualifications are required";
+        isValid = false;
+      } else if (!qualificationsPattern.test(formData.qualifications)) {
+        errors.qualifications = "Qualifications contains invalid characters.";
+        isValid = false;
+      }
+
+      return errors;
+    };
+
+    if (formData.roleId === 3) {
+      errors = { ...formErrors, ...validateStudentFields(formData) };
+    } else if (formData.roleId === 2) {
+      errors = { ...formErrors, ...validateTeacherFields(formData) };
     }
 
     // Update the errors state with any validation errors
@@ -219,7 +245,9 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
       <p className="text-center">
         Please Fill in the details and do not refresh this page.
       </p>
-      <h1 className="mb-6 text-4xl">User Registration - {title}</h1>
+      <h1 className="mb-6 text-3xl">
+        User Registration - <em className="text-blue-500">{title}</em>
+      </h1>
 
       <ProgressIndicator currentStep={currentStep} />
 

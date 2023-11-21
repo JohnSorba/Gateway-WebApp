@@ -7,39 +7,38 @@ const queries = require("../queries");
 const register = async (req, res) => {
   // extract/destructure object from the request body
   const {
-    username,
-    password,
+    // username,
+    // password,
+    // roleId,
+    // email,
+    // // studentId, (generated on the server-side)
+    // // personal information
+    // firstName,
+    // lastName,
+    // gender,
+    // age,
+    // dateOfBirth,
+    // phoneNumber,
+    // address,
+    // className,
+    // profilePhoto,
+    // // Student Info
+    // parentName,
+    // parentContact,
+    // // Admission information
+    // // admissionId, (generated on the server-side)
+    // admissionDate,
+    // admissionStatus,
+    // classCode,
+    // // Teacher Info
+    // // teacherId, (generated on the server-side)
+    // qualifications,
+    // dateJoined,
+    // employmentStatus,
+    // additionalNotes,
+
     roleId,
-    email,
-    // studentId, (generated on the server-side)
-
-    // personal information
-    firstName,
-    lastName,
-    gender,
-    age,
-    dateOfBirth,
-    phoneNumber,
-    address,
-    className,
-    profilePhoto,
-
-    // Student Info
-    parentName,
-    parentContact,
-
-    // Admission information
-    // admissionId, (generated on the server-side)
-    admissionDate,
-    admissionStatus,
-    classCode,
-
-    // Teacher Info
-    teacherId,
-    qualifications,
-    dateJoined,
-    employmentStatus,
-    additionalNotes,
+    ...formData
   } = req.body;
 
   // Add regex patterns here for validation as constants
@@ -51,25 +50,25 @@ const register = async (req, res) => {
     const errors = [];
 
     // Username validation
-    if (!username) {
+    if (!formData.username) {
       errors.push("Username is required");
-    } else if (!usernamePattern.test(username)) {
+    } else if (!usernamePattern.test(formData.username)) {
       errors.push(
         "Username must be 3-10 characters long and can only contain alphanumeric characters and underscores."
       );
     }
 
     // Email validation
-    if (!email) {
+    if (!formData.email) {
       errors.push("Email is required");
-    } else if (!emailPattern.test(email)) {
+    } else if (!emailPattern.test(formData.email)) {
       errors.push("Please enter a valid email address.");
     }
 
     // Password validation
-    if (!password) {
+    if (!formData.password) {
       errors.push("Password is required.");
-    } else if (!passwordPattern.test(password)) {
+    } else if (!passwordPattern.test(formData.password)) {
       errors.push(
         "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number."
       );
@@ -87,28 +86,32 @@ const register = async (req, res) => {
   }
 
   // Begin a transaction to ensure that user_id is not incremented on failed attempts
-  const client = await pool.connect();
 
   try {
+    const client = await pool.connect();
+
     await client.query("BEGIN");
 
     // Check for existing user email and username before attempting to insert
 
     const existingUserResult = await client.query(queries.existingUserQuery, [
-      email,
-      username,
+      formData.email,
+      formData.username,
     ]);
 
     if (existingUserResult.rows.length > 0) {
       // Check which constraint was violated (email or username)
       const existingUser = existingUserResult.rows[0];
-      if (existingUser.email === email && existingUser.username === username) {
+      if (
+        existingUser.email === formData.email &&
+        existingUser.username === formData.username
+      ) {
         return res
           .status(409)
           .send({ error: "Email and Username are already in use" });
-      } else if (existingUser.email === email) {
+      } else if (existingUser.email === formData.email) {
         return res.status(409).send({ error: "Email already in use." });
-      } else if (existingUser.username === username) {
+      } else if (existingUser.username === formData.username) {
         return res.status(409).send({ error: "Username already in use." });
       }
     }
@@ -118,8 +121,6 @@ const register = async (req, res) => {
     const studentID = rows[0].id_value;
     const admissionID = rows[1].id_value;
     const teacherID = rows[2].id_value;
-
-    console.log("teacher id: ", teacherID);
 
     // Generate New StudentID
     const generateID = (studentID, admissionID, teacherID) => {
@@ -158,108 +159,117 @@ const register = async (req, res) => {
       };
     };
 
-    // destructure return values from generateID function
-    const {
-      updatedSidValue,
-      updatedAidValue,
-      updatedTidValue,
-      newStudentID,
-      newAdmissionID,
-      newTeacherID,
-    } = generateID(studentID, admissionID);
-
-    // Increment and update the student ID in the database
-    await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
-      updatedSidValue,
-      "student_id",
-    ]);
-    // Increment and update the admission ID in the database
-    await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
-      updatedAidValue,
-      "admission_id",
-    ]);
-    // Increment and update the teacher ID in the database
-    await pool.query("UPDATE id_storage SET id_value = $1 WHERE id_name = $2", [
-      updatedTidValue,
-      "teacher_id",
-    ]);
-
     ////////////////////////////////////////////////
     // Hash password
     const hashedPassword = await bcrypt.hash(
-      password,
+      formData.password,
       parseInt(process.env.SALT_ROUNDS)
     );
-    // insert personal details
-    await client.query(queries.registerPupilQuery, [
-      newStudentID,
-      firstName,
-      lastName,
-      gender,
-      age,
-      dateOfBirth,
-      phoneNumber,
-      address,
-      parentName,
-      parentContact,
-      profilePhoto,
-      className,
-      classCode,
-    ]);
-
-    // insert admission details
-    await client.query(queries.admissionQuery, [
-      newAdmissionID,
-      newStudentID,
-      admissionDate,
-      admissionStatus,
-      classCode,
-    ]);
 
     // Insert Registerd User Account Details in Database
-    const result = await client.query(queries.accountQuery, [
-      username,
+    const userResult = await client.query(queries.accountQuery, [
+      formData.username,
       hashedPassword,
+      formData.email,
       roleId,
-      email,
-      newStudentID,
     ]);
 
-    const userID = 1;
+    // Assign row data to registered user
+    const userId = userResult.rows[0].user_id;
 
-    // Insert Teacher details
-    const query =
-      "INSERT INTO teachers (teacher_id, user_id, first_name, last_name, date_of_birth, gender, phone_number, address";
-    await client.query(query, [
-      newTeacherID,
-      userID,
-      firstName,
-      lastName,
-      dateOfBirth,
-      gender,
-      phoneNumber,
-      address,
-    ]);
+    // role id (3) === 'student'
+    // role id (2) === 'teacher'
 
-    const employeeQuery =
-      "INSERT INTO teacher_employee_details (teacher_id, qualifications, joining_date, profile_photo, additional_notes";
-    await client.query(employeeQuery, [
-      newTeacherID,
-      qualifications,
-      dateJoined,
-      profilePhoto,
-      additionalNotes,
-    ]);
+    const registerStudent = async (studentData, userId) => {
+      const { updatedAidValue, updatedSidValue, newStudentID, newAdmissionID } =
+        generateID(studentID, admissionID, teacherID);
+
+      // Increment and update the student ID in the database
+      await pool.query(
+        "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
+        [updatedSidValue, "student_id"]
+      );
+      // Increment and update the admission ID in the database
+      await pool.query(
+        "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
+        [updatedAidValue, "admission_id"]
+      );
+
+      // insert personal details
+      await client.query(queries.registerPupilQuery, [
+        newStudentID,
+        userId,
+        studentData.firstName,
+        studentData.lastName,
+        studentData.gender,
+        studentData.age,
+        studentData.dateOfBirth,
+        studentData.phoneNumber,
+        studentData.address,
+        studentData.parentName,
+        studentData.parentContact,
+        studentData.profilePhoto,
+      ]);
+
+      // insert admission details
+      await client.query(queries.admissionQuery, [
+        newAdmissionID,
+        newStudentID,
+        studentData.admissionDate,
+        studentData.admissionStatus,
+        studentData.classCode,
+      ]);
+
+      return { newStudentID, newAdmissionID };
+    };
+
+    const registerTeacher = async (teacherData, userId) => {
+      const { newTeacherID, updatedTidValue } = generateID(
+        studentID,
+        admissionID,
+        teacherID
+      );
+      // Increment and update the teacher ID in the database
+      await pool.query(
+        "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
+        [updatedTidValue, "teacher_id"]
+      );
+      // Insert Teacher details
+
+      await client.query(queries.registerTeacherQuery, [
+        newTeacherID,
+        userId,
+        teacherData.firstName,
+        teacherData.lastName,
+        teacherData.dateOfBirth,
+        teacherData.gender,
+        teacherData.phoneNumber,
+        teacherData.address,
+      ]);
+
+      await client.query(queries.employmentDetailsQuery, [
+        newTeacherID,
+        teacherData.qualifications,
+        teacherData.dateJoined,
+        teacherData.profilePhoto,
+        teacherData.additionalNotes,
+        teacherData.employmentStatus,
+      ]);
+    };
+
+    // conditional insertion into students or teachers table
+    if (roleId === 3) {
+      await registerStudent(formData, userId);
+    } else if (roleId === 2) {
+      await registerTeacher(formData, userId);
+    }
 
     // Commit the transaction
     await client.query("COMMIT");
 
-    // Assign row data to registered user
-    const user_id = result.rows[0].user_id;
-
     res
       .status(201)
-      .json({ user: result.rows[0], newStudentID, newAdmissionID });
+      .json({ user: userResult.rows[0], newStudentID, newAdmissionID });
   } catch (error) {
     // Roll back the transaction in the case of error
     await client.query("ROLLBACK");

@@ -32,7 +32,7 @@ function ProgressIndicator({ currentStep }) {
               <div className={`line ${isComplete ? "complete" : ""}`}></div>
             )}
             <div
-              className={`circle ${isCurrent ? "current" : ""} ${
+              className={`circle ${isCurrent ? "current" : ""} circles ${
                 isComplete ? "complete" : ""
               }`}
             >

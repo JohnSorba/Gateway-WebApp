@@ -92,50 +92,165 @@ function ProfileInformation({
   return (
     <div className="self-center">
       <form className="personal-info" noValidate>
-        {/* Select User Role */}
-        <article className="form-group">
-          <label htmlFor="user" className="form-label">
-            Select User Role:
-          </label>
-          <select
-            name="user"
-            onChange={handleUserTypeChange}
-            className="form-select"
-          >
-            <option value="" disabled>
-              Select User
-            </option>
-            <option value="teacher">Teacher</option>
-            <option value="student">Student</option>
-          </select>
-        </article>
+        <div className="flex gap-4">
+          {/* First name */}
+          <article className="form-group grow">
+            <label className="form-label">First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              className="form-input w-full"
+              value={formData.firstName}
+              placeholder="First Name"
+              onChange={handleChange}
+              required
+            />
+            {renderErrorMessage("firstName")}
+            {/* Render error message for first name */}
+          </article>
 
+          {/* Last Name */}
+          <article className="form-group grow">
+            <label className="form-label">Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              className="form-input w-full"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
+              required
+            />
+            {renderErrorMessage("lastName")}
+          </article>
+
+          {/* Date of Birth */}
+          <article className="form-group grow">
+            <label htmlFor="dateOfBirth" className="form-label">
+              Date of Birth:
+            </label>
+            <input
+              type="text"
+              id="dateOfBirth"
+              name="dateOfBirth"
+              className="form-input w-full"
+              value={formData.dateOfBirth}
+              onChange={handleDateOfBirthChange}
+              placeholder="YYYY-MM-DD"
+              required
+            />
+            {renderErrorMessage("dateOfBirth")}
+          </article>
+        </div>
+        <div className="flex gap-4 justify-between">
+          {/* Select User Role */}
+          <article className="form-group grow">
+            <label htmlFor="user" className="form-label">
+              Select User Role:
+            </label>
+            <select
+              id="user"
+              name="user"
+              onChange={handleUserTypeChange}
+              className="form-select"
+            >
+              <option value="" disabled>
+                Select User Type
+              </option>
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+          </article>
+          {/* Gender */}
+          <article className="form-group grow">
+            <label htmlFor="gender" className="form-label">
+              Gender:
+            </label>
+            <select
+              id="gender"
+              name="gender"
+              className="form-select"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Select Gender
+              </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </article>
+          {/* class */}
+          <article className="form-group grow">
+            <label htmlFor="className" className="form-label">
+              Class / Grade:
+            </label>
+            <select
+              id="className"
+              name="className"
+              className="form-select w-full"
+              value={formData.className}
+              onChange={handleClassCodeChange}
+              required
+            >
+              <option value="" disabled>
+                Select Class
+              </option>
+              {classes.map((grade) => (
+                <option key={grade.class_code} value={grade.class_code}>
+                  {grade.class_code}
+                </option>
+              ))}
+            </select>
+          </article>
+        </div>{" "}
+        {/* Phone Number */}
+        <article className="form-group">
+          <label className="form-label">Phone Number:</label>
+          <input
+            type="text"
+            name="phoneNumber"
+            className="form-input w-full"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            placeholder="Phone Number"
+            required
+          />
+          {renderErrorMessage("phoneNumber")}
+        </article>
+        {/* Address */}
+        <article className="form-group">
+          <label className="form-label">Address:</label>
+          <input
+            type="text"
+            name="address"
+            className="form-input"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Home Address"
+            required
+          />
+          {renderErrorMessage("address")}
+        </article>
         {/* conditionally render form user */}
         {formData.roleId === 2 && (
           <TeacherProfile
             formData={formData}
             handleChange={handleChange}
-            classes={classes}
             renderErrorMessage={renderErrorMessage}
-            handleClassCodeChange={handleClassCodeChange}
-            handleUserTypeChange={handleUserTypeChange}
-            handleDateOfBirthChange={handleDateOfBirthChange}
           />
         )}
         {formData.roleId === 3 && (
           <StudentProfile
             formData={formData}
             handleChange={handleChange}
-            classes={classes}
             renderErrorMessage={renderErrorMessage}
-            handleClassCodeChange={handleClassCodeChange}
-            handleUserTypeChange={handleUserTypeChange}
-            handleDateOfBirthChange={handleDateOfBirthChange}
           />
         )}
       </form>{" "}
       {/* Nav Buttons */}
-      <div className="flex justify-between gap-4 mt-12">
+      <div className="flex justify-between gap-4">
         <button className="form-button" type="button" onClick={prevStep}>
           Back
         </button>

@@ -39,8 +39,8 @@
 }
 
 .circle {
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #ddd;
   color: #fff;
@@ -55,18 +55,18 @@
 .circle.current {
   background-color: #007bff;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
 .circle.complete {
   font-weight: 700;
   background-color: #4bb543;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .line {
   flex-grow: 1;
-  height: 5px;
+  height: 3px;
   background-color: #e0e0e0;
   position: relative;
   /* top: 15px; */
@@ -82,9 +82,9 @@
   /* min-width: auto; */
   min-width: 250px;
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   color: #4bb543;
-  top: 60px; /* Distance from circle center to title */
+  top: 45px; /* Distance from circle center to title */
   left: 50%;
   transform: translateX(-50%);
 }
