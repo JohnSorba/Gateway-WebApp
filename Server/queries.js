@@ -1,5 +1,5 @@
 // DATABASE QUERIES
-const loginQuery = `SELECT user_accounts.user_id,user_accounts.username, user_accounts.password,  user_accounts.role_id, roles.role_name
+const loginQuery = `SELECT user_accounts.user_id,user_accounts.username, user_accounts.password, user_accounts.role_id, roles.role_name
 FROM user_accounts
 INNER JOIN roles ON user_accounts.role_id = roles.role_Id
 WHERE username = $1`;
@@ -21,6 +21,7 @@ const employmentDetailsQuery =
 
 const registerTeacherQuery =
   "INSERT INTO teachers (teacher_id, user_id, first_name, last_name, date_of_birth, gender, phone_number, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
+
 const registerAdminQuery =
   "INSERT INTO admins (user_id, first_name, last_name, gender, age, date_of_birth,  phone_number, address, profile_photo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
 

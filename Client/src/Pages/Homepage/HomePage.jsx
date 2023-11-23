@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../Contexts/AuthContext";
+import { useAuth } from "../../Contexts/AuthContext";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
+import "./Home.css";
 // import { useEffect, useState } from "react";
 
 // import axios from "axios";
@@ -74,9 +75,6 @@ function HomePage() {
             {/* <li>
               <Link to="/admin/register/step-1">Register</Link>
             </li> */}
-            <li>
-              <Link to="/register/step-1">Register</Link>
-            </li>
             <button className="font-bold uppercase">Get App</button>
           </ul>
         </nav>

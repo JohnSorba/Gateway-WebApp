@@ -5,8 +5,8 @@ import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers";
 import AdminExams from "../comps/DashboardAdmin/AdminExams";
 import AdminTimetable from "../comps/DashboardAdmin/AdminTimetable";
 import AdminReports from "../comps/DashboardAdmin/AdminReports";
-import AdminSupport from "../comps/DashboardAdmin/AdminSupport";
 import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
+import AdminEvents from "../comps/DashboardAdmin/AdminEvents";
 
 function AdminDashboard() {
   return (
@@ -18,13 +18,11 @@ function AdminDashboard() {
         <Route path="timetable" element={<AdminTimetable />} />
         <Route path="exams" element={<AdminExams />} />
         <Route path="reports" element={<AdminReports />} />
-        <Route path="user-management" element={<UserManagement />} />
-        <Route path="support" element={<AdminSupport />} />
+
+        <Route path="events" element={<AdminEvents />} />
       </Routes>
     </>
   );
 }
 
 export default AdminDashboard;
-
-const UserManagement = () => <div>Admin User Management Content</div>;

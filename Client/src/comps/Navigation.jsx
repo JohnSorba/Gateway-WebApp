@@ -5,7 +5,7 @@ import {
   FaUserCheck,
   FaUserPlus,
 } from "react-icons/fa";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdEventNote } from "react-icons/md";
 import { PiCardsFill, PiExamFill, PiStudentFill } from "react-icons/pi";
 import { NavLink } from "react-router-dom";
 
@@ -54,20 +54,14 @@ export function AdminNav() {
       icon: <CgTranscript />,
     },
     {
-      title: "User Management",
-      link: "/dashboard/admin/user-management",
-      icon: <FaTable />,
+      title: "Events",
+      link: "/dashboard/admin/events",
+      icon: <MdEventNote />,
     },
     {
       title: "Account Registration",
       link: "/admin/register/step-1",
       icon: <FaUserPlus />,
-    },
-
-    {
-      title: "Support",
-      link: "/dashboard/admin/support",
-      icon: <PiExamFill />,
     },
   ];
 

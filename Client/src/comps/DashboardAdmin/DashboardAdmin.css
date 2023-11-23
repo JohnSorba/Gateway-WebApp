@@ -40,35 +40,30 @@ tr:hover {
 
 /* Dashboard Home */
 .admin-home {
-  padding: 2rem 0;
+  padding: 1rem 0;
 }
 .admin-home .header {
-  padding: 3rem 3rem;
+  /* padding: 3rem 3rem; */
   margin-bottom: 2rem;
-  border: 2px solid #eee;
-  border-radius: 8px;
 }
 
 .admin-home .header h1 {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   text-align: left;
   margin: 0;
-}
-
-.header h1 > span {
-  font-size: 1.5rem;
 }
 
 .admin-home .stats {
   display: flex;
   justify-content: space-between;
-  flex-grow: 1;
-  /* gap: 2rem; */
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 .admin-home .stats article {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-grow: 1;
   padding: 1rem 1rem;
   border: 2px solid #eee;
   border-radius: 8px;
@@ -92,4 +87,86 @@ tr:hover {
   height: 60px;
   padding: 0.5rem;
   border-radius: 50px;
+}
+
+/* Class Details */
+.class-details {
+  display: flex;
+  justify-content: space-between;
+  /* grid-template-columns: 2fr 1fr; */
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.top-students {
+  flex-grow: 3;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.pie-chart {
+  flex-grow: 1;
+}
+
+/* Events */
+
+.admin-events-section {
+  border: 1px solid #555;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  width: 350px;
+}
+
+.admin-aside {
+  height: 400px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.admin-aside .events {
+  margin: 0;
+}
+
+.admin-aside .section-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1rem 1.25rem;
+}
+
+.admin-aside ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-aside .list-item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  align-items: stretch;
+  grid-column-gap: 0.75rem;
+  background-color: #fdfdfd;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 1px 1px 8px 4px rgba(0, 0, 0, 0.02),
+    -1px -1px 8px 4px rgba(0, 0, 0, 0.02);
+}
+
+.list-item img {
+  height: 60px;
+  width: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.list-item h3 {
+  font-size: 0.925rem;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.list-item {
+  font-size: 0.85rem;
 }

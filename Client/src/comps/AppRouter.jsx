@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import HomePage from "../Pages/HomePage";
 import ComingSoon from "../Pages/ComingSoon";
+import HomePage from "../Pages/Homepage/HomePage";
 
 import Login from "../Pages/Login";
 
@@ -38,7 +38,7 @@ function AppRouter() {
 
         {/* Registration Route */}
         <Route
-          path="/register"
+          path="admin/register"
           element={
             <RegistrationPage
               modalOpen={modalOpen}

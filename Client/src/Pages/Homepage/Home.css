@@ -1,0 +1,93 @@
+/* Homepage Styles */
+.homepage .header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.01),
+    rgba(0, 0, 0, 0.01)
+  );
+  z-index: 1;
+}
+
+.homepage .header {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  height: 100vh;
+  background: url("/gateway_connect_hero_img.png");
+  background-size: cover;
+}
+
+/* Navbar Styles */
+.header .navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0 0;
+  z-index: 2;
+}
+
+.navbar .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.navbar .nav-links li {
+  padding: 0rem 0.25rem;
+}
+
+.navbar .nav-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: black;
+  font-size: 0.95rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid transparent;
+}
+.navbar .nav-links li a:hover {
+  color: blue;
+  border-color: blue;
+}
+
+/* Hero Section Styles */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 1.25rem;
+  z-index: 2;
+}
+.hero-section h1 {
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  line-height: 0.9;
+}
+.hero-section p {
+  font-size: 1.4rem;
+  font-weight: 500;
+  /* margin-bottom: 2rem; */
+}
+.hero-section a {
+  color: black;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  background-color: #5582ff;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: 0.25s all;
+}
+.hero-section a:hover {
+  border-color: #5582ff;
+  background: transparent;
+}

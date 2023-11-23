@@ -118,3 +118,52 @@ export const articles = [
     author: "Puzzle Master",
   },
 ];
+
+// Admin Home Data
+export const studentData = [
+  {
+    fullName: "John Doe",
+    parentName: "Jane Doe",
+    phone: "123-456-7890",
+    class: "101",
+    grade: "A",
+    feeStatus: "Paid",
+  },
+  {
+    fullName: "Alice Smith",
+    parentName: "Bob Smith",
+    phone: "987-654-3210",
+    class: "102",
+    grade: "B",
+    feeStatus: "Unpaid",
+  },
+  {
+    fullName: "Charlie Brown",
+    parentName: "Lucy Brown",
+    phone: "555-123-4567",
+    class: "103",
+    grade: "C",
+    feeStatus: "Paid",
+  },
+  {
+    fullName: "Eva Martinez",
+    parentName: "Carlos Martinez",
+    phone: "222-333-4444",
+    class: "104",
+    grade: "A",
+    feeStatus: "Unpaid",
+  },
+  {
+    fullName: "Michael Johnson",
+    parentName: "Emily Johnson",
+    phone: "999-888-7777",
+    class: "105",
+    grade: "B",
+    feeStatus: "Paid",
+  },
+];
+
+export const PieChartData = [
+  { name: "Boys", value: 300, color: "#0088FE" },
+  { name: "Girls", value: 215, color: "#FF8042" },
+];
