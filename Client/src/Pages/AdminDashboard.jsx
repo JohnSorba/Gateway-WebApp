@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminStudents from "../comps/DashboardAdmin/AdminStudents";
 import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers";
 import AdminExams from "../comps/DashboardAdmin/AdminExams";
-import AdminTimetable from "../comps/DashboardAdmin/AdminTimetable";
+import AdminTimetable from "../comps/DashboardAdmin/Timetable/AdminTimetable";
 import AdminReports from "../comps/DashboardAdmin/AdminReports";
 import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
 import AdminEvents from "../comps/DashboardAdmin/AdminEvents";

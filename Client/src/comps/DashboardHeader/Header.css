@@ -58,6 +58,16 @@
 .dashboard-header .icon {
   color: black;
   cursor: pointer;
+  width: 28px;
+  height: 28px;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  transition: 0.2s all;
+}
+
+.dashboard-header .icon:hover {
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 .nav-menu .icon:active {
   transform: scale(0.9);

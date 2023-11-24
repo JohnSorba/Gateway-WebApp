@@ -21,7 +21,6 @@ function Header({ handleClick }) {
         />
       </article>
       <article className="user-actions">
-        {" "}
         <div className="search-container">
           <FaSearch className="h-4 w-4 search-icon" />
           <input type="search" className="search-bar" placeholder="Search..." />
@@ -32,6 +31,7 @@ function Header({ handleClick }) {
         <div className="flex gap-2 items-center">
           <img
             src="https://i.pravatar.cc/48?u=118556"
+            d
             alt="user-profile"
             className="rounded-full"
           />

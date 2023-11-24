@@ -4,6 +4,7 @@
   height: 100vh;
   color: #666;
   background-color: #ffe;
+  background-color: #fff;
 }
 
 .main-section {
@@ -13,6 +14,7 @@
   height: 100%;
   color: #666;
   background-color: #ffe;
+  background-color: #fff;
   position: relative;
   overflow-y: scroll;
 }
