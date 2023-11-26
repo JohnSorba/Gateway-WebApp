@@ -30,30 +30,10 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
-// Fetch Subjects by class
-app.get("/api/subjects/:classCode", async (req, res) => {
-  const classCode = req.params.classCode;
-
-  try {
-    const result = await pool.query(
-      `select * from subjects where class_assigned = $1`,
-      [classCode]
-    );
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.log("Error fetching subjects: ", error);
-  }
-});
-
-app.get("/api/test", (req, res) => {
-  res.json({ message: "test response" });
-});
-
 // Authentication Requests
 app.use("/auth", authRoutes);
 
 // Timetable Creation Routes
-// app.use("/timetable", timetableRoutes);
 app.use("/timetable", timetableRoutes);
 
 // Start the Server

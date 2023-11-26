@@ -10,9 +10,6 @@ const pool = require("../db");
 
 const ClassModel = {
   async getSubjectsPerClass(classCode) {
-    console.log(`Fetching subjects for class ${classCode}`);
-    console.log(classCode);
-
     const query = "SELECT * FROM subjects WHERE class_assigned = $1";
 
     try {
@@ -26,4 +23,38 @@ const ClassModel = {
   },
 };
 
-module.exports = { ClassModel };
+const SubjectModel = {
+  async addSubject(subjectName, subjectCode, classAssigned) {
+    const query =
+      "INSERT INTO subjects (subject_name, subject_code, class_assigned) VALUES ($1, $2, $3)";
+
+    try {
+      await pool.query(query, [subjectName, subjectCode, classAssigned]);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async updateSubject(subjectId, subjectDetails) {
+    // Database query to update the subject based on subjectId and subjectDetails
+    const { subjectCode, subjectName } = subjectDetails;
+
+    const query =
+      "UPDATE subjects SET subject_code = $1, subject_name = $2 WHERE id = $3";
+
+    try {
+      await pool.query(query, [subjectCode, subjectName, subjectId]);
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async deleteSubject(subjectId) {
+    // Database query to delete the subject based on subjectId
+
+    const query = "DELETE FROM subjects WHERE id = $1";
+    await pool.query(query, [subjectId]);
+  },
+};
+
+module.exports = { ClassModel, SubjectModel };
