@@ -1,7 +1,6 @@
 // The controller will handle the HTTP requests and utilize the models to interact with the database
 
 // const TimetableModel = require("../models/timetable");
-const pool = require("../db");
 const { ClassModel, SubjectModel } = require("../models/timetable");
 
 // const TimetableController = {
@@ -58,9 +57,13 @@ const SubjectController = {
       const subjectId = req.params.subjectId;
       const subjectDetails = req.body;
 
-      await SubjectModel.updateSubject(subjectDetails, subjectId);
+      console.log("body: ", subjectDetails);
+      console.log("------------------------");
+      console.log("id: ", subjectId);
 
-      res.status(200).send("Subject updated successfully");
+      await SubjectModel.updateSubject(subjectId, subjectDetails);
+
+      res.status(200).send({ message: "Subject updated successfully" });
     } catch (error) {
       console.error("Error updating subject: ", error);
       res.status(500).send("Error updating subject");
@@ -117,7 +120,7 @@ const shuffleArray = (array) => {
 
 const ShuffleController = async (req, res) => {
   try {
-    const classCode = await req.params.classCode;
+    const classCode = req.params.classCode;
     console.log(classCode);
 
     const subjects = ClassModel.getSubjectsPerClass(classCode);
@@ -130,6 +133,29 @@ const ShuffleController = async (req, res) => {
     res.status(500).send("Error shuffling timetable");
   }
 };
+
+// function populateAndShuffleTimetable(subjects) {
+//   var timetable = new Array(20).fill(null);
+
+//   // Populate the timetable
+//   subjects.forEach((subject) => {
+//     var i;
+//     do {
+//       i = Math.floor(Math.random() * timetable.length);
+//     } while (timetable[i] !== null);
+//     timetable[i] = subject;
+//   });
+
+//   // Shuffle the timetable
+//   for (var i = timetable.length - 1; i > 0; i--) {
+//     var j = Math.floor(Math.random() * (i + 1));
+//     var temp = timetable[i];
+//     timetable[i] = timetable[j];
+//     timetable[j] = temp;
+//   }
+
+//   return timetable;
+// }
 
 module.exports = {
   // TimetableController,

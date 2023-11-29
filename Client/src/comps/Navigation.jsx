@@ -49,6 +49,11 @@ export function AdminNav() {
       title: "Exams",
     },
     {
+      link: "/dashboard/admin/questions",
+      icon: <PiExamFill />,
+      title: "Exam Questions",
+    },
+    {
       title: "Reports",
       link: "/dashboard/admin/reports",
       icon: <CgTranscript />,

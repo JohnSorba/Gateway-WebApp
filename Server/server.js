@@ -7,6 +7,7 @@ const cors = require("cors");
 // Routes
 const authRoutes = require("./routes/auth");
 const timetableRoutes = require("./routes/timetable");
+const examRoutes = require("./routes/exams");
 const pool = require("./db");
 
 // const { authenticateToken } = require("./middleware/authenticate");
@@ -33,8 +34,11 @@ app.get("/api/students", async (req, res) => {
 // Authentication Requests
 app.use("/auth", authRoutes);
 
-// Timetable Creation Routes
+// Timetable Routes
 app.use("/timetable", timetableRoutes);
+
+// Exam Routes
+app.use("/exams", examRoutes);
 
 // Start the Server
 const PORT = 3000;
