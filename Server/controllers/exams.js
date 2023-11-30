@@ -68,12 +68,14 @@ const QuestionController = {
   // Add a new question
   async createQuestion(req, res) {
     try {
-      const { newQuestions } = req.body;
+      const { newQuestions, options } = req.body;
 
       const createdQuestion = await QuestionModel.create(
         newQuestions.subjectId,
         newQuestions.questionText,
-        newQuestions.marks
+        newQuestions.marks,
+        newQuestions.correctOption,
+        options
       );
 
       res.status(200).json(createdQuestion);
@@ -85,15 +87,15 @@ const QuestionController = {
 
   async addQuestion(req, res) {
     try {
-      const { subjectId, questionText, marks, options, correctOption } =
-        req.body;
+      const { newQuestions, options } = req.body;
+      console.log("in controller: ", options);
 
       const resultMessage = await QuestionModel.addQuestion(
-        subjectId,
-        questionText,
-        marks,
-        options,
-        correctOption
+        newQuestions.subjectId,
+        newQuestions.questionText,
+        newQuestions.marks,
+        newQuestions.correctOption,
+        options
       );
 
       res.status(201).json(resultMessage);
@@ -104,6 +106,19 @@ const QuestionController = {
   },
 
   //********************************* */
+
+  // Retrieve all questions with options
+  async getAllQuestionsWithOptions(req, res) {
+    try {
+      const questionsWithOptions =
+        await QuestionModel.getQuestionsWithOptions();
+
+      res.json(questionsWithOptions);
+    } catch (error) {
+      console.error("Error fetching questions: ", error);
+      res.status(500).send("Internal Server Error: ", error);
+    }
+  },
 
   // Retrieve questions by subject
   async getAllQuestions(req, res) {

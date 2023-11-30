@@ -32,6 +32,9 @@ router.post("/add-question", QuestionController.addQuestion);
 // Get all questions
 router.get("/get-questions", QuestionController.getAllQuestions);
 
+// Get questions with options
+router.get("/api/questions", QuestionController.getAllQuestionsWithOptions);
+
 // Get all questions by subject id
 router.get(
   "/get-questions/:subjectId",

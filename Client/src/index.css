@@ -145,6 +145,7 @@ form,
   flex-direction: column;
   gap: 0.25rem;
   flex-grow: 1;
+  margin-bottom: 1rem;
 }
 
 .form-label {

@@ -49,18 +49,9 @@ const SubjectModel = {
 // QUESTION MODEL
 
 const QuestionModel = {
-  // Add a new question
-  async create(subjectId, questionText, marks) {
-    const query =
-      "INSERT INTO questions (subject_code, question_text, marks) VALUES ($1, $2, $3) RETURNING *";
-
-    const result = await pool.query(query, [subjectId, questionText, marks]);
-
-    return result.rows[0];
-  },
-
-  // New add questions with options model function
-  async addQuestion(subjectId, questionText, marks, options, correctOption) {
+  // Add a question with options model function
+  async addQuestion(subjectId, questionText, marks, correctOption, options) {
+    console.log("in model: ", options);
     try {
       const query =
         "INSERT INTO questions (subject_code, question_text, marks, correct_option) values ($1, $2, $3, $4) RETURNING *";
@@ -90,7 +81,39 @@ const QuestionModel = {
   },
 
   // ***************************************************
-  // Get questions by subject
+  // Get questiosn with options
+  async getQuestionsWithOptions() {
+    try {
+      const questionsResult = await pool.query("SELECT * FROM questions");
+      const questions = questionsResult.rows;
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          const optionsResult = await pool.query(
+            "SELECT * FROM question_options WHERE question_id = $1",
+            [question.question_id]
+          );
+          const options = optionsResult.rows.map(
+            (option) => option.option_text
+          );
+
+          return {
+            subjectId: question.subject_code,
+            questionText: question.question_text,
+            options,
+            correctOption: question.correct_option,
+            marks: question.marks,
+          };
+        })
+      );
+
+      return questionsWithOptions;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Get all questions
   async getAllQuestions() {
     const query = "SELECT * FROM questions";
 
