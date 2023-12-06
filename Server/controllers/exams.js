@@ -269,6 +269,32 @@ const ExamController = {
     }
   },
 
+  // Add Subjects to Exam
+  async addExamSubject(req, res) {
+    try {
+      const { examId } = req.params;
+      const { newSubject } = req.body;
+
+      console.log(examId, newSubject.subjectCode);
+
+      const addSubject = await ExamModel.addExamSubjects(
+        examId,
+        newSubject.subjectCode,
+        newSubject.date,
+        newSubject.startTime,
+        newSubject.duration,
+        newSubject.examType,
+        newSubject.numQuestions,
+        newSubject.teacherId
+      );
+
+      res.status(201).json({ message: "Subject added to exam", addSubject });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+      console.error(error);
+    }
+  },
+
   // Retrieve all exams
   async getAllExams(req, res) {
     try {

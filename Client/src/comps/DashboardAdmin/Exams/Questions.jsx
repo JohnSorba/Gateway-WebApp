@@ -55,7 +55,7 @@ function Questions() {
         <ul>
           {questions.map((question, i) => (
             <li
-              key={question.question_id}
+              key={i}
               className=" grid grid-cols-[20px_1fr] gap-8 items-start mb-4"
             >
               <span>{i + 1}</span>{" "}

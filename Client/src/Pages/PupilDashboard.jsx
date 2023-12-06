@@ -5,7 +5,7 @@ import DashboardHome from "../comps/Dashboard/DashboardHome";
 import Attendance from "../comps/Dashboard/Attendance";
 import Timetable from "../comps/Dashboard/Timetable";
 import Flashcards from "../comps/Dashboard/Flashcards";
-import Exams from "../comps/Dashboard/Exams";
+import Exams from "../comps/Dashboard/Exams/Exams";
 import Reports from "../comps/Dashboard/Reports";
 import StudentProfile from "../comps/Dashboard/StudentProfile";
 

@@ -215,6 +215,52 @@ const ExamModel = {
     return result.rows[0];
   },
 
+  // Add Subjects to Exam
+  async addExamSubjects(
+    examId,
+    subjectCode,
+    date,
+    startTime,
+    duration,
+    examType,
+    numQuestions,
+    teacherId
+  ) {
+    const query =
+      "INSERT INTO exam_subjects (exam_id, subject_code, exam_date, start_time, duration, exam_type, no_of_questions, total_marks, teacher_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
+
+    try {
+      const { rows: questions } = await pool.query(
+        "SELECT * FROM questions WHERE subject_code = $1 LIMIT $2",
+        [subjectCode, numQuestions]
+      );
+
+      // calculate the total marks
+      const totalMarks = questions.reduce(
+        (sum, question) => sum + question.marks,
+        0
+      );
+
+      console.log(totalMarks);
+
+      const result = await pool.query(query, [
+        examId,
+        subjectCode,
+        date,
+        startTime,
+        duration,
+        examType,
+        numQuestions,
+        totalMarks,
+        teacherId,
+      ]);
+
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Get all exam
   async getAllExams() {
     const result = await pool.query("SELECT * FROM exams");
@@ -223,10 +269,14 @@ const ExamModel = {
 
   // Get exam details
   async getById(examId) {
-    const result = await pool.query("SELECT * FROM exams WHERE exam_id = $1", [
-      examId,
-    ]);
-    return result.rows[0];
+    const result = await pool.query(
+      `SELECT *
+      FROM exams 
+      JOIN exam_subjects ON exam_subjects.exam_id = exams.exam_id
+      WHERE exams.exam_id = $1`,
+      [examId]
+    );
+    return result.rows;
   },
 
   // Update an exam

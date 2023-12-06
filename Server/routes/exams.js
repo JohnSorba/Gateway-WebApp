@@ -79,6 +79,9 @@ router.get("/get-all-exams", ExamController.getAllExams);
 // Retrieve exam by quesiton Id
 router.get("/get-exam/:examId", ExamController.getExamById);
 
+// Add Exam Subject
+router.post("/:examId/subject", ExamController.addExamSubject);
+
 // Update exam
 router.put("/update-exam/:examId", ExamController.updateExam);
 

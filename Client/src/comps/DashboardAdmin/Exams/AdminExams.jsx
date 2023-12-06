@@ -1,10 +1,10 @@
-import CreateExam from "./Exams/CreateExam";
+import ExamHome from "./ExamHome";
 
 function AdminExams() {
   return (
     <div>
       <h2>Admin Exams</h2>
-      <CreateExam />
+      <ExamHome />
     </div>
   );
 }
