@@ -11,6 +11,8 @@ import ExamDetails from "../comps/DashboardAdmin/Exams/ExamDetails";
 import Questions from "../comps/DashboardAdmin/Exams/Questions";
 import QuestionsAdd from "../comps/DashboardAdmin/Exams/QuestionsAdd";
 import ExamList from "../comps/DashboardAdmin/Exams/ExamList";
+import QuestionDetails from "../comps/DashboardAdmin/Exams/QuestionDetails";
+import TakeExam from "../comps/DashboardAdmin/Exams/TakeExam/TakeExam";
 
 function AdminDashboard() {
   return (
@@ -27,12 +29,14 @@ function AdminDashboard() {
           <Route path="exam-list" element={<ExamList />} />
           <Route path="exam-details/:examId" element={<ExamDetails />} />
           <Route path="exam-subjects/:examId" />
+          <Route path="take-exam/:subjectId" element={<TakeExam />} />
         </Route>
 
         {/* QUESTIONS ROUTES */}
         <Route path="questions">
           <Route index element={<Questions />} />
           <Route path="add" element={<QuestionsAdd />} />
+          <Route path="details/:questionId" element={<QuestionDetails />} />
         </Route>
 
         <Route path="reports" element={<AdminReports />} />

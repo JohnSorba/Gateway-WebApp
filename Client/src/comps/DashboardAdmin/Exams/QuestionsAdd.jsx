@@ -70,10 +70,9 @@ function QuestionsAdd() {
         {/* Question Text input */}
         <article className="form-group">
           <label htmlFor="questionText" className="form-label">
-            Question:
+            Question Text:
           </label>
-          <input
-            type="text"
+          <textarea
             id="questionText"
             name="questionText"
             value={newQuestions.questionText}

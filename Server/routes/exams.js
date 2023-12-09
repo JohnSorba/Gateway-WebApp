@@ -33,7 +33,10 @@ router.post("/add-question", QuestionController.addQuestion);
 router.get("/get-questions", QuestionController.getAllQuestions);
 
 // Get questions with options
-router.get("/api/questions", QuestionController.getAllQuestionsWithOptions);
+router.get(
+  "/question-details/:questionId",
+  QuestionController.getAllQuestionsWithOptions
+);
 
 // Get all questions by subject id
 router.get(
@@ -46,7 +49,7 @@ router.put("/update-question/:questionId", QuestionController.updateQuestion);
 
 // Delete a question by id
 router.delete(
-  "/delete-question/:questionId",
+  "/question/delete/:questionId",
   QuestionController.deleteQuestion
 );
 
@@ -87,5 +90,8 @@ router.put("/update-exam/:examId", ExamController.updateExam);
 
 // Delete an exam
 router.delete("/delete-exam/:examId", ExamController.deleteExam);
+
+// Take an exam
+router.get("/take-exam/:subjectId", ExamController.takeExam);
 
 module.exports = router;

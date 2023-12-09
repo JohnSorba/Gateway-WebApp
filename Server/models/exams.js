@@ -82,9 +82,12 @@ const QuestionModel = {
 
   // ***************************************************
   // Get questiosn with options
-  async getQuestionsWithOptions() {
+  async getQuestionsWithOptions(questionId) {
     try {
-      const questionsResult = await pool.query("SELECT * FROM questions");
+      const questionsResult = await pool.query(
+        "SELECT * FROM questions WHERE question_id = $1",
+        [questionId]
+      );
       const questions = questionsResult.rows;
 
       const questionsWithOptions = await Promise.all(
@@ -115,8 +118,12 @@ const QuestionModel = {
 
   // Get all questions
   async getAllQuestions() {
-    const query = "SELECT * FROM questions";
+    const query = `SELECT questions.*, subjects.subject_name, subjects.class_assigned
+    FROM questions
+    JOIN subjects ON questions.subject_code = subjects.subject_code
+    `;
 
+    // WHERE questions.exam_id = {exam_id};
     const result = await pool.query(query);
 
     return result.rows;
@@ -132,35 +139,98 @@ const QuestionModel = {
   },
 
   // Update a question
-  async update(questionId, questionText) {
-    const query =
-      "UPDATE questions SET question_text = $1 WHERE question_id = $2 RETURNING *";
+  async update(questionId, questionText, options) {
+    const client = await pool.connect();
 
-    const result = await pool.query(query, [questionText, questionId]);
+    try {
+      // Start a transaction
+      await client.query("BEGIN");
 
-    return result.rows[0];
+      const query =
+        "UPDATE questions SET question_text = $1 WHERE question_id = $2 RETURNING *";
+
+      await pool.query(query, [questionText, questionId]);
+
+      // Clear existing options for the question
+      await pool.query("DELETE FROM question_options WHERE question_id = $1", [
+        questionId,
+      ]);
+
+      // Insert new options for the question
+      const optionsQuery =
+        "INSERT INTO question_options (question_id, option_text) VALUES($1, $2)";
+
+      // Loop over each option and add it to the question_options table
+      for (let i = 0; i < options.length; i++) {
+        const result = await pool.query(optionsQuery, [questionId, options[i]]);
+      }
+
+      // Commit the transaction
+      await client.query("COMMIT");
+
+      return "Question updated Successfully";
+    } catch (error) {
+      // ROLLBACK the transaction incase of an error
+      console.error(error);
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      // Release the client back to the pool
+      client.release;
+    }
   },
 
   // Delete a question
   async delete(questionId) {
-    const query = "DELETE FROM questions WHERE question_id = $1";
+    const client = await pool.connect();
 
-    const result = pool.query(query, [questionId]);
+    try {
+      client.query("BEGIN");
 
-    return result.rowCount;
+      // Delete options associated with the question
+      await pool.query("DELETE FROM question_options WHERE question_id = $1", [
+        questionId,
+      ]);
+
+      // Delete the question itself
+      await pool.query("DELETE FROM questions WHERE question_id = $1", [
+        questionId,
+      ]);
+
+      // Commit the transaction
+      client.query("COMMIT");
+
+      return "Question and options deleted successfully";
+    } catch (error) {
+      // Rollback the transaction in case of an error
+      client.query("ROLLBACK");
+
+      console.error("Error Deleting Question", error);
+      throw error;
+    } finally {
+      client.release;
+    }
   },
 };
 
 // QUESTION OPTIONS MODEL
 const QuestionOptionsModel = {
   // Add options to a question
-  async create(questionId, optionText, isCorrect) {
-    const query =
-      "INSERT INTO question_options (question_id, option_text, is_correct) VALUES ($1, $2, $3) RETURNING *";
+  async create(questionId, options) {
+    // const query =
+    //   "INSERT INTO question_options (question_id, option_text) VALUES ($1, $2) RETURNING *";
 
-    const result = pool.query(query, [questionId, optionText, isCorrect]);
+    // const result = pool.query(query, [questionId, optionText]);
 
-    return result.rows;
+    const optionsQuery =
+      "INSERT INTO question_options (question_id, option_text) values ($1, $2)";
+
+    // Loop over each option and add it to the question_options table
+    for (let i = 0; i < options.length; i++) {
+      await pool.query(optionsQuery, [questionId, options[i]]);
+    }
+
+    // return result.rows;
   },
 
   // Get options by question
@@ -270,12 +340,13 @@ const ExamModel = {
   // Get exam details
   async getById(examId) {
     const result = await pool.query(
-      `SELECT *
+      `SELECT exams.*, exam_subjects.*
       FROM exams 
       JOIN exam_subjects ON exam_subjects.exam_id = exams.exam_id
       WHERE exams.exam_id = $1`,
       [examId]
     );
+
     return result.rows;
   },
 
@@ -294,6 +365,41 @@ const ExamModel = {
       examId,
     ]);
     return result.rowCount;
+  },
+
+  // Get questions with options
+  async getQuestionsForExam(subjectId) {
+    try {
+      const questionsResult = await pool.query(
+        "SELECT * FROM questions WHERE subject_code = $1",
+        [subjectId]
+      );
+      const questions = questionsResult.rows;
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          const optionsResult = await pool.query(
+            "SELECT * FROM question_options WHERE question_id = $1",
+            [question.question_id]
+          );
+          const options = optionsResult.rows.map(
+            (option) => option.option_text
+          );
+
+          return {
+            subjectId: question.subject_code,
+            questionText: question.question_text,
+            options,
+            correctOption: question.correct_option,
+            marks: question.marks,
+          };
+        })
+      );
+
+      return questionsWithOptions;
+    } catch (error) {
+      throw error;
+    }
   },
 };
 

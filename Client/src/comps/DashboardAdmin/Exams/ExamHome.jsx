@@ -38,7 +38,7 @@ function ExamHome() {
   const fetchQuestions = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/exams/api/questions`
+        `http://localhost:3000/exams/get-questions`
       );
 
       const data = response.data;

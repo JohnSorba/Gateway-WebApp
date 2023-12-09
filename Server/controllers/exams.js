@@ -109,9 +109,12 @@ const QuestionController = {
 
   // Retrieve all questions with options
   async getAllQuestionsWithOptions(req, res) {
+    const { questionId } = req.params;
+
     try {
-      const questionsWithOptions =
-        await QuestionModel.getQuestionsWithOptions();
+      const questionsWithOptions = await QuestionModel.getQuestionsWithOptions(
+        questionId
+      );
 
       res.json(questionsWithOptions);
     } catch (error) {
@@ -128,19 +131,20 @@ const QuestionController = {
       res.json(questions);
     } catch (err) {
       // res.status(500).json({ message: err.message });
-      res.status(500).send("Error adding question", err);
+      res.status(500).json({ message: "Error adding question", err });
     }
   },
 
   // Retrieve questions by subject
   async getQuestionsBySubject(req, res) {
     try {
-      const subjectId = req.params.subjectId;
+      const { subjectId } = req.params;
 
       const questions = await QuestionModel.getBySubject(subjectId);
 
       res.json(questions);
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: err.message });
     }
   },
@@ -149,14 +153,15 @@ const QuestionController = {
   async updateQuestion(req, res) {
     try {
       const { questionId } = req.params;
-      const { questionText } = req.body;
+      const { questionText, options } = req.body;
 
       const updatedQuestion = await QuestionModel.update(
         questionId,
-        questionText
+        questionText,
+        options
       );
 
-      res.json(updatedQuestion);
+      res.json({ updatedQuestion, options });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -166,9 +171,9 @@ const QuestionController = {
   async deleteQuestion(req, res) {
     try {
       const { questionId } = req.params;
-      await QuestionModel.delete(questionId);
+      const result = await QuestionModel.delete(questionId);
 
-      res.status(204).send();
+      res.status(200).json({ message: result });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -179,13 +184,9 @@ const QuestionOptionsController = {
   // Add options to a question
   async createOption(req, res) {
     try {
-      const { questionId, optionText, isCorrect } = req.body;
+      const { questionId, options } = req.body;
 
-      const newOption = await QuestionOptionsModel.create(
-        questionId,
-        optionText,
-        isCorrect
-      );
+      const newOption = await QuestionOptionsModel.create(questionId, options);
 
       res.status(201).json(newOption);
     } catch (err) {
@@ -277,7 +278,7 @@ const ExamController = {
 
       console.log(examId, newSubject.subjectCode);
 
-      const addSubject = await ExamModel.addExamSubjects(
+      await ExamModel.addExamSubjects(
         examId,
         newSubject.subjectCode,
         newSubject.date,
@@ -288,7 +289,7 @@ const ExamController = {
         newSubject.teacherId
       );
 
-      res.status(201).json({ message: "Subject added to exam", addSubject });
+      res.status(201).json({ message: "Subject added to exam" });
     } catch (error) {
       res.status(500).json({ message: error.message });
       console.error(error);
@@ -345,6 +346,24 @@ const ExamController = {
       res.status(204).json({ message: "Exam deleted successfully" });
     } catch (err) {
       res.status(500).json({ message: err.message });
+    }
+  },
+
+  // TAKE EXAM: Retrieve all questions with options
+  async takeExam(req, res) {
+    const { subjectId } = req.params;
+
+    console.log(subjectId);
+
+    try {
+      const questionsWithOptions = await ExamModel.getQuestionsForExam(
+        subjectId
+      );
+
+      res.json(questionsWithOptions);
+    } catch (error) {
+      console.error("Error fetching questions: ", error);
+      res.status(500).send("Internal Server Error: ", error);
     }
   },
 };
