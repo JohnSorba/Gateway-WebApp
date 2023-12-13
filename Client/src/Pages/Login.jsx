@@ -6,10 +6,12 @@ import Modal from "../comps/RegistrationDetails/Modal";
 import { FaCheckCircle } from "react-icons/fa";
 import { useAuth } from "../Contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
+import Loader from "../Loader";
 
 function Login({ modalOpen, setModalOpen }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({ username: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +66,7 @@ function Login({ modalOpen, setModalOpen }) {
 
     if (validate()) {
       try {
+        setIsLoading(true);
         const response = await axios.post("http://localhost:3000/auth/login", {
           username,
           password,
@@ -73,13 +76,10 @@ function Login({ modalOpen, setModalOpen }) {
         if (response.data) {
           // decode the token to access all values
           const decodedToken = jwtDecode(data.token);
-          console.log("decoded token: ", decodedToken);
+          // console.log("decoded token: ", decodedToken);
 
           login(data.token, decodedToken.role, decodedToken.username);
-          console.log("login data: ", data);
-          // navigate(`/dashboard/${data.role}`);
-
-          // login(response.data);
+          // console.log("login data: ", data);
 
           setMessage(response.data.message);
           setModalOpen(true);
@@ -89,9 +89,12 @@ function Login({ modalOpen, setModalOpen }) {
         setAnimate(false);
         setTimeout(() => setAnimate(true), 10);
         setMessage(error.response.data.error);
-        console.log(error.response.data.error);
+
+        // console.log("Login Failed");
 
         // console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -133,9 +136,8 @@ function Login({ modalOpen, setModalOpen }) {
             onChange={toggleShowPassword}
           />
         </div>
-
         <button className="form-button" type="submit">
-          Login
+          {isLoading ? <Loader /> : <p>Login</p>}
         </button>
         <p className={`login-message ${animate ? "animate" : ""}`}>{message}</p>
       </form>

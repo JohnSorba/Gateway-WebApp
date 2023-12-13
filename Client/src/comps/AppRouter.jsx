@@ -22,6 +22,7 @@ import PupilDashboard from "../Pages/PupilDashboard";
 import PageNotFound from "../Pages/PageNotFound";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "./Dashboard/DashboardLayout";
+import TakeExam from "./Dashboard/Exams/TakeExam";
 
 function AppRouter() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,6 +64,14 @@ function AppRouter() {
             }
           />
           <Route path="step-4" element={<CourseForm />} />
+        </Route>
+
+        {/* STUDENT EXAM ROUTE */}
+        <Route>
+          <Route
+            path="student/exam/:examId/:subjectId"
+            element={<TakeExam />}
+          />
         </Route>
 
         {/* Login Route */}

@@ -8,9 +8,9 @@ function QuestionEdit({ question, onClose, message, onSetMessage }) {
 
   // Set initial value when the question prop changes
   useEffect(() => {
-    setQuestionText(question.questionText);
-    setOptions(question.options.length > 0 ? question.options : options);
-  }, [question, options]);
+    setQuestionText(question.questionText || "");
+    setOptions(question.options.length > 0 ? question.options : []);
+  }, [question]);
 
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...options];

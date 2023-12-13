@@ -367,14 +367,41 @@ const ExamModel = {
     return result.rowCount;
   },
 
+  async noOfQuestions(subjectId) {
+    const query =
+      "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1";
+
+    await pool.query(query, [subjectId]);
+  },
+
   // Get questions with options
-  async getQuestionsForExam(subjectId) {
+  async getQuestionsForExam(subjectId, examId) {
     try {
-      const questionsResult = await pool.query(
-        "SELECT * FROM questions WHERE subject_code = $1",
-        [subjectId]
+      const result = await pool.query(
+        "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
+        [subjectId, examId]
       );
+
+      // console.log("Result: ", result);
+
+      const numQuestions = result.rows[0].no_of_questions;
+      console.log("no of questions: ", numQuestions);
+
+      const questionsResult = await pool.query(
+        `
+        SELECT * from questions        
+        WHERE subject_code = $1
+        ORDER BY RANDOM()
+        LIMIT $2
+        `,
+        [subjectId, numQuestions]
+      );
+
+      // console.log("ques result: ", questionsResult);
+
       const questions = questionsResult.rows;
+
+      console.log(questions);
 
       const questionsWithOptions = await Promise.all(
         questions.map(async (question) => {
@@ -396,7 +423,9 @@ const ExamModel = {
         })
       );
 
-      return questionsWithOptions;
+      console.log({ questionsWithOptions, numQuestions });
+
+      return { questionsWithOptions, numQuestions };
     } catch (error) {
       throw error;
     }
@@ -436,6 +465,77 @@ const ExamQuestionsModel = {
   },
 };
 
+////////////////////////
+// STUDENT EXAMS MODEL
+////////////////////////
+
+const studentExamModel = {
+  async getAllExams() {
+    try {
+      const result = await pool.query("SELECT * FROM exams");
+      return result.rows;
+    } catch (error) {
+      console.log("Error fetching Exams:", error);
+      throw error;
+    }
+  },
+
+  // Get Class Exam
+  async getByClassId(classId) {
+    try {
+      const result = await pool.query(
+        `SELECT exams.exam_id, exams.title, exams.date_created, COUNT(exam_subjects.subject_code) AS numSubjects,
+         subjects.class_assigned
+      FROM 
+        exams 
+      LEFT JOIN 
+        exam_subjects ON exams.exam_id = exam_subjects.exam_id 
+      LEFT JOIN
+        subjects ON exam_subjects.subject_code = subjects.subject_code
+      WHERE subjects.class_assigned = $1
+      GROUP BY
+        exams.exam_id, subjects.class_assigned
+      `,
+        [classId]
+      );
+
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Get exam details
+  async getByStudentExamId(examId) {
+    const result = await pool.query(
+      `SELECT exams.*, exam_subjects.*
+        FROM exams 
+        JOIN exam_subjects ON exam_subjects.exam_id = exams.exam_id
+        WHERE exams.exam_id = $1`,
+      [examId]
+    );
+
+    return result.rows;
+  },
+
+  // Get exam details by classId
+  async getExamDetailsByClassId(examId, classId) {
+    const result = await pool.query(
+      `SELECT exams.*, exam_subjects.*, subjects.*
+      FROM 
+        exams 
+      JOIN 
+        exam_subjects ON exam_subjects.exam_id = exams.exam_id
+      JOIN
+        subjects ON exam_subjects.subject_code = subjects.subject_code
+      WHERE exams.exam_id = $1 AND subjects.class_assigned = $2`,
+      [examId, classId]
+    );
+
+    return result.rows;
+  },
+};
+
 module.exports = {
   SubjectModel,
   QuestionModel,
@@ -443,4 +543,5 @@ module.exports = {
   ClassModel,
   ExamModel,
   ExamQuestionsModel,
+  studentExamModel,
 };

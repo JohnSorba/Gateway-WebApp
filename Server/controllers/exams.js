@@ -5,6 +5,7 @@ const {
   ClassModel,
   ExamModel,
   ExamQuestionsModel,
+  studentExamModel,
 } = require("../models/exams");
 
 const SubjectController = {
@@ -363,7 +364,94 @@ const ExamController = {
       res.json(questionsWithOptions);
     } catch (error) {
       console.error("Error fetching questions: ", error);
-      res.status(500).send("Internal Server Error: ", error);
+      res.status(500).json({ error: "Internal Server Error: ", error });
+    }
+  },
+};
+
+const StudentExamController = {
+  async getAllExams(req, res) {
+    const allExams = await studentExamModel.getAllExams();
+
+    res.status(200).json(allExams);
+  },
+
+  async getExamsByClassId(req, res) {
+    const { classId } = req.params;
+
+    console.log(classId);
+
+    try {
+      const allExams = await studentExamModel.getByClassId(classId);
+
+      // console.log(allExams);
+
+      // console.log("got exams");
+
+      // res.send(allExams);
+      res.status(200).json(allExams);
+      // res.status(200).json(filteredExams);
+    } catch (error) {
+      console.error("Error fetching student exams: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  // Retrieve exam details by ID
+  async getExamById(req, res) {
+    const { classId } = req.params;
+
+    try {
+      const allExams = await studentExamModel.getByStudentExamId(classId);
+
+      //Filter subjects basedon the student's class
+      const filteredExams = allExams.map((exam) => {
+        const filteredSubjects = exam.subjects.filter(
+          (subject) => subject.classId === classId
+        );
+        return { ...exam, subjects: filteredSubjects };
+      });
+
+      console.log(filteredExams);
+
+      res.json(exam);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  async getStudentExamDetails(req, res) {
+    const { examId, classId } = req.params;
+
+    try {
+      const allExams = await studentExamModel.getExamDetailsByClassId(
+        examId,
+        classId
+      );
+
+      res.status(200).json(allExams);
+    } catch (error) {
+      console.error("Error fetching student exams: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  // TAKE EXAM: Retrieve all questions with options
+  async takeStudentExam(req, res) {
+    const subjectId = req.params.subjectId;
+    const examId = req.params.examId;
+
+    console.log("subjectId: ", subjectId);
+    console.log("examId: ", examId);
+
+    try {
+      const { questionsWithOptions, numQuestions } =
+        await ExamModel.getQuestionsForExam(subjectId, examId);
+
+      res.json({ questionsWithOptions, numQuestions });
+    } catch (error) {
+      console.error("Error fetching questions: ", error);
+      res.status(500).json({ error: error });
     }
   },
 };
@@ -374,4 +462,5 @@ module.exports = {
   QuestionOptionsController,
   ClassController,
   ExamController,
+  StudentExamController,
 };

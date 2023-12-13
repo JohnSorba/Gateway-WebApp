@@ -10,6 +10,7 @@ function Questions() {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
+  // const [selectAll, setSelectAll] = useState(false);
 
   // console.log(newQuestions);
   // console.log("q", questions);
@@ -112,9 +113,10 @@ function Questions() {
     }
   };
 
-  const handleViewAllQuestions = () => {
-    fetchQuestions();
-  };
+  // const handleViewAllQuestions = () => {
+  //   setSelectAll(true);
+  //   fetchQuestions();
+  // };
 
   return (
     <div>
@@ -125,7 +127,10 @@ function Questions() {
           <Link to="/dashboard/admin/questions/add">
             <button className="form-button">Add Question</button>
           </Link>
-          <button className="form-button" onClick={handleViewAllQuestions}>
+          <button
+            className="form-button"
+            // onClick={handleViewAllQuestions}
+          >
             View All Quesitons
           </button>
         </div>
@@ -147,6 +152,7 @@ function Questions() {
               <option value="" disabled>
                 Select Class
               </option>
+              <option value={questions}>Select All</option>
               {classes?.map((cls) => (
                 <option key={cls.class_code} value={cls.class_code}>
                   {cls.class_name}
@@ -237,6 +243,26 @@ function Questions() {
                     </Link>
                   </tr>
                 ))}
+
+            {/* {selectAll && questions.map((question, i) => {
+                <tr key={i} className="py-2 text-sm">
+                <td>{question.question_id}</td>
+                <td>{question.subject_code}</td>
+                <td>{question.subject_name}</td>
+                <td className="font-semibold text-md">
+                  {question.question_text}
+                </td>
+                <td>{question.marks}</td>
+                <td>{question.class_assigned}</td>
+                <Link
+                  to={`/dashboard/admin/questions/details/${question.question_id}`}
+                >
+                  <button className="flex gap-2 items-center py-2">
+                    <span>View Details</span> <FaEye />
+                  </button>
+                </Link>
+              </tr>
+              }} */}
           </tbody>
         </table>
       </div>

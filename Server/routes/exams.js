@@ -7,7 +7,9 @@ const {
   QuestionController,
   QuestionOptionsController,
   ExamController,
+  StudentExamController,
 } = require("../controllers/exams");
+const { studentExamModel } = require("../models/exams");
 
 /********SUBJECT ROUTES***********/
 
@@ -94,4 +96,24 @@ router.delete("/delete-exam/:examId", ExamController.deleteExam);
 // Take an exam
 router.get("/take-exam/:subjectId", ExamController.takeExam);
 
+////////////////////////
+// STUDENT EXAMS ROUTES
+////////////////////////
+
+// Fetch all exams
+router.get("/student-exam", StudentExamController.getAllExams);
+
+// Fetch by class ID
+router.get("/student-exam/:classId", StudentExamController.getExamsByClassId);
+
+router.get(
+  "/:examId/class/:classId",
+  StudentExamController.getStudentExamDetails
+);
+
+// Take Exam
+router.get(
+  "/take-exam/:examId/:subjectId",
+  StudentExamController.takeStudentExam
+);
 module.exports = router;
