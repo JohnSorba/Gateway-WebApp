@@ -8,14 +8,17 @@
   border-radius: 24px;
 
   /* margin-top: 2rem; */
+  /* flex: 0 0 250px; */
   width: 250px;
+  /* min-width: 250px; */
   height: 100%;
   z-index: 5;
   transition: 0.2s ease-in-out;
 }
 
 .sidebar.slide-in {
-  width: 0px;
+  width: 0;
+  /* min-width: 0px; */
   visibility: hidden;
   opacity: 0;
   /* animation: slideIn 0.3s; */

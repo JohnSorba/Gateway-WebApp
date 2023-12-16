@@ -24,7 +24,7 @@ const { ClassModel, SubjectModel } = require("../models/timetable");
 
 const ClassController = {
   async getClassTimetable(req, res) {
-    const classCode = await req.params.classCode;
+    const { classCode } = await req.params;
 
     try {
       const subjects = await ClassModel.getSubjectsPerClass(classCode);

@@ -28,8 +28,6 @@ function AppRouter() {
   const [modalOpen, setModalOpen] = useState(false);
   const [animate, setAnimate] = useState(false);
 
-  // const user = { role: "admin" };
-
   return (
     <BrowserRouter>
       <Routes>

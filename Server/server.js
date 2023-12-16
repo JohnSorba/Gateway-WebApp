@@ -8,7 +8,10 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const timetableRoutes = require("./routes/timetable");
 const examRoutes = require("./routes/exams");
+const studentRoutes = require("./routes/student");
+const teacherRoutes = require("./routes/teachers");
 const pool = require("./db");
+const { authenticateToken } = require("./middleware/authenticate");
 
 // const { authenticateToken } = require("./middleware/authenticate");
 
@@ -31,6 +34,8 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
+app.use("/user/", studentRoutes);
+
 // Authentication Requests
 app.use("/auth", authRoutes);
 
@@ -40,6 +45,12 @@ app.use("/timetable", timetableRoutes);
 // Exam Routes
 app.use("/exams", examRoutes);
 
+// Student Routes
+app.use("/student", studentRoutes);
+
+// Teacher Routes
+app.use("/teacher", teacherRoutes);
+
 // Start the Server
 const PORT = 3000;
 app.listen(PORT, () => {
@@ -48,10 +59,3 @@ app.listen(PORT, () => {
 });
 
 console.log("We are Live...");
-
-/*
- *
- *
- *
- *
- **/

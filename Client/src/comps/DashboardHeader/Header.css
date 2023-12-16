@@ -55,6 +55,32 @@
   width: 40px;
 }
 
+.user-actions .user-profile {
+  position: relative;
+  cursor: pointer;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  border-radius: 0.75rem;
+  background-color: #fee;
+}
+.user-actions .user-profile:hover {
+  background-color: #fde;
+}
+
+.user-profile .dropdown-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.user-profile .dropdown-item.show {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
 .dashboard-header .icon {
   color: black;
   cursor: pointer;

@@ -96,13 +96,13 @@ export function TeacherNav() {
       icon: <MdDashboard />,
     },
     {
-      title: "Classes",
-      link: "/dashboard/teacher/classes",
-      icon: <FaUserCheck />,
+      title: "Timetable",
+      link: "/dashboard/teacher/timetable",
+      icon: <PiExamFill />,
     },
     {
-      title: "Assignments",
-      link: "/dashboard/teacher/assignments",
+      title: "Exams",
+      link: "/dashboard/teacher/exam",
       icon: <FaTable />,
     },
     {
@@ -111,8 +111,8 @@ export function TeacherNav() {
       icon: <PiCardsFill />,
     },
     {
-      title: "Calendar",
-      link: "/dashboard/teacher/calendar",
+      title: "Profile",
+      link: "/dashboard/teacher/profile",
       icon: <PiExamFill />,
     },
   ];
@@ -166,6 +166,11 @@ export function StudentNav() {
       link: "/dashboard/student/reports",
       icon: <CgTranscript />,
       title: "Report Cards",
+    },
+    {
+      link: "/dashboard/student/profile",
+      icon: <CgTranscript />,
+      title: "Your Profile",
     },
   ];
 

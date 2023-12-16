@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "../comps/RegistrationDetails/Modal";
 import { FaCheckCircle } from "react-icons/fa";
@@ -19,7 +19,14 @@ function Login({ modalOpen, setModalOpen }) {
   const [animate, setAnimate] = useState(false);
 
   const { login, authState } = useAuth();
-  // console.log("role: ", authState.user.role);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authState.token) {
+      // navigate("/home");
+      navigate(`/dashboard/${authState.role}`);
+    }
+  }, [navigate, authState.token, authState.role]);
 
   const toggleStatus = () => {
     if (showPassword) setStatus("password");
@@ -35,8 +42,6 @@ function Login({ modalOpen, setModalOpen }) {
     setModalOpen(false);
     navigate(`/dashboard/${authState.role}`);
   };
-
-  const navigate = useNavigate();
 
   const validate = () => {
     let isValid = true;
@@ -76,15 +81,20 @@ function Login({ modalOpen, setModalOpen }) {
         if (response.data) {
           // decode the token to access all values
           const decodedToken = jwtDecode(data.token);
-          // console.log("decoded token: ", decodedToken);
+          console.log("decoded token: ", decodedToken);
 
-          login(data.token, decodedToken.role, decodedToken.username);
-          // console.log("login data: ", data);
+          login(
+            data.token,
+            decodedToken.role,
+            decodedToken.username,
+            decodedToken.userId
+          );
+          console.log("login data: ", data);
 
           setMessage(response.data.message);
           setModalOpen(true);
         }
-        // console.log(response.data);
+        console.log(response.data);
       } catch (error) {
         setAnimate(false);
         setTimeout(() => setAnimate(true), 10);

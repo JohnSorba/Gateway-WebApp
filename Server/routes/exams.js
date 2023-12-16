@@ -9,7 +9,6 @@ const {
   ExamController,
   StudentExamController,
 } = require("../controllers/exams");
-const { studentExamModel } = require("../models/exams");
 
 /********SUBJECT ROUTES***********/
 

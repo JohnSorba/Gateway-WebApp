@@ -16,17 +16,24 @@ export function AuthProvider({ children }) {
     token: null,
     username: null,
     role: null,
+    userId: null,
   });
 
   // Function to update state on login
-  const login = (token, role, username) => {
+  const login = (token, role, username, userId) => {
     localStorage.setItem("token", token);
-    setAuthState({ token, role, username });
+    setAuthState({
+      token: token,
+      role: role,
+      username: username,
+      userId: userId,
+    });
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setAuthState({ token: null, role: null, username: null });
+    localStorage.removeItem("accountData");
+    setAuthState({ token: null, role: null, username: null, userId: null });
 
     // localStorage.removeItem("userData");
   };
@@ -41,10 +48,10 @@ export function AuthProvider({ children }) {
         token,
         role: decodedToken.role,
         username: decodedToken.username,
+        userId: decodedToken.userId,
       });
+      setIsAuthChecked(true);
     }
-
-    setIsAuthChecked(true);
   }, []);
 
   return (

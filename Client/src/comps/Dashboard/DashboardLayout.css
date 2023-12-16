@@ -21,7 +21,7 @@
 
 /* Main Content */
 .main-content {
-  flex-grow: 9;
+  flex: 1;
   padding: 1rem 2rem;
   overflow-y: auto;
   transition: 0.3s all;

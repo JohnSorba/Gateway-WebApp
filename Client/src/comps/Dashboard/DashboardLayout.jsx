@@ -6,7 +6,7 @@ import SideNav from "../SideNavigation/SideNav";
 import Header from "../DashboardHeader/Header";
 import { useState } from "react";
 
-const DashboardLayout = () => {
+const DashboardLayout = ({ userId }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClick = () => {
@@ -27,7 +27,7 @@ const DashboardLayout = () => {
         </div>
       </div> */}
 
-      <Header handleClick={handleClick} />
+      <Header handleClick={handleClick} userId={userId} />
       <section className="main-section">
         {/* SIDE NAV - Slides In From Left */}
         <SideNav
