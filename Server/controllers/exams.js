@@ -6,7 +6,9 @@ const {
   ExamModel,
   ExamQuestionsModel,
   studentExamModel,
+  AdminReportModel,
 } = require("../models/exams");
+const { StudentModel } = require("../models/student");
 
 const SubjectController = {
   // Retrieve all subjects
@@ -261,9 +263,9 @@ const ExamController = {
   // Create a new exam
   async createExam(req, res) {
     try {
-      const { title } = req.body;
+      const { examTitle } = req.body;
 
-      const newExam = await ExamModel.create(title);
+      const newExam = await ExamModel.create(examTitle);
 
       res.status(201).json(newExam);
     } catch (err) {
@@ -421,12 +423,18 @@ const StudentExamController = {
   },
 
   async getStudentExamDetails(req, res) {
-    const { examId, classId } = req.params;
+    const { examId, classId, studentId } = req.params;
+    // const { studentId } = req.body;
+
+    console.log("student id: ", studentId);
+    console.log("exam id: ", examId);
+    console.log("class id: ", classId);
 
     try {
       const allExams = await studentExamModel.getExamDetailsByClassId(
         examId,
-        classId
+        classId,
+        studentId
       );
 
       res.status(200).json(allExams);
@@ -454,6 +462,41 @@ const StudentExamController = {
       res.status(500).json({ error: error });
     }
   },
+
+  // Submit grades for exam
+  async submitExamResult(req, res) {
+    const { examId, subjectId } = req.params;
+    const { studentId, marksObtained, isComplete } = req.body;
+
+    try {
+      const submitGrade = await studentExamModel.submitExamResult(
+        studentId,
+        examId,
+        subjectId,
+        marksObtained,
+        isComplete
+      );
+
+      res.status(200).json({ message: submitGrade });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+};
+
+const AdminReportController = {
+  // Get all reports
+  async getAllStudentResult(req, res) {
+    try {
+      const result = await AdminReportModel.getAllStudentResult();
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  },
 };
 
 module.exports = {
@@ -463,4 +506,5 @@ module.exports = {
   ClassController,
   ExamController,
   StudentExamController,
+  AdminReportController,
 };

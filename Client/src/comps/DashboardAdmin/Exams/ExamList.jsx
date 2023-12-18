@@ -33,7 +33,7 @@ function ExamList() {
   const handleCreateExam = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/exams/23/subject`,
+        `http://localhost:3000/exams/create-exam`,
         { examTitle }
       );
 

@@ -5,7 +5,7 @@ import {
   FaUserCheck,
   FaUserPlus,
 } from "react-icons/fa";
-import { MdDashboard, MdEventNote } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
 import { PiCardsFill, PiExamFill, PiStudentFill } from "react-icons/pi";
 import { NavLink } from "react-router-dom";
 
@@ -57,11 +57,6 @@ export function AdminNav() {
       title: "Reports",
       link: "/dashboard/admin/reports",
       icon: <CgTranscript />,
-    },
-    {
-      title: "Events",
-      link: "/dashboard/admin/events",
-      icon: <MdEventNote />,
     },
     {
       title: "Account Registration",
@@ -152,11 +147,7 @@ export function StudentNav() {
       icon: <FaTable />,
       title: "Timetable",
     },
-    {
-      link: "/dashboard/student/flashcards",
-      icon: <PiCardsFill />,
-      title: "Study Flashcards",
-    },
+
     {
       link: "/dashboard/student/exams",
       icon: <PiExamFill />,
@@ -166,11 +157,6 @@ export function StudentNav() {
       link: "/dashboard/student/reports",
       icon: <CgTranscript />,
       title: "Report Cards",
-    },
-    {
-      link: "/dashboard/student/profile",
-      icon: <CgTranscript />,
-      title: "Your Profile",
     },
   ];
 

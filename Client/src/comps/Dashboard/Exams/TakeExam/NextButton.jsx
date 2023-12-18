@@ -16,9 +16,9 @@ function NextButton({ dispatch, correctOption, index, numQuestions }) {
     return (
       <button
         className="btn btn-ui"
-        onClick={() => dispatch({ type: "finish" })}
+        onClick={() => dispatch({ type: "examCompleted" })}
       >
-        Finish
+        Complete Exam
       </button>
     );
 }

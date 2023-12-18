@@ -275,6 +275,8 @@ const ClassModel = {
   },
 };
 
+/******************************************** */
+//  EXAM MODEL
 const ExamModel = {
   // Create an exam
   async create(title) {
@@ -423,7 +425,7 @@ const ExamModel = {
         })
       );
 
-      console.log({ questionsWithOptions, numQuestions });
+      // console.log({ questionsWithOptions, numQuestions });
 
       return { questionsWithOptions, numQuestions };
     } catch (error) {
@@ -432,6 +434,8 @@ const ExamModel = {
   },
 };
 
+/*********************************************** */
+//  EXAM QUESTIONS MODEL
 const ExamQuestionsModel = {
   // Add question to an exam
   async addQuestionsToExam(examId, questionIds) {
@@ -485,7 +489,7 @@ const studentExamModel = {
     try {
       const result = await pool.query(
         `SELECT exams.exam_id, exams.title, exams.date_created, COUNT(exam_subjects.subject_code) AS numSubjects,
-         subjects.class_assigned
+        subjects.class_assigned
       FROM 
         exams 
       LEFT JOIN 
@@ -493,6 +497,7 @@ const studentExamModel = {
       LEFT JOIN
         subjects ON exam_subjects.subject_code = subjects.subject_code
       WHERE subjects.class_assigned = $1
+      
       GROUP BY
         exams.exam_id, subjects.class_assigned
       `,
@@ -519,20 +524,83 @@ const studentExamModel = {
   },
 
   // Get exam details by classId
-  async getExamDetailsByClassId(examId, classId) {
+  async getExamDetailsByClassId(examId, classId, studentId) {
     const result = await pool.query(
-      `SELECT exams.*, exam_subjects.*, subjects.*
-      FROM 
-        exams 
-      JOIN 
-        exam_subjects ON exam_subjects.exam_id = exams.exam_id
-      JOIN
-        subjects ON exam_subjects.subject_code = subjects.subject_code
-      WHERE exams.exam_id = $1 AND subjects.class_assigned = $2`,
-      [examId, classId]
+      `SELECT exams.*, exam_subjects.*, subjects.*, student_exam_grades.*
+        FROM 
+          exams 
+        JOIN 
+          exam_subjects ON exams.exam_id = exam_subjects.exam_id
+        JOIN
+          subjects ON exam_subjects.subject_code = subjects.subject_code
+        LEFT JOIN
+          student_exam_grades ON exams.exam_id = student_exam_grades.exam_id
+          AND exam_subjects.subject_code = student_exam_grades.subject_code
+          AND student_exam_grades.student_id = $3
+          
+    
+        WHERE exams.exam_id = $1 AND subjects.class_assigned = $2
+        AND (student_exam_grades.completed = false OR student_exam_grades.completed IS NULL OR student_exam_grades.student_id IS NULL)
+        `,
+      [examId, classId, studentId]
     );
 
+    console.log("result: ", result.rows);
+
     return result.rows;
+  },
+
+  async submitExamResult(
+    studentId,
+    examId,
+    subjectId,
+    marksObtained,
+    isComplete
+  ) {
+    const submitGradeQuery =
+      "INSERT INTO student_exam_grades (student_id, exam_id, subject_code, marks_obtained, completed) VALUES ($1, $2, $3, $4, $5)";
+
+    // const client = pool.connect();
+    try {
+      await pool.query(submitGradeQuery, [
+        studentId,
+        examId,
+        subjectId,
+        marksObtained,
+        isComplete,
+      ]);
+
+      return "You have successfully completed your exam!";
+    } catch (error) {
+      console.log(error);
+
+      throw error;
+    }
+  },
+};
+
+const AdminReportModel = {
+  // Get report result
+  async getAllStudentResult() {
+    const query = `
+    SELECT seg.*, s.first_name, s.last_name, su.* 
+    FROM student_exam_grades seg
+    JOIN students s
+    ON s.student_id = seg.student_id
+    LEFT JOIN subjects su
+    ON su.subject_code = seg.subject_code
+
+    `;
+
+    try {
+      const result = await pool.query(query);
+      console.log(result.rows);
+
+      return result.rows;
+    } catch (error) {
+      console.log("Cannot display results");
+      throw error;
+    }
   },
 };
 
@@ -544,4 +612,5 @@ module.exports = {
   ExamModel,
   ExamQuestionsModel,
   studentExamModel,
+  AdminReportModel,
 };

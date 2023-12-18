@@ -20,7 +20,7 @@ const SECS_PER_QUESTION = 30;
 const initialState = {
   questions: [],
 
-  // 'loading', 'error', 'ready', 'active', 'finished'
+  // 'loading', 'error', 'ready', 'active', 'examCompleteded'
   status: "loading",
   index: 0,
   correctOption: null,
@@ -75,13 +75,22 @@ function reducer(state, action) {
         index: state.index + 1,
         correctOption: null,
       };
-    case "finish":
+    case "examCompleted":
+      // const { examId } = action.payload;
       return {
         ...state,
-        status: "finished",
+        status: "examCompleteded",
         highscore:
           state.marks > state.highscore ? state.marks : state.highscore,
+        // currentExamId: examId,
       };
+
+    case "navigateToExamDetails":
+      return {};
+
+    case "removeCompletedExam":
+      return {};
+
     case "restart":
       return {
         ...initialState,
@@ -93,7 +102,7 @@ function reducer(state, action) {
       return {
         ...state,
         secondsRemaining: state.secondsRemaining - 1,
-        status: state.secondsRemaining === 0 ? "finished" : state.status,
+        status: state.secondsRemaining === 0 ? "examCompleteded" : state.status,
       };
 
     default:
@@ -145,11 +154,6 @@ export default function TakeExam() {
     };
 
     fetchQuestions();
-
-    // fetch(`http://localhost:3000/exam/get-questions/G5-AGRIC`)
-    //   .then((res) => res.json())
-    //   .then((data) => dispatch({ type: "dataReceived", payload: data }))
-    //   .catch((err) => dispatch({ type: "dataFailed" }));
   }, [subjectId, examId]);
 
   return (
@@ -194,12 +198,14 @@ export default function TakeExam() {
           </>
         )}
 
-        {status === "finished" && (
+        {status === "examCompleteded" && (
           <FinishScreen
             marks={marks}
             maxPossibleMarks={maxPossibleMarks}
             highscore={highscore}
             dispatch={dispatch}
+            examId={examId}
+            subjectId={subjectId}
           />
         )}
       </Main>

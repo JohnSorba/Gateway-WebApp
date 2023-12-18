@@ -1,53 +1,21 @@
 /* eslint-disable react/prop-types */
 // import { GiHamburgerMenu } from "react-icons/gi";
-import "./Header.css";
 import { MdNotifications } from "react-icons/md";
 import { BiChevronDown, BiLogOut } from "react-icons/bi";
-import { FaHamburger, FaSearch } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { FaHamburger, FaSearch, FaUser } from "react-icons/fa";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../Contexts/AuthContext";
 import { useUser } from "../../Contexts/UserContext";
+import "./Header.css";
 
 function Header({ handleClick }) {
   const { authState, logout } = useAuth();
-  // const [userDetails, setUserDetails] = useState(null);
-  // const [userToken, setUserToken] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  // const [userToken, setUserToken] = useState(authState.token);
-  const { token, userDetails, setUserDetails, makeAuthenticatedRequest } =
-    useUser();
+  const [isOpen, setIsOpen] = useState(false);
+  const { userDetails, accountInfo } = useUser();
 
   // console.log("details: ", userDetails);
-
-  const handleToggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        // Make an authenticated request to the endpoint that uses the middleware
-        const response = await makeAuthenticatedRequest(
-          "http://localhost:3000/student/user/details",
-          token
-        );
-
-        // console.log(response);
-
-        // console.log(response.user);
-        // console.log(response.user.userDetails);
-
-        setUserDetails(response.user.userDetails);
-      } catch (error) {
-        // Handle errors, e.g., redirect to the login page
-        console.error("Error fetching user details", error.response.data.error);
-      }
-    };
-
-    // console.log(fetchUserDetails);
-    fetchUserDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  // console.log("account info: ", accountInfo);
 
   return (
     <header className="dashboard-header">
@@ -71,8 +39,8 @@ function Header({ handleClick }) {
 
         {/* Dropdown Profile Info */}
         <div
-          className="user-profile flex gap-2 items-center"
-          onClick={() => handleToggleDropdown}
+          className="user-profile dropdown flex gap-2 items-center"
+          onClick={() => setIsOpen(!isOpen)}
         >
           <img
             src={userDetails?.profile_photo}
@@ -84,20 +52,35 @@ function Header({ handleClick }) {
             <p className="font-semibold text-lg">{authState.username}</p>
             {/* <span className="text-sm text-green-700">Active</span> */}
           </div>
-          <BiChevronDown className="w-4 h-4" />
+          <BiChevronDown className="w-5 h-5" />
+          {isOpen && (
+            <div className={`dropdown-content ${isOpen ? "show" : ""}`}>
+              <div className="flex flex-col items-center text-center border-b-2 pb-4">
+                <img
+                  src={userDetails?.profile_photo}
+                  alt={`${userDetails.first_name} img`}
+                  className="profile-img my-4"
+                />
 
-          <div
-            className={`dropdown-item ${showDropdown === true ? "show" : ""}`}
-          >
-            <p>Profile Information</p>
-            <span
-              className="flex gap-2 items-center cursor-pointer"
-              onClick={logout}
-            >
-              <BiLogOut className="w-6 h-6 icon" />
-              Logout
-            </span>
-          </div>
+                <p className="text-lg font-semibold">
+                  {userDetails.first_name} {userDetails.last_name}
+                </p>
+                <p>{accountInfo[0].email}</p>
+              </div>
+              <div className="links">
+                <Link
+                  to={`/dashboard/${authState.role}/profile`}
+                  className="flex gap-4 items-center"
+                >
+                  <FaUser /> <span>Profile Information</span>
+                </Link>
+                <span className="flex gap-4 items-center" onClick={logout}>
+                  <BiLogOut />
+                  <span>Sign Out</span>
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </article>
     </header>

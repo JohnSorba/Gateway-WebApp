@@ -8,6 +8,7 @@ const {
   QuestionOptionsController,
   ExamController,
   StudentExamController,
+  AdminReportController,
 } = require("../controllers/exams");
 
 /********SUBJECT ROUTES***********/
@@ -106,7 +107,7 @@ router.get("/student-exam", StudentExamController.getAllExams);
 router.get("/student-exam/:classId", StudentExamController.getExamsByClassId);
 
 router.get(
-  "/:examId/class/:classId",
+  "/:examId/class/:classId/:studentId",
   StudentExamController.getStudentExamDetails
 );
 
@@ -115,4 +116,13 @@ router.get(
   "/take-exam/:examId/:subjectId",
   StudentExamController.takeStudentExam
 );
+
+// Submit grades
+router.post(
+  "/submit-grades/:examId/:subjectId",
+  StudentExamController.submitExamResult
+);
+
+// Get Result for admin
+router.get("/get-result", AdminReportController.getAllStudentResult);
 module.exports = router;

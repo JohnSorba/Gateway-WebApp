@@ -45,25 +45,29 @@ function AdminStudents() {
         <table>
           <thead>
             <tr>
-              <th>No.</th>
+              <th>###</th>
+              <th>Full Name</th>
               <th>Student ID</th>
-              <th>Name</th>
+              <th>Admission ID</th>
               <th>Age</th>
               <th>Gender</th>
               <th>Class / Grade</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {students.map((student, i) => (
               <tr key={student.student_id}>
-                <td>{i + 1}</td>
-                <td>{student.student_id}</td>
+                <td className="bg-blue-50 border-r-2">00{i + 1}</td>
                 <td>
                   {student.first_name} {student.last_name}
                 </td>
+                <td>{student.student_id}</td>
+                <td>{student.admission_id}</td>
                 <td>{student.age}</td>
                 <td>{student.gender}</td>
                 <td>{student.class_name}</td>
+                <td>{student.admission_status}</td>
               </tr>
             ))}
           </tbody>

@@ -35,8 +35,36 @@ export function UserProvider({ children }) {
   };
 
   useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        // Make an authenticated request to the endpoint that uses the middleware
+        const response = await makeAuthenticatedRequest(
+          "http://localhost:3000/student/user/details",
+          token
+        );
+
+        // console.log(response);
+
+        // console.log(response.user);
+        // console.log(response.user.userDetails);
+        localStorage.setItem("userDetails", userDetails);
+        setUserDetails(response.user.userDetails);
+      } catch (error) {
+        // Handle errors, e.g., redirect to the login page
+        console.error("Error fetching user details", error.response.data.error);
+      }
+    };
+
+    // console.log(fetchUserDetails);
+    fetchUserDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  useEffect(() => {
     const storedDetails = localStorage.getItem("accountData");
+    const storedUserDetails = localStorage.getItem("userDetails");
     setAccountInfo(storedDetails);
+    setUserDetails(storedUserDetails);
   }, []);
 
   useEffect(() => {

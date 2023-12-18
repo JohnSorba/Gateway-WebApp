@@ -93,7 +93,7 @@ function TeacherProfile() {
                 </h3>
                 <p>Teacher</p>
                 <p>
-                  Student ID:{" "}
+                  Teacher ID:{" "}
                   <em className="font-semibold">{userDetails.teacher_id}</em>
                 </p>
               </div>

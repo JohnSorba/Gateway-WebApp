@@ -2,24 +2,28 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../DashboardAdmin/Exams/ExamHome.css";
 import { Link } from "react-router-dom";
+import { useUser } from "../../../Contexts/UserContext";
 
 function Exams() {
   const [exams, setExams] = useState([]);
-  const selectedClass = 105;
+  const { userDetails } = useUser();
+
+  // const studentId = userDetails.student_id;
+  const classId = userDetails && userDetails.class_code;
 
   useEffect(() => {
     fetchExams();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchExams = async () => {
     try {
       const response = await axios.get(
-        // `http://localhost:3000/exams/student-exam`
-        `http://localhost:3000/exams/student-exam/${selectedClass}`
+        `http://localhost:3000/exams/student-exam/${classId}`
       );
 
       const data = response.data;
-      console.log(data);
+      // console.log(data);
 
       setExams(data);
     } catch (error) {
@@ -29,7 +33,8 @@ function Exams() {
 
   return (
     <div>
-      <h1>View your upcoming exams</h1>
+      <h1>View your upcoming exams </h1>
+      <h3> ({exams.length} Exam Available)</h3>
 
       {/* Display exams fetched from API */}
       <ul className="exam-list">

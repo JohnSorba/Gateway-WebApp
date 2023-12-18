@@ -2,22 +2,29 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../../../Loader";
+// import Loader from "../../../Loader";
+import { useUser } from "../../../Contexts/UserContext";
 // import TakeExam from "./TakeExam";
 
-function StudentExamDetails({ classId }) {
+function StudentExamDetails() {
   const [examDetails, setExamDetails] = useState([]);
   // const [examModal, setExamModal] = useState(false);
   // const [subjectId, setSubjectId] = useState("");
   // const [numberOfQuestions, setNumberOfQuestions] = useState(null);
+  const { userDetails } = useUser();
   const { examId } = useParams();
+
+  const studentId = userDetails.student_id;
+  const classId = userDetails.class_code;
   const navigate = useNavigate();
+
+  console.log("student id: ", studentId);
 
   useEffect(() => {
     const fetchExams = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/${examId}/class/${classId}`
+          `http://localhost:3000/exams/${examId}/class/${classId}/${studentId}`
         );
 
         const data = await response.data;
@@ -30,10 +37,10 @@ function StudentExamDetails({ classId }) {
     };
 
     fetchExams();
-  }, [examId, classId]);
+  }, [examId, classId, studentId]);
 
   if (examDetails.length < 1) {
-    return <Loader />;
+    return <h2>There are no subjects available for this exam!</h2>;
   }
 
   const handleTakeExam = async (subjectId, examId) => {

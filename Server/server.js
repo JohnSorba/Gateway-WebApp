@@ -27,7 +27,14 @@ app.get("/", (req, res) => {
 app.get("/api/students", async (req, res) => {
   try {
     // Query the database
-    const result = await pool.query("SELECT * FROM students");
+    const result = await pool.query(
+      `SELECT students.*, student_admission.*, class_name 
+      FROM students 
+      JOIN student_admission 
+      ON students.student_id = student_admission.student_id 
+      JOIN classes 
+      ON classes.class_code = student_admission.class_code`
+    );
     res.status(200).json(result.rows);
   } catch (err) {
     console.error("Error fetching student data: ", err);

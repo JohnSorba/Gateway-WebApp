@@ -36,7 +36,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
 
     if (errors === true) {
       setCurrentStep(currentStep + 1);
-      navigate(`/register/step-${currentStep + 1}`);
+      navigate(`/admin/register/step-${currentStep + 1}`);
     }
   };
 
@@ -48,7 +48,7 @@ function RegistrationPage({ modalOpen, setModalOpen, setAnimate }) {
   const handleCloseModal = () => {
     setModalOpen(false);
     setCurrentStep(4);
-    navigate("/register/step-4");
+    navigate("/admin/register/step-4");
     isRegisterSuccess;
   };
 
