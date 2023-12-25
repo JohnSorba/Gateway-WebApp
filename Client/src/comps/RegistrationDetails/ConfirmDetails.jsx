@@ -30,11 +30,14 @@ function ConfirmDetails({
         setFormData((prevFormData) => {
           return {
             ...prevFormData,
-            studentId: response.data.newStudentID,
-            admissionId: response.data.newAdmissionID,
-            teacherId: response.data.newTeacherID,
+            studentId: response.data.user.newStudentID,
+            admissionId: response.data.user.newAdmissionID,
+            teacherId: response.data.user.newTeacherID,
           };
         });
+
+        console.log("teacherId: ", response.data.user.newTeacherID);
+
         onRegisterSuccess(true);
         onModalOpen(true);
         // Open modal on success

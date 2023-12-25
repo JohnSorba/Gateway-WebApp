@@ -6,7 +6,7 @@ const addSubjectForm = {
   date: "",
   startTime: "",
   duration: 30,
-  totalQuestions: null,
+  totalQuestions: 3,
   examType: "Online",
   teacherId: "",
 };

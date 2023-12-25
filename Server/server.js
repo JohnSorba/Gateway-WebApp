@@ -10,6 +10,7 @@ const timetableRoutes = require("./routes/timetable");
 const examRoutes = require("./routes/exams");
 const studentRoutes = require("./routes/student");
 const teacherRoutes = require("./routes/teachers");
+const userRoutes = require("./routes/admin");
 const pool = require("./db");
 const { authenticateToken } = require("./middleware/authenticate");
 
@@ -42,6 +43,8 @@ app.get("/api/students", async (req, res) => {
 });
 
 app.use("/user/", studentRoutes);
+
+app.use("/users", userRoutes);
 
 // Authentication Requests
 app.use("/auth", authRoutes);

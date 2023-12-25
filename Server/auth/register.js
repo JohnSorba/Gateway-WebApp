@@ -116,7 +116,7 @@ const register = async (req, res) => {
     }
 
     ////////////////////////////////////////////////
-    const { rows } = await pool.query("SELECT * FROM id_storage");
+    const { rows } = await client.query("SELECT * FROM id_storage");
     const teacherID = rows[0].id_value;
     const studentID = rows[1].id_value;
     const admissionID = rows[2].id_value;
@@ -184,12 +184,12 @@ const register = async (req, res) => {
         generateID(studentID, admissionID, teacherID);
 
       // Increment and update the student ID in the database
-      await pool.query(
+      await client.query(
         "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
         [updatedSidValue, "student_id"]
       );
       // Increment and update the admission ID in the database
-      await pool.query(
+      await client.query(
         "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
         [updatedAidValue, "admission_id"]
       );
@@ -229,7 +229,7 @@ const register = async (req, res) => {
         teacherID
       );
       // Increment and update the teacher ID in the database
-      await pool.query(
+      await client.query(
         "UPDATE id_storage SET id_value = $1 WHERE id_name = $2",
         [updatedTidValue, "teacher_id"]
       );
@@ -254,6 +254,11 @@ const register = async (req, res) => {
         teacherData.additionalNotes,
         teacherData.employmentStatus,
       ]);
+
+      await client.query(
+        "INSERT INTO teacher_classes (teacher_id, class_code) VALUES ($1, $2)",
+        [newTeacherID, teacherData.classCode]
+      );
     };
 
     const registerAdmin = async (adminData, userId) => {
@@ -270,21 +275,20 @@ const register = async (req, res) => {
       ]);
     };
 
+    let result;
     // conditional insertion into students or teachers table
     if (roleId === 3) {
-      await registerStudent(formData, userId);
+      result = await registerStudent(formData, userId);
     } else if (roleId === 2) {
-      await registerTeacher(formData, userId);
+      result = await registerTeacher(formData, userId);
     } else if (roleId === 1) {
-      await registerAdmin(formData, userId);
+      result = await registerAdmin(formData, userId);
     }
 
     // Commit the transaction
     await client.query("COMMIT");
 
-    res
-      .status(201)
-      .json({ message: "Registration Successful", user: userResult.rows[0] });
+    res.status(201).json({ message: "Registration Successful", user: result });
   } catch (error) {
     // Roll back the transaction in the case of error
     await client.query("ROLLBACK");

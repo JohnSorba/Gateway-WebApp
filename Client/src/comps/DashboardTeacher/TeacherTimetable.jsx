@@ -6,6 +6,7 @@ function TeacherTimetable() {
   const [timetable, setTimetable] = useState(null);
   const [subjects, setSubjects] = useState(null);
   const { userDetails } = useUser();
+  console.log(userDetails);
 
   useEffect(() => {
     const getTimetable = async () => {

@@ -1,6 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 /* eslint-disable react/prop-types */
 function CourseForm({ formData, prevStep }) {
+  const navigate = useNavigate();
   console.log("Form Data: ", formData);
+
+  const goToDashboard = () => {
+    navigate("/dashboard/admin/users");
+  };
 
   return (
     <div>
@@ -16,7 +23,7 @@ function CourseForm({ formData, prevStep }) {
       <button className="form-button" type="button" onClick={prevStep}>
         Back
       </button>
-      <button className="form-button" type="button">
+      <button className="form-button" type="button" onClick={goToDashboard}>
         Go to Dashboard
       </button>
     </div>

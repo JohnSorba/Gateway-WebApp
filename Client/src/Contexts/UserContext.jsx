@@ -18,6 +18,8 @@ export function UserProvider({ children }) {
   const userId = authState.userId;
   const token = authState.token;
 
+  // console.log("user details: ", userDetails);
+
   // Function to make an authenticated request with the user's token
   const makeAuthenticatedRequest = async (url, token) => {
     try {
@@ -37,9 +39,10 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
+        setIsLoading(true);
         // Make an authenticated request to the endpoint that uses the middleware
         const response = await makeAuthenticatedRequest(
-          "http://localhost:3000/student/user/details",
+          "http://localhost:3000/users/user/details",
           token
         );
 
@@ -47,16 +50,19 @@ export function UserProvider({ children }) {
 
         // console.log(response.user);
         // console.log(response.user.userDetails);
-        localStorage.setItem("userDetails", userDetails);
+        localStorage.setItem("userDetails", response.user.userDetails);
         setUserDetails(response.user.userDetails);
       } catch (error) {
         // Handle errors, e.g., redirect to the login page
         console.error("Error fetching user details", error.response.data.error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    // console.log(fetchUserDetails);
-    fetchUserDetails();
+    if (token) {
+      fetchUserDetails();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 

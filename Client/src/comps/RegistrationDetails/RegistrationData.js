@@ -1,3 +1,10 @@
+const randomNumber = () => {
+  const getRand = Math.floor(Math.random() * 10000);
+  return getRand;
+};
+
+const randomPhotoNumber = randomNumber();
+
 export const initialFormData = {
   // Shared user information
   // (Accoutnt Info)
@@ -32,7 +39,7 @@ export const initialFormData = {
   employmentStatus: "Active",
 
   // Misc
-  profilePhoto: "https://i.pravatar.cc/300", // Assuming this is common for both students and teachers
+  profilePhoto: `https://i.pravatar.cc/300?u=${randomPhotoNumber}36`, // Assuming this is common for both students and teachers
 };
 
 export function calculateAge(dob) {

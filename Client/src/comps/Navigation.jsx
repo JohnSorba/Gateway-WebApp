@@ -59,8 +59,8 @@ export function AdminNav() {
       icon: <CgTranscript />,
     },
     {
-      title: "Account Registration",
-      link: "/admin/register/step-1",
+      title: "User Accounts",
+      link: "/dashboard/admin/users",
       icon: <FaUserPlus />,
     },
   ];

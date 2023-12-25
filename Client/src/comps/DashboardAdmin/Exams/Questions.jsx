@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -11,6 +11,8 @@ function Questions() {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   // const [selectAll, setSelectAll] = useState(false);
+
+  const navigate = useNavigate();
 
   // console.log(newQuestions);
   // console.log("q", questions);
@@ -118,6 +120,10 @@ function Questions() {
   //   fetchQuestions();
   // };
 
+  const viewQuestionDetails = (id) => {
+    navigate(`/dashboard/admin/questions/details/${id}`);
+  };
+
   return (
     <div>
       <header>
@@ -215,13 +221,13 @@ function Questions() {
                     </td>
                     <td>{question.marks}</td>
                     <td>{question.class_assigned}</td>
-                    <Link
-                      to={`/dashboard/admin/questions/details/${question.question_id}`}
+
+                    <button
+                      className="flex gap-2 items-center py-2"
+                      onClick={() => viewQuestionDetails(question.question_id)}
                     >
-                      <button className="flex gap-2 items-center py-2">
-                        <span>View Details</span> <FaEye />
-                      </button>
-                    </Link>
+                      <span>View Details</span> <FaEye />
+                    </button>
                   </tr>
                 ))
               : selectedQuestions.map((question, i) => (
@@ -234,13 +240,13 @@ function Questions() {
                     </td>
                     <td>{question.marks}</td>
                     <td>{question.class_assigned}</td>
-                    <Link
-                      to={`/dashboard/admin/questions/details/${question.question_id}`}
+
+                    <button
+                      className="flex gap-2 items-center py-2"
+                      onClick={() => viewQuestionDetails(question.question_id)}
                     >
-                      <button className="flex gap-2 items-center py-2">
-                        <span>View Details</span> <FaEye />
-                      </button>
-                    </Link>
+                      <span>View Details</span> <FaEye />
+                    </button>
                   </tr>
                 ))}
 
