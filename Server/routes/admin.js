@@ -1,5 +1,10 @@
 const { Router } = require("express");
-const { UserAccountsController } = require("../controllers/admin");
+const {
+  UserAccountsController,
+  StudentDetailsController,
+  TeacherDetailsController,
+  AdminDashboardController,
+} = require("../controllers/admin");
 const { authenticateToken } = require("../middleware/authenticate");
 
 const router = Router();
@@ -17,5 +22,25 @@ router.get("/get-all-users", UserAccountsController.getAllUsers);
 
 // Delete User
 router.delete("/delete/:userId", UserAccountsController.deleteUser);
+
+////////////////////
+// STUDENT DETAILS
+// get all students
+router.get("/get-students", StudentDetailsController.getAllStudentInfo);
+
+// get student info
+router.get("/student/:studentId", StudentDetailsController.getStudentInfo);
+
+// TEACHER DETAILS
+// get all teachers
+router.get("/get-teachers", TeacherDetailsController.getAllTeachersInfo);
+
+// get teacher info
+router.get("/teacher/:teacherId", TeacherDetailsController.getTeacherInfo);
+
+/////////////////////
+// DASHBOARD STATS
+
+router.get("/dashboard-stats", AdminDashboardController.getStats);
 
 module.exports = router;

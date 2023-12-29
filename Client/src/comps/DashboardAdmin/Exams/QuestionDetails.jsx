@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import QuestionEdit from "./QuestionEdit";
 import { PiWarningCircleFill } from "react-icons/pi";
+import Alert from "../../Utilities/Alert";
 
 function QuestionDetails() {
   const [questionDetails, setQuestionDetails] = useState([]);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState(" ");
 
   const navigate = useNavigate();
@@ -39,12 +41,16 @@ function QuestionDetails() {
 
   const handleDeleteQuestion = async (questionId) => {
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `http://localhost:3000/exams/question/delete/${questionId}`
       );
 
-      setMessage("Question Deleted Successfully");
+      console.log(response);
+      setMessage(response.data);
+
       navigate("/dashboard/admin/questions");
+      setDeleteModal(false);
+      setShowAlert(true);
     } catch (error) {
       console.error("Error deleting question", error);
     }
@@ -52,6 +58,10 @@ function QuestionDetails() {
 
   const closeEditModal = () => {
     setEditModal(false);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
 
   return (
@@ -97,7 +107,7 @@ function QuestionDetails() {
           <QuestionEdit
             questionId={questionId}
             onClose={closeEditModal}
-            message={message}
+            onShowAlert={setShowAlert}
             onSetMessage={setMessage}
             question={question}
           />
@@ -135,6 +145,12 @@ function QuestionDetails() {
           </footer>
         </div>
       )}
+      <Alert
+        type="success"
+        message={message}
+        onClose={handleCloseAlert}
+        isVisible={showAlert}
+      />
     </div>
   );
 }

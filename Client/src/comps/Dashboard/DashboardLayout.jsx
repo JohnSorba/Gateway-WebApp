@@ -1,23 +1,41 @@
 /* eslint-disable react/prop-types */
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import "./DashboardLayout.css";
 import { AnimatePresence } from "framer-motion";
 import SideNav from "../SideNavigation/SideNav";
 import Header from "../DashboardHeader/Header";
+import Alert from "../../comps/Utilities/Alert";
 import { useState } from "react";
-import { GrFormPreviousLink } from "react-icons/gr";
+// import { useAuth } from "../../Contexts/AuthContext";
 
 const DashboardLayout = ({ userId }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
+
+  // const { authState, isAuthChecked } = useAuth();
+  // const token = authState.token;
+
+  // console.log(token);
+
+  // useEffect(() => {
+  //   setShowAlert(true);
+  //   const timer = setTimeout(() => {
+  //     if (isAuthChecked) {
+  //       setShowAlert(false);
+  //     }
+  //   }, 5000);
+
+  //   return () => clearTimeout(timer);
+  // }, [isAuthChecked]);
 
   const handleClick = () => {
     setIsVisible(!isVisible);
   };
 
-  const prev = () => {
-    navigate(-1);
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
+
   return (
     <div className="dashboard-container">
       {/* <div className="aside-left ">
@@ -44,13 +62,17 @@ const DashboardLayout = ({ userId }) => {
 
         {/* MAIN CONTENT */}
         <main className="main-content">
-          <GrFormPreviousLink
-            className="w-10 h-10 bg-blue-400 rounded-full p-2 mb-4"
-            onClick={prev}
-          />
           <AnimatePresence>
             <Outlet />
           </AnimatePresence>
+
+          {/* TO GO OVER */}
+          <Alert
+            type="success"
+            message="Login Successful!"
+            onClose={handleCloseAlert}
+            isVisible={showAlert}
+          />
         </main>
       </section>
     </div>

@@ -1,5 +1,6 @@
 import { CgTranscript } from "react-icons/cg";
 import {
+  FaCalendarPlus,
   FaChalkboardTeacher,
   FaTable,
   FaUserCheck,
@@ -96,7 +97,12 @@ export function TeacherNav() {
       icon: <PiExamFill />,
     },
     {
-      title: "Exams",
+      title: "Attendance",
+      link: "/dashboard/teacher/attendance",
+      icon: <FaCalendarPlus />,
+    },
+    {
+      title: "Exams*",
       link: "/dashboard/teacher/exam",
       icon: <FaTable />,
     },

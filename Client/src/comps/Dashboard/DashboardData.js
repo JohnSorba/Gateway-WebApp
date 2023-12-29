@@ -163,7 +163,22 @@ export const studentData = [
   },
 ];
 
+export const calculateGrade = (grade) => {
+  switch (true) {
+    case grade >= 90:
+      return "AA 😎";
+    case grade >= 80 && grade < 90:
+      return "A 😉";
+    case grade >= 70:
+      return "B- 😃";
+    case grade >= 50:
+      return "C 🙂";
+    default:
+      return "D";
+  }
+};
+
 export const PieChartData = [
-  { name: "Boys", value: 300, color: "#0088FE" },
-  { name: "Girls", value: 215, color: "#FF8042" },
+  { name: "Boys", value: 6, color: "#0088FE" },
+  { name: "Girls", value: 2, color: "#FF8042" },
 ];

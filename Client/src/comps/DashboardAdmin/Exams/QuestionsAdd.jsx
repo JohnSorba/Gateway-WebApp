@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import Alert from "../../Utilities/Alert";
 
 const initialState = {
   subjectId: "",
@@ -12,6 +13,7 @@ function QuestionsAdd() {
   const [newQuestions, setNewQuestions] = useState(initialState);
   const [options, setOptions] = useState(["", "", "", ""]);
   const [message, setMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleAddQuestion = async () => {
     try {
@@ -29,15 +31,11 @@ function QuestionsAdd() {
         { newQuestions, options }
       );
 
-      setMessage("Question added successfully!");
-      console.log(response);
-      console.log(response.data);
+      setMessage(response.data);
+      setShowAlert(true);
 
       setNewQuestions(initialState);
       setOptions(["", "", "", ""]);
-
-      //   fetchQuestions();
-      //   setMessage(response.data);
     } catch (error) {
       console.error("Error adding question", error);
     }
@@ -46,6 +44,10 @@ function QuestionsAdd() {
   const handleAddQuestionInput = (e) => {
     const { name, value } = e.target;
     setNewQuestions({ ...newQuestions, [name]: value });
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
 
   return (
@@ -140,7 +142,12 @@ function QuestionsAdd() {
           Add Question
         </button>
 
-        <p>{message}</p>
+        <Alert
+          type="success"
+          message={message}
+          onClose={handleCloseAlert}
+          isVisible={showAlert}
+        />
       </div>
     </div>
   );

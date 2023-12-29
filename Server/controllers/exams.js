@@ -69,24 +69,6 @@ const SubjectController = {
 //****************************************** */
 const QuestionController = {
   // Add a new question
-  async createQuestion(req, res) {
-    try {
-      const { newQuestions, options } = req.body;
-
-      const createdQuestion = await QuestionModel.create(
-        newQuestions.subjectId,
-        newQuestions.questionText,
-        newQuestions.marks,
-        newQuestions.correctOption,
-        options
-      );
-
-      res.status(200).json(createdQuestion);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-      console.error(err);
-    }
-  },
 
   async addQuestion(req, res) {
     try {
@@ -164,7 +146,7 @@ const QuestionController = {
         options
       );
 
-      res.json({ updatedQuestion, options });
+      res.status(200).json(updatedQuestion);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -176,7 +158,7 @@ const QuestionController = {
       const { questionId } = req.params;
       const result = await QuestionModel.delete(questionId);
 
-      res.status(200).json({ message: result });
+      res.status(200).json(result);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -344,9 +326,9 @@ const ExamController = {
     try {
       const { examId } = req.params;
 
-      await ExamModel.delete(examId);
+      const result = await ExamModel.delete(examId);
 
-      res.status(204).json({ message: "Exam deleted successfully" });
+      res.status(201).json(result);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }

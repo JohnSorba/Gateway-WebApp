@@ -4,12 +4,14 @@ import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./ExamHome.css";
+import Alert from "../../Utilities/Alert";
 
 function ExamList() {
   const [exams, setExams] = useState([]);
   const [examTitle, setExamTitle] = useState("");
   const [message, setMessage] = useState("");
   const [newExamModal, setNewExamModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     fetchExams();
@@ -41,14 +43,22 @@ function ExamList() {
 
       const res = response.data.title;
       const status = response.statusText;
+
       const message = res + " " + status;
       console.log(res, status);
+
+      setNewExamModal(false);
       setMessage(message);
       setExamTitle("");
       fetchExams();
+      setShowAlert(true);
     } catch (error) {
       console.error("Error creating exams: ", error);
     }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
 
   //   Delete exam
@@ -61,7 +71,8 @@ function ExamList() {
       console.log(response);
 
       fetchExams();
-      //   setMessage(response.data);
+      setMessage(response.data);
+      setShowAlert(true);
     } catch (error) {
       console.error("Error deleting exam", error);
     }
@@ -114,8 +125,6 @@ function ExamList() {
               />
             </article>
 
-            <p>{message}</p>
-
             <div className="flex gap-4 mt-4">
               <button
                 type="button"
@@ -135,6 +144,13 @@ function ExamList() {
           </div>
         </div>
       )}
+
+      <Alert
+        type="success"
+        message={message}
+        onClose={handleCloseAlert}
+        isVisible={showAlert}
+      />
     </div>
   );
 }

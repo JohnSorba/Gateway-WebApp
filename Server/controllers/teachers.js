@@ -1,4 +1,4 @@
-const { TeacherModel } = require("../models/teachers");
+const { TeacherModel, TeacherAttendanceModel } = require("../models/teachers");
 
 const TeacherController = {
   async getTeacherById(req, res) {
@@ -31,4 +31,70 @@ const TeacherController = {
   },
 };
 
-module.exports = { TeacherController };
+const TeacherAttendanceController = {
+  // get students by class
+  async getStudentsByClass(req, res) {
+    const { classId } = req.params;
+
+    try {
+      const students = await TeacherAttendanceModel.getStudentsByClass(classId);
+
+      res.status(200).json(students);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error!" });
+    }
+  },
+
+  // add attendance
+  async addAttendanceStatus(req, res) {
+    const { attendanceDetails } = req.body;
+
+    console.log(attendanceDetails);
+
+    try {
+      const addAttendance = await TeacherAttendanceModel.addAttendanceStatus(
+        attendanceDetails
+      );
+
+      if (addAttendance) {
+        res.status(201).json(addAttendance);
+      } else {
+        res.status(500).json({ addAttendance });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Cannot add attendance record!" });
+    }
+  },
+
+  // view attendance records
+  async viewAttendanceRecords(req, res) {
+    const { classId } = req.params;
+
+    try {
+      const attendanceRecord =
+        await TeacherAttendanceModel.viewAttendanceRecords(classId);
+
+      res.status(200).json(attendanceRecord);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error!" });
+    }
+  },
+
+  // view attendance record by student Id
+  async viewStudentAttendance(req, res) {
+    const { studentId } = req.params;
+
+    try {
+      const studentAttendance =
+        await TeacherAttendanceModel.viewStudentAttendance(studentId);
+
+      console.log(studentAttendance);
+
+      res.status(200).json(studentAttendance);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error!" });
+    }
+  },
+};
+
+module.exports = { TeacherController, TeacherAttendanceController };

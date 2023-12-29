@@ -10,6 +10,7 @@ function Questions() {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
+  const [query, setQuery] = useState("");
   // const [selectAll, setSelectAll] = useState(false);
 
   const navigate = useNavigate();
@@ -129,22 +130,26 @@ function Questions() {
       <header>
         <h2>Welcome to the Question Bank</h2>
 
-        <div className="flex gap-4">
-          <Link to="/dashboard/admin/questions/add">
-            <button className="form-button">Add Question</button>
-          </Link>
-          <button
-            className="form-button"
-            // onClick={handleViewAllQuestions}
-          >
-            View All Quesitons
-          </button>
+        <div className="flex justify-between items-center mb-4">
+          <input
+            type="search"
+            placeholder="Filter by Subject name, Question, Class..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="form-input w-[400px]"
+          />
+          <div className="flex gap-4">
+            <Link to="/dashboard/admin/questions/add">
+              <button className="form-button">Add Question</button>
+            </Link>
+            <button
+              className="form-button"
+              // onClick={handleViewAllQuestions}
+            >
+              View All Quesitons
+            </button>
+          </div>
         </div>
-
-        <ul>
-          <h3 className="text-lg mt-4">To Do</h3>
-          <li>filter questions by class, subject, marks, name</li>
-        </ul>
 
         {/* Select Classes from a dropdown list */}
         <div className="flex gap-4 items-center">
@@ -195,8 +200,6 @@ function Questions() {
       </header>
 
       <div>
-        <h2>Questions</h2>
-
         <table>
           <thead>
             <tr>
@@ -230,25 +233,40 @@ function Questions() {
                     </button>
                   </tr>
                 ))
-              : selectedQuestions.map((question, i) => (
-                  <tr key={i} className="py-2 text-sm">
-                    <td>{question.question_id}</td>
-                    <td>{question.subject_code}</td>
-                    <td>{question.subject_name}</td>
-                    <td className="font-semibold text-md">
-                      {question.question_text}
-                    </td>
-                    <td>{question.marks}</td>
-                    <td>{question.class_assigned}</td>
+              : selectedQuestions
+                  .filter(
+                    (item) =>
+                      item.class_assigned
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                      item.subject_name
+                        .toLowerCase()
+                        .includes(query.toLowerCase()) ||
+                      item.question_text
+                        .toLowerCase()
+                        .includes(query.toLowerCase())
+                  )
+                  .map((question, i) => (
+                    <tr key={i} className="py-2 text-sm">
+                      <td>{question.question_id}</td>
+                      <td>{question.subject_code}</td>
+                      <td>{question.subject_name}</td>
+                      <td className="font-semibold text-md">
+                        {question.question_text}
+                      </td>
+                      <td>{question.marks}</td>
+                      <td>{question.class_assigned}</td>
 
-                    <button
-                      className="flex gap-2 items-center py-2"
-                      onClick={() => viewQuestionDetails(question.question_id)}
-                    >
-                      <span>View Details</span> <FaEye />
-                    </button>
-                  </tr>
-                ))}
+                      <button
+                        className="flex gap-2 items-center py-2"
+                        onClick={() =>
+                          viewQuestionDetails(question.question_id)
+                        }
+                      >
+                        <span>View Details</span> <FaEye />
+                      </button>
+                    </tr>
+                  ))}
 
             {/* {selectAll && questions.map((question, i) => {
                 <tr key={i} className="py-2 text-sm">

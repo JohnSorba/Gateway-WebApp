@@ -168,7 +168,7 @@ const QuestionModel = {
       // Commit the transaction
       await client.query("COMMIT");
 
-      return "Question updated Successfully";
+      return "Question and Options updated Successfully";
     } catch (error) {
       // ROLLBACK the transaction incase of an error
       console.error(error);
@@ -363,10 +363,13 @@ const ExamModel = {
 
   // Delete an exam
   async delete(examId) {
-    const result = await pool.query("DELETE FROM exams WHERE exam_id = $1", [
-      examId,
-    ]);
-    return result.rowCount;
+    try {
+      await pool.query("DELETE FROM exams WHERE exam_id = $1", [examId]);
+
+      return "Exam Deleted Successfully!";
+    } catch (error) {
+      throw error;
+    }
   },
 
   async noOfQuestions(subjectId) {

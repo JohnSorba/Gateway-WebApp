@@ -1,25 +1,20 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../Contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./DashboardAdmin.css";
+import "../DashboardAdmin.css";
 
 function AdminStudents() {
   const [students, setStudents] = useState([]);
-  const { authState } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const config = {
-          headers: { Authorization: `Bearer ${authState.token}` },
-        };
-
         const response = await axios.get(
-          "http://localhost:3000/api/students",
-          config
+          "http://localhost:3000/admin/get-students"
         );
+
         setStudents(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(
           "Error fetching student data: ",
@@ -28,14 +23,12 @@ function AdminStudents() {
       }
     };
 
-    if (authState.token) {
-      fetchStudents();
-    }
-  }, [authState.token]);
+    fetchStudents();
+  }, []);
 
-  if (!students) {
-    return <div>Loading...</div>;
-  }
+  const viewStudentDetails = (studentId) => {
+    navigate(`details/${studentId}`);
+  };
 
   return (
     <div>
@@ -48,11 +41,10 @@ function AdminStudents() {
               <th>###</th>
               <th>Full Name</th>
               <th>Student ID</th>
-              <th>Admission ID</th>
               <th>Age</th>
               <th>Gender</th>
               <th>Class / Grade</th>
-              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -63,11 +55,16 @@ function AdminStudents() {
                   {student.first_name} {student.last_name}
                 </td>
                 <td>{student.student_id}</td>
-                <td>{student.admission_id}</td>
                 <td>{student.age}</td>
                 <td>{student.gender}</td>
                 <td>{student.class_name}</td>
-                <td>{student.admission_status}</td>
+                <td>
+                  <button
+                    onClick={() => viewStudentDetails(student.student_id)}
+                  >
+                    View Details
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

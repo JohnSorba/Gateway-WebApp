@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
-import AdminStudents from "../comps/DashboardAdmin/AdminStudents";
-import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers";
+import AdminStudents from "../comps/DashboardAdmin/AdminStudents/AdminStudents";
+import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers/AdminTeachers";
 import AdminExams from "../comps/DashboardAdmin/Exams/AdminExams";
 import AdminTimetable from "../comps/DashboardAdmin/Timetable/AdminTimetable";
 import AdminReports from "../comps/DashboardAdmin/Reports/AdminReports";
@@ -14,14 +14,22 @@ import QuestionDetails from "../comps/DashboardAdmin/Exams/QuestionDetails";
 import ReportExamDetails from "../comps/DashboardAdmin/Reports/ReportExamDetails";
 import ReportStudentDetails from "../comps/DashboardAdmin/Reports/ReportStudentDetails";
 import UserAccounts from "../comps/DashboardAdmin/UserAccounts";
+import AdminStudentDetails from "../comps/DashboardAdmin/AdminStudents/AdminStudentDetails";
+import AdminTeacherDetails from "../comps/DashboardAdmin/AdminTeachers/AdminTeacherDetails";
 
 function AdminDashboard() {
   return (
     <>
       <Routes>
         <Route index element={<AdminDashboardHome />} />
-        <Route path="students" element={<AdminStudents />} />
-        <Route path="teachers" element={<AdminTeachers />} />
+        <Route path="students">
+          <Route index element={<AdminStudents />} />
+          <Route path="details/:studentId" element={<AdminStudentDetails />} />
+        </Route>
+        <Route path="teachers">
+          <Route index element={<AdminTeachers />} />
+          <Route path="details/:teacherId" element={<AdminTeacherDetails />} />
+        </Route>
         <Route path="timetable" element={<AdminTimetable />} />
 
         {/* EXAMS ROUTES */}

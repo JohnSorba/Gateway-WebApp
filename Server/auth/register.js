@@ -117,9 +117,33 @@ const register = async (req, res) => {
 
     ////////////////////////////////////////////////
     const { rows } = await client.query("SELECT * FROM id_storage");
-    const teacherID = rows[0].id_value;
-    const studentID = rows[1].id_value;
-    const admissionID = rows[2].id_value;
+    // const teacherID = rows[0].id_value;
+    // const studentID = rows[1].id_value;
+    // const admissionID = rows[2].id_value;
+
+    // get student ID
+    const studentIdQuery = await client.query(
+      "SELECT id_value FROM id_storage WHERE id_name = $1",
+      ["student_id"]
+    );
+
+    // get teacher ID
+    const teacherIdQuery = await client.query(
+      "SELECT id_value FROM id_storage WHERE id_name = $1",
+      ["teacher_id"]
+    );
+
+    // GET admission ID
+    const admissionIdQuery = await client.query(
+      "SELECT id_value FROM id_storage WHERE id_name = $1",
+      ["admission_id"]
+    );
+
+    const studentID = studentIdQuery.rows[0]?.id_value;
+    const admissionID = admissionIdQuery.rows[0]?.id_value;
+    const teacherID = teacherIdQuery.rows[0]?.id_value;
+
+    console.log(studentID, admissionID, teacherID);
 
     // Generate New StudentID
     const generateID = (studentID, admissionID, teacherID) => {

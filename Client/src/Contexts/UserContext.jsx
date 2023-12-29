@@ -86,7 +86,7 @@ export function UserProvider({ children }) {
       const response = await axios.get(
         `http://localhost:3000/student/details/personal/${userId}`
       );
-      const data = await response.data;
+      const data = response.data;
 
       if (response.data) {
         setStudentInfo(data);

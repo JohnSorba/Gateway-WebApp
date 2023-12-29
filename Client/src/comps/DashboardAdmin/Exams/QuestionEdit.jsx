@@ -2,7 +2,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-function QuestionEdit({ question, onClose, message, onSetMessage }) {
+function QuestionEdit({
+  questionId,
+  question,
+  onClose,
+  onSetMessage,
+  onShowAlert,
+}) {
   const [questionText, setQuestionText] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
 
@@ -26,8 +32,8 @@ function QuestionEdit({ question, onClose, message, onSetMessage }) {
         return;
       }
 
-      await axios.put(
-        `http://localhost:3000/exams/update-question/${question.questionId}`,
+      const response = await axios.put(
+        `http://localhost:3000/exams/update-question/${questionId}`,
         {
           questionText,
           options,
@@ -35,7 +41,8 @@ function QuestionEdit({ question, onClose, message, onSetMessage }) {
       );
 
       onClose();
-      onSetMessage("Question updated Successfully!");
+      onSetMessage(response.data);
+      onShowAlert(true);
     } catch (error) {
       console.error("Error editing question", error);
     }
@@ -65,7 +72,7 @@ function QuestionEdit({ question, onClose, message, onSetMessage }) {
           />
         </article>
       ))}
-      <p>{message}</p>
+
       <div className="flex gap-8 self-end">
         <button onClick={onClose}>Cancel</button>
         <button onClick={handleEditQuestion}>Save Changes</button>

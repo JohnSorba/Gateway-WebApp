@@ -8,6 +8,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const timetableRoutes = require("./routes/timetable");
 const examRoutes = require("./routes/exams");
+const adminRoutes = require("./routes/admin");
 const studentRoutes = require("./routes/student");
 const teacherRoutes = require("./routes/teachers");
 const userRoutes = require("./routes/admin");
@@ -25,23 +26,8 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello, ES6 Express Server!</h1>");
 });
 
-app.get("/api/students", async (req, res) => {
-  try {
-    // Query the database
-    const result = await pool.query(
-      `SELECT students.*, student_admission.*, class_name 
-      FROM students 
-      JOIN student_admission 
-      ON students.student_id = student_admission.student_id 
-      JOIN classes 
-      ON classes.class_code = student_admission.class_code`
-    );
-    res.status(200).json(result.rows);
-  } catch (err) {
-    console.error("Error fetching student data: ", err);
-  }
-});
-
+// Admin Routes
+app.use("/admin", adminRoutes);
 app.use("/user/", studentRoutes);
 
 app.use("/users", userRoutes);

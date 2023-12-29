@@ -92,7 +92,6 @@ function Login({ modalOpen, setModalOpen }) {
           console.log("login data: ", data);
 
           setMessage(response.data.message);
-          setModalOpen(true);
         }
         console.log(response.data);
       } catch (error) {
@@ -112,6 +111,7 @@ function Login({ modalOpen, setModalOpen }) {
   return (
     <div className="login-page">
       <form onSubmit={handleLogin} noValidate className="login-form">
+        <p>Implement password Recovery</p>
         <h2>User Login</h2>
         <div className="form-group">
           <input

@@ -4,24 +4,34 @@ import { MdNotifications } from "react-icons/md";
 import { BiChevronDown, BiLogOut } from "react-icons/bi";
 import { FaHamburger, FaSearch, FaUser } from "react-icons/fa";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Contexts/AuthContext";
 import { useUser } from "../../Contexts/UserContext";
 import "./Header.css";
+import { GrPrevious } from "react-icons/gr";
 
 function Header({ handleClick }) {
   const { authState, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { userDetails, accountInfo } = useUser();
+  const navigate = useNavigate();
 
   // console.log("details: ", userDetails);
   // console.log("account info: ", accountInfo);
+
+  const prev = () => {
+    navigate(-1);
+  };
 
   return (
     <header className="dashboard-header">
       <article className="nav-menu">
         {/* <GiHamburgerMenu className="w-6 h-6 icon" onClick={handleClick} /> */}
-        <FaHamburger className="w-6 h-6 icon" onClick={handleClick} />
+        <GrPrevious
+          className="w-8 h-8 text-white font-semibold bg-blue-200 rounded-full p-2 cursor-pointer border-r-2 "
+          onClick={prev}
+        />
+        <FaHamburger className="w-6 h-6 pl-4 icon" onClick={handleClick} />
         <img
           src="/gateway_logo_final.png"
           alt="gateway logo"
@@ -29,10 +39,16 @@ function Header({ handleClick }) {
         />
       </article>
       <article className="user-actions">
-        <div className="search-container">
-          <FaSearch className="h-4 w-4 search-icon" />
-          <input type="search" className="search-bar" placeholder="Search..." />
-        </div>
+        {authState.role === "admin" && (
+          <div className="search-container">
+            <FaSearch className="h-4 w-4 search-icon" />
+            <input
+              type="search"
+              className="search-bar"
+              placeholder="Search..."
+            />
+          </div>
+        )}
         <span>
           <MdNotifications className="w-6 h-6 text-red-400" />
         </span>

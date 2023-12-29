@@ -1,0 +1,45 @@
+/* Alert.css */
+.alert-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Ensure the alert is above other components */
+}
+
+.alert {
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  width: 120%;
+  font-size: 1.1rem;
+  gap: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.success {
+  background-color: #28a745;
+  color: #fff;
+  background-color: #fff;
+  color: #28a745;
+  border: 1px solid #28a745;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+}
+
+.failure {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.close-button {
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0.25rem 1.5rem;
+  color: #fff;
+  border-radius: 8px;
+  background-color: #28a745;
+}
