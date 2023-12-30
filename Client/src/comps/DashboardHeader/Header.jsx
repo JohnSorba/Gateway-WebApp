@@ -9,6 +9,7 @@ import { useAuth } from "../../Contexts/AuthContext";
 import { useUser } from "../../Contexts/UserContext";
 import "./Header.css";
 import { GrPrevious } from "react-icons/gr";
+import DateTimeDisplay from "../Utilities/DateTimeDisplay";
 
 function Header({ handleClick }) {
   const { authState, logout } = useAuth();
@@ -37,6 +38,9 @@ function Header({ handleClick }) {
           alt="gateway logo"
           className="border-l-2 pl-4"
         />
+        <div>
+          <DateTimeDisplay />
+        </div>
       </article>
       <article className="user-actions">
         {authState.role === "admin" && (

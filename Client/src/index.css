@@ -78,6 +78,10 @@ h2 {
   margin-bottom: 2rem;
 }
 
+table button {
+  padding: 0.2rem 1rem;
+}
+
 button {
   color: white;
   border-radius: 8px;
@@ -86,7 +90,7 @@ button {
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: #5582ff;
+  background-color: #3399ff;
   cursor: pointer;
   transition: border-color 0.25s;
   z-index: 5;
@@ -97,6 +101,10 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 @media (prefers-color-schreme: light) {

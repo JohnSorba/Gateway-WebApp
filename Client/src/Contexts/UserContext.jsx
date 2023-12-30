@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
+import { baseURL } from "../comps/Dashboard/DashboardData";
 
 // create context
 export const UserContext = createContext(null);
@@ -42,7 +43,7 @@ export function UserProvider({ children }) {
         setIsLoading(true);
         // Make an authenticated request to the endpoint that uses the middleware
         const response = await makeAuthenticatedRequest(
-          "http://localhost:3000/users/user/details",
+          `${baseURL}/users/user/details`,
           token
         );
 

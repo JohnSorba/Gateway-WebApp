@@ -30,9 +30,9 @@ function ConfirmDetails({
         setFormData((prevFormData) => {
           return {
             ...prevFormData,
-            studentId: response.data.user.newStudentID,
-            admissionId: response.data.user.newAdmissionID,
-            teacherId: response.data.user.newTeacherID,
+            studentId: response.data.user?.newStudentID,
+            admissionId: response.data.user?.newAdmissionID,
+            teacherId: response.data.user?.newTeacherID,
           };
         });
 

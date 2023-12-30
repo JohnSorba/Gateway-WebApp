@@ -4,6 +4,7 @@ import AdminStudents from "../comps/DashboardAdmin/AdminStudents/AdminStudents";
 import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers/AdminTeachers";
 import AdminExams from "../comps/DashboardAdmin/Exams/AdminExams";
 import AdminTimetable from "../comps/DashboardAdmin/Timetable/AdminTimetable";
+import AttendanceHome from "../comps/DashboardAdmin/Attendance/AttendanceHome";
 import AdminReports from "../comps/DashboardAdmin/Reports/AdminReports";
 import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
 import ExamDetails from "../comps/DashboardAdmin/Exams/ExamDetails";
@@ -22,14 +23,25 @@ function AdminDashboard() {
     <>
       <Routes>
         <Route index element={<AdminDashboardHome />} />
+
+        {/* STUDENT ROUTES */}
         <Route path="students">
           <Route index element={<AdminStudents />} />
           <Route path="details/:studentId" element={<AdminStudentDetails />} />
         </Route>
+
+        {/* TEACHER ROUTES */}
         <Route path="teachers">
           <Route index element={<AdminTeachers />} />
           <Route path="details/:teacherId" element={<AdminTeacherDetails />} />
         </Route>
+
+        {/* ATTENDANCE ROUTES */}
+        <Route path="attendance">
+          <Route index element={<AttendanceHome />} />
+        </Route>
+
+        {/* TIMETABLE ROUTES */}
         <Route path="timetable" element={<AdminTimetable />} />
 
         {/* EXAMS ROUTES */}
@@ -47,6 +59,7 @@ function AdminDashboard() {
           <Route path="details/:questionId" element={<QuestionDetails />} />
         </Route>
 
+        {/* REPORTS ROUTES */}
         <Route path="reports">
           <Route index element={<AdminReports />} />
           <Route path="exam-details/:examId" element={<ReportExamDetails />} />
@@ -56,6 +69,7 @@ function AdminDashboard() {
           />
         </Route>
 
+        {/* USER ACCOUNTS */}
         <Route path="users" element={<UserAccounts />} />
       </Routes>
     </>

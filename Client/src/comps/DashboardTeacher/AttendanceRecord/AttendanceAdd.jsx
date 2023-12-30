@@ -6,17 +6,20 @@ import { useEffect, useState } from "react";
 
 function AttendanceAdd({
   onCloseAttendance,
-  //   showAlert,
   onFetchAttendance,
   onShowAlert,
+  message,
   onSetMessage,
+  onSetType,
 }) {
   const { isLoading, setIsLoading, userDetails } = useUser();
 
   const [students, setStudents] = useState(null);
   const [attendanceDetails, setAttendanceDetails] = useState({
     classId: userDetails.class_code,
-    attendanceDate: new Date().toLocaleDateString(),
+    attendanceDate: new Date().toLocaleDateString("en-US", {
+      timeZone: "Asia/Kuala_Lumpur",
+    }),
     details: [],
   });
 
@@ -28,6 +31,7 @@ function AttendanceAdd({
     fetchAttendance();
   }, []);
 
+  // fetch the students from the database based on their class
   const fetchAttendance = async () => {
     try {
       setIsLoading(true);
@@ -60,6 +64,7 @@ function AttendanceAdd({
     }
   };
 
+  // update the attendance status based on Input
   const handleAttendanceChange = (studentId, newStatus) => {
     // update the attendance details in the state
 
@@ -71,25 +76,38 @@ function AttendanceAdd({
           : detail
       ),
     }));
+    onSetMessage("");
   };
 
+  // send the attendance data to the server for processing and storing in the database
   const handleAddAttendance = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/teacher/add-attendance",
-        { attendanceDetails }
-      );
+    // check if all entries have been made
+    const checkEntries = attendanceDetails.details.every(
+      (detail) => detail.attendanceStatus !== ""
+    );
 
-      console.log(response);
+    if (!checkEntries) {
+      onSetMessage("Please complete all entries before submitting!");
+    } else {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/teacher/add-attendance",
+          { attendanceDetails }
+        );
 
-      const data = response.data;
-      onSetMessage(data);
+        console.log(response);
 
-      onCloseAttendance();
-      onShowAlert(true);
-      onFetchAttendance();
-    } catch (error) {
-      console.log("Error adding attendance: ", error.response.data.severity);
+        const data = response.data;
+
+        onSetMessage(data.message);
+        onSetType(data.type);
+
+        onCloseAttendance();
+        onShowAlert(true);
+        onFetchAttendance();
+      } catch (error) {
+        console.log(error.response.data.error);
+      }
     }
   };
 
@@ -148,13 +166,23 @@ function AttendanceAdd({
                 ))}
               </tbody>
             </table>
+            <footer className="flex items-center justify-between">
+              <div>
+                {message && (
+                  <p className="py-1 px-4 bg-red-700 text-white rounded-xl">
+                    {message}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-4">
+                <button onClick={onCloseAttendance}>Close</button>
+                <button onClick={handleAddAttendance}>Add</button>
+              </div>
+            </footer>
           </div>
         )}
       </section>
-      <footer className="flex gap-4">
-        <button onClick={onCloseAttendance}>Close</button>
-        <button onClick={handleAddAttendance}>Add</button>
-      </footer>
     </div>
   );
 }

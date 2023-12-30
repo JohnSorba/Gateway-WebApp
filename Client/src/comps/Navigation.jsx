@@ -40,6 +40,11 @@ export function AdminNav() {
       icon: <FaChalkboardTeacher />,
     },
     {
+      link: "/dashboard/admin/attendance",
+      icon: <CgTranscript />,
+      title: "Attendance",
+    },
+    {
       link: "/dashboard/admin/timetable",
       icon: <FaTable />,
       title: "Timetable",

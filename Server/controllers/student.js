@@ -1,4 +1,4 @@
-const { StudentModel } = require("../models/student");
+const { StudentModel, StudentAttendanceModel } = require("../models/student");
 
 const StudentController = {
   async getStudentById(req, res) {
@@ -32,4 +32,19 @@ const StudentController = {
   },
 };
 
-module.exports = { StudentController };
+const StudentAttendanceController = {
+  // get student attendance
+  async getAttendance(req, res) {
+    const { studentId } = req.params;
+
+    try {
+      const result = await StudentAttendanceModel.getAttendance(studentId);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Cannot fetch your attendance record!" });
+    }
+  },
+};
+
+module.exports = { StudentController, StudentAttendanceController };

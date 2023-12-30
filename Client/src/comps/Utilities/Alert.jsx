@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import "./Alert.css";
 import { FaCheckCircle } from "react-icons/fa";
+import { MdOutlineError } from "react-icons/md";
 
 function Alert({ type, message, onClose, isVisible }) {
   const [isRendered, setIsRendered] = useState(isVisible);
@@ -23,9 +24,13 @@ function Alert({ type, message, onClose, isVisible }) {
   return (
     <div className="alert-container">
       <div className={`alert ${type}`}>
-        <FaCheckCircle className="h-12 w-12" />
+        {type === "success" ? (
+          <FaCheckCircle className="h-12 w-12" />
+        ) : (
+          <MdOutlineError className="h-12 w-12" />
+        )}
         {message}
-        <span className="close-button" onClick={onClose}>
+        <span className={`close-button ${type}`} onClick={onClose}>
           OK
         </span>
       </div>

@@ -27,4 +27,49 @@ const StudentModel = {
   },
 };
 
-module.exports = { StudentModel };
+const StudentAttendanceModel = {
+  // get student attendance
+  async getAttendance(studentId) {
+    console.log("studentId: ", studentId);
+
+    const statsQuery = `
+    SELECT 
+      a.student_id, s.first_name, s.last_name,
+      COUNT(CASE WHEN a.status = 'present' THEN 1 END) AS totalPresent,
+      COUNT(CASE WHEN a.status = 'absent' THEN 1 END) AS totalAbsent,
+      COUNT(*) AS totalStatus
+    FROM
+      attendance a
+    JOIN
+      students s ON s.student_id = a.student_id
+    WHERE
+      s.student_id = $1
+    GROUP BY
+      a.student_id, s.first_name, s.last_name
+    ORDER BY
+      a.student_id
+  
+      `;
+
+    const query =
+      "SELECT a.attendance_date, a.student_id, a.status FROM attendance a WHERE student_id = $1";
+
+    try {
+      const attQuery = await pool.query(query, [studentId]);
+      const statsQueryResult = await pool.query(statsQuery, [studentId]);
+
+      const attendanceData = attQuery.rows;
+      const stats = statsQueryResult.rows[0];
+
+      console.log({ attendanceData, stats });
+
+      return { attendanceData, stats };
+    } catch (error) {
+      console.error(error);
+
+      return "Cannot Retrieve Your Attendance Records from the Database!";
+    }
+  },
+};
+
+module.exports = { StudentModel, StudentAttendanceModel };

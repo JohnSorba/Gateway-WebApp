@@ -16,25 +16,40 @@ router.get("/timetable/:classId");
 
 ////////////////////////
 // ATTENDANCE ROUTES
-// get student by class
+// get student by class for attendance update (done)
 router.get(
   "/attendance/students/:classId",
   TeacherAttendanceController.getStudentsByClass
 );
 
-// add attendance
+// add attendance (done)
 router.post("/add-attendance", TeacherAttendanceController.addAttendanceStatus);
 
-// get all student attendance by class
+// get all student attendance by date for each class (done)
+router.get(
+  "/get-date-attendance/:classId",
+  TeacherAttendanceController.getAttendanceByDate
+);
+
+// get all student attendance for students for each class
+router.get(
+  "/get-students-attendance/:classId",
+  TeacherAttendanceController.getAttendanceByStudents
+);
+
+// get all student attendance by class for specific date (has query parameter [?='date']) (done)
 router.get(
   "/get-attendance/:classId",
-  TeacherAttendanceController.viewAttendanceRecords
+  TeacherAttendanceController.viewDailyAttendanceRecords
+);
+
+// get all student attendance by class for specific student
+router.get(
+  "/get-attendance/:classId/:studentId",
+  TeacherAttendanceController.viewDailyStudentAttendance
 );
 
 // get attendance by student Id
-router.get(
-  "/get-attendance/:studentId",
-  TeacherAttendanceController.viewStudentAttendance
-);
+router.get("/get-attendance/:studentId");
 
 module.exports = router;

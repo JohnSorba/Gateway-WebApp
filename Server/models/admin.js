@@ -122,6 +122,12 @@ const UserAccountsModel = {
       await client.query("BEGIN");
 
       // Delete dependent records
+      // Delete from student_attendance
+      await client.query(
+        "DELETE FROM attendance WHERE student_id = (SELECT student_id FROM students WHERE user_id = $1)",
+        [userId]
+      );
+      // Delete from student_admission
       await client.query(
         "DELETE FROM student_admission WHERE student_id = (SELECT student_id FROM students WHERE user_id = $1)",
         [userId]
@@ -153,11 +159,11 @@ const UserAccountsModel = {
       // Commit the transaction if everything is successful
       await client.query("COMMIT");
 
-      return "User Deleted Successfully!";
+      return { type: "success", message: "User Deleted Successfully!" };
     } catch (error) {
       await client.query("ROLLBACK");
       console.error("Error deleting user:", error);
-      return "Unable to Delete User!";
+      return { type: "failure", message: "Unable to Delete User!" };
     } finally {
       client.release();
     }

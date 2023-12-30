@@ -7,10 +7,12 @@ import { MdDateRange, MdEmail } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import Alert from "../Utilities/Alert";
+import { convertDateFormat } from "../Dashboard/DashboardData";
 
 function UserAccounts() {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
   const [query, setQuery] = useState("");
   const [showModal, setShowModal] = useState({ open: false, userId: null });
   const { isLoading, setIsLoading } = useUser();
@@ -50,7 +52,10 @@ function UserAccounts() {
         `http://localhost:3000/users/delete/${userId}`
       );
 
-      setMessage(response.data);
+      const data = response.data;
+      setMessage(data.message);
+      setType(data.type);
+
       setShowModal(false);
       fetchUsers();
       setShowAlert(true);
@@ -72,15 +77,6 @@ function UserAccounts() {
   const addNewUser = () => {
     navigate("/admin/register/step-1");
   };
-
-  function convertDateFormat(dateString) {
-    const date = new Date(dateString);
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-indexed in JS
-    const day = String(date.getUTCDate()).padStart(2, "0");
-
-    return `${day}-${month}-${year}`;
-  }
 
   return (
     <div>
@@ -210,7 +206,7 @@ function UserAccounts() {
       )}
 
       <Alert
-        type="success"
+        type={type}
         message={message}
         onClose={handleCloseAlert}
         isVisible={showAlert}

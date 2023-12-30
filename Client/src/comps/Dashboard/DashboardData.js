@@ -182,3 +182,21 @@ export const PieChartData = [
   { name: "Boys", value: 6, color: "#0088FE" },
   { name: "Girls", value: 2, color: "#FF8042" },
 ];
+
+export const localDateString = (date) => {
+  const retrievedDate = new Date(date);
+  const localDateString = retrievedDate.toLocaleDateString();
+
+  return localDateString;
+};
+
+export function convertDateFormat(dateString) {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-indexed in JS
+  const day = String(date.getUTCDate()).padStart(2, "0");
+
+  return `${day}-${month}-${year}`;
+}
+
+export const baseURL = "http://localhost:3000";

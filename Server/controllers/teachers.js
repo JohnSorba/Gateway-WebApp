@@ -49,30 +49,74 @@ const TeacherAttendanceController = {
   async addAttendanceStatus(req, res) {
     const { attendanceDetails } = req.body;
 
-    console.log(attendanceDetails);
-
     try {
       const addAttendance = await TeacherAttendanceModel.addAttendanceStatus(
         attendanceDetails
       );
 
-      if (addAttendance) {
-        res.status(201).json(addAttendance);
-      } else {
-        res.status(500).json({ addAttendance });
-      }
+      res.status(201).json(addAttendance);
     } catch (error) {
       res.status(500).json({ error: "Cannot add attendance record!" });
+      console.error(error);
     }
   },
 
-  // view attendance records
-  async viewAttendanceRecords(req, res) {
+  // view attendance records by date
+  async getAttendanceByDate(req, res) {
+    const { classId } = req.params;
+
+    try {
+      const attendanceRecord = await TeacherAttendanceModel.getAttendanceByDate(
+        classId
+      );
+
+      res.status(200).json(attendanceRecord);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Cannot fetch attendance by date" });
+    }
+  },
+
+  // view attendance records by students
+  async getAttendanceByStudents(req, res) {
     const { classId } = req.params;
 
     try {
       const attendanceRecord =
-        await TeacherAttendanceModel.viewAttendanceRecords(classId);
+        await TeacherAttendanceModel.getAttendanceByStudents(classId);
+
+      res.status(200).json(attendanceRecord);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Cannot fetch attendance for students" });
+    }
+  },
+
+  // view attendance records details
+  async viewDailyAttendanceRecords(req, res) {
+    const { classId } = req.params;
+    const date = req.query.date;
+
+    try {
+      const attendanceRecord =
+        await TeacherAttendanceModel.viewAttendanceRecords(classId, date);
+
+      res.status(200).json(attendanceRecord);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error!" });
+    }
+  },
+
+  // view attendance records details
+  async viewDailyStudentAttendance(req, res) {
+    const { classId, studentId } = req.params;
+
+    try {
+      const attendanceRecord =
+        await TeacherAttendanceModel.viewDailyStudentsAttendance(
+          classId,
+          studentId
+        );
 
       res.status(200).json(attendanceRecord);
     } catch (error) {
