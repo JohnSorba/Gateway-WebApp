@@ -17,6 +17,10 @@ import ReportStudentDetails from "../comps/DashboardAdmin/Reports/ReportStudentD
 import UserAccounts from "../comps/DashboardAdmin/UserAccounts";
 import AdminStudentDetails from "../comps/DashboardAdmin/AdminStudents/AdminStudentDetails";
 import AdminTeacherDetails from "../comps/DashboardAdmin/AdminTeachers/AdminTeacherDetails";
+import ClassesDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassesDailyAttendance";
+import ClassDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassDailyAttendance";
+import ClassAttendanceDetails from "../comps/DashboardAdmin/Attendance/ClassAttendanceDetails";
+import StudentAttendanceDetails from "../comps/DashboardAdmin/Attendance/StudentAttendanceDetails";
 
 function AdminDashboard() {
   return (
@@ -39,6 +43,22 @@ function AdminDashboard() {
         {/* ATTENDANCE ROUTES */}
         <Route path="attendance">
           <Route index element={<AttendanceHome />} />
+          <Route
+            path="date-classes-details/:date"
+            element={<ClassesDailyAttendance />}
+          />
+          <Route
+            path="date-classes-details/:date/:classId"
+            element={<ClassDailyAttendance />}
+          />
+          <Route
+            path="class-details/:classId"
+            element={<ClassAttendanceDetails />}
+          />
+          <Route
+            path="student-details/:studentId"
+            element={<StudentAttendanceDetails />}
+          />
         </Route>
 
         {/* TIMETABLE ROUTES */}

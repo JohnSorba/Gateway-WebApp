@@ -6,6 +6,7 @@ const cors = require("cors");
 
 // Routes
 const authRoutes = require("./routes/auth");
+const attendanceRoutes = require("./routes/attendance");
 const timetableRoutes = require("./routes/timetable");
 const examRoutes = require("./routes/exams");
 const adminRoutes = require("./routes/admin");
@@ -37,6 +38,9 @@ app.use("/auth", authRoutes);
 
 // Timetable Routes
 app.use("/timetable", timetableRoutes);
+
+// Attendance Routes
+app.use("/attendance", attendanceRoutes);
 
 // Exam Routes
 app.use("/exams", examRoutes);
