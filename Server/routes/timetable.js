@@ -18,6 +18,9 @@ router.get("/:classCode", ClassController.getClassTimetable);
 // shuffle timetable
 router.get("shuffleTimetable/:classCode", ShuffleController);
 
+////////
+// SUBJECT ROUTES
+
 // add subject
 router.post("/addSubject", SubjectController.addSubject);
 

@@ -44,9 +44,13 @@ const SubjectController = {
     const { subjectName, subjectCode, classAssigned } = req.body;
 
     try {
-      SubjectModel.addSubject(subjectName, subjectCode, classAssigned);
+      const result = await SubjectModel.addSubject(
+        subjectName,
+        subjectCode,
+        classAssigned
+      );
 
-      res.status(200).send({ message: "Subject added successfully" });
+      res.status(201).json(result);
     } catch (error) {
       res.status(500).send("Error adding subject", error);
     }
@@ -57,31 +61,32 @@ const SubjectController = {
       const subjectId = req.params.subjectId;
       const subjectDetails = req.body;
 
-      console.log("body: ", subjectDetails);
-      console.log("------------------------");
-      console.log("id: ", subjectId);
+      const result = await SubjectModel.updateSubject(
+        subjectId,
+        subjectDetails
+      );
 
-      await SubjectModel.updateSubject(subjectId, subjectDetails);
-
-      res.status(200).send({ message: "Subject updated successfully" });
+      res.status(200).send(result);
     } catch (error) {
       console.error("Error updating subject: ", error);
-      res.status(500).send("Error updating subject");
+      res
+        .status(500)
+        .json({ type: "failure", message: "Error updating subject" });
     }
   },
 
   async deleteSubject(req, res) {
     try {
-      const subjectId = req.params.subjectId;
-      console.log("subject Id: ", subjectId);
-      console.log("------------------------");
+      const { subjectId } = req.params;
 
-      await SubjectModel.deleteSubject(subjectId);
+      const result = await SubjectModel.deleteSubject(subjectId);
 
-      res.status(200).send("Subject deleted successfully");
+      res.status(200).json(result);
     } catch (error) {
       console.error("Error deleting subject: ", error);
-      res.send("Error deleting subjects");
+      res
+        .status(500)
+        .json({ type: "failure", message: "Failed to delete subject!" });
     }
   },
 };

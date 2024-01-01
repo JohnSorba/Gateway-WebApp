@@ -88,26 +88,27 @@ function AttendanceAdd({
 
     if (!checkEntries) {
       onSetMessage("Please complete all entries before submitting!");
-    } else {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/teacher/add-attendance",
-          { attendanceDetails }
-        );
+      return;
+    }
 
-        console.log(response);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/teacher/add-attendance",
+        { attendanceDetails }
+      );
 
-        const data = response.data;
+      console.log(response);
 
-        onSetMessage(data.message);
-        onSetType(data.type);
+      const data = response.data;
 
-        onCloseAttendance();
-        onShowAlert(true);
-        onFetchAttendance();
-      } catch (error) {
-        console.log(error.response.data.error);
-      }
+      onSetMessage(data.message);
+      onSetType(data.type);
+
+      onCloseAttendance();
+      onShowAlert(true);
+      onFetchAttendance();
+    } catch (error) {
+      console.log(error.response.data.error);
     }
   };
 

@@ -30,36 +30,6 @@ function ExamDetails() {
     }
   };
 
-  // const data = [
-  //   {
-  //     subject: "Math",
-  //     date: "2023-12-04",
-  //     time: "09:00",
-  //     duration: "45",
-  //     no_of_questions: 4,
-  //     total_marks: 50,
-  //     exam_type: "online",
-  //   },
-  //   {
-  //     subject: "Science",
-  //     date: "2023-12-05",
-  //     time: "10:00",
-  //     duration: "60",
-  //     no_of_questions: 5,
-  //     total_marks: 100,
-  //     exam_type: "online",
-  //   },
-  //   {
-  //     subject: "English",
-  //     date: "2023-12-05",
-  //     time: "12:00",
-  //     duration: "45",
-  //     no_of_questions: 10,
-  //     total_marks: 100,
-  //     exam_type: "online",
-  //   },
-  // ];
-
   if (!examDetails) {
     return <Loader />;
   }

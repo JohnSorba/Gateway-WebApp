@@ -52,7 +52,17 @@ function AdminStudents() {
               <tr key={student.student_id}>
                 <td className="bg-blue-50 border-r-2">00{i + 1}</td>
                 <td>
-                  {student.first_name} {student.last_name}
+                  <span className="flex gap-2 items-center justify-center">
+                    {" "}
+                    <img
+                      src={student.profile_photo}
+                      alt="No-Img"
+                      className="w-[40px] h-[40] rounded-full"
+                    />
+                    <span>
+                      {student.first_name} {student.last_name}
+                    </span>
+                  </span>
                 </td>
                 <td>{student.student_id}</td>
                 <td>{student.age}</td>

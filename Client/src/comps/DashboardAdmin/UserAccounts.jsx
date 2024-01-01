@@ -7,6 +7,7 @@ import { MdDateRange, MdEmail } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import Alert from "../Utilities/Alert";
+import ConfirmDelete from "../Utilities/ConfirmDelete";
 import { convertDateFormat } from "../Dashboard/DashboardData";
 
 function UserAccounts() {
@@ -57,8 +58,8 @@ function UserAccounts() {
       setType(data.type);
 
       setShowModal(false);
-      fetchUsers();
       setShowAlert(true);
+      fetchUsers();
     } catch (error) {
       console.log("Error deleting user: ", error);
     } finally {
@@ -183,26 +184,11 @@ function UserAccounts() {
       )}
 
       {showModal.open && (
-        <div>
-          <div className="modal-backdrop"></div>
-          <div className="modal flex flex-col gap-4 items-center">
-            <p className="text-lg font-semibold">
-              Are you sure you want to delete this account?
-            </p>
-            <p>You will lose all records related to this user!</p>
-            <div className="flex gap-4">
-              <button onClick={() => setShowModal({ open: false, id: null })}>
-                Cancel
-              </button>
-              <button
-                className="bg-red-600"
-                onClick={() => handleDeleteUser(showModal.userId)}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDelete
+          item="user"
+          onCancel={() => setShowModal({ open: false, id: null })}
+          onDelete={() => handleDeleteUser(showModal.userId)}
+        />
       )}
 
       <Alert

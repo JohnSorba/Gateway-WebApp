@@ -174,7 +174,7 @@ const StudentDetailsModel = {
   // Get all student info
   async getAllStudentInfo() {
     const query = `
-    SELECT s.first_name, s.last_name, s.student_id, s.age, s.gender, class_name 
+    SELECT s.first_name, s.last_name, s.student_id, s.age, s.gender, class_name, profile_photo 
     FROM students s
     JOIN student_admission sa
     ON sa.student_id = s.student_id
@@ -221,11 +221,19 @@ const TeacherDetailsModel = {
   // Get all teacher info
   async getAllTeacherInfo() {
     const query = `
-    SELECT t.first_name, t.last_name, t.teacher_id, t.gender, class_name
-    FROM teachers t    
-    JOIN teacher_classes tc
-    ON tc.teacher_id = t.teacher_id
-    JOIN classes c ON c.class_code = tc.class_code
+    SELECT t.first_name, t.last_name, t.teacher_id, t.gender, class_name, ted.profile_photo
+    FROM 
+      teachers t
+    JOIN 
+      teacher_employee_details ted
+    ON
+      ted.teacher_id = t.teacher_id
+    JOIN
+      teacher_classes tc
+    ON 
+      tc.teacher_id = t.teacher_id
+    JOIN 
+      classes c ON c.class_code = tc.class_code
     `;
 
     try {

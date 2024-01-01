@@ -49,14 +49,48 @@ const SubjectModel = {
 // QUESTION MODEL
 
 const QuestionModel = {
+  // get classes for add question
+  async getAddQuestionClasses() {
+    const result = await pool.query("SELECT * FROM classes");
+
+    return result.rows;
+  },
+
+  // get subjects based on class Id
+  async getSubjectsPerClass(classId) {
+    const result = await pool.query(
+      "SELECT * FROM subjects WHERE class_assigned = $1",
+      [classId]
+    );
+
+    return result.rows;
+  },
+
   // Add a question with options model function
   async addQuestion(subjectId, questionText, marks, correctOption, options) {
-    console.log("in model: ", options);
+    // Retrieve question to check if it matches new question (including non-case sensitive)
+    const query =
+      "SELECT COUNT(*) AS question_exists FROM questions WHERE LOWER(question_text) = LOWER($1) AND subject_code = $2";
+
+    const matchCase = await pool.query(query, [questionText, subjectId]);
+    const questionExists = matchCase.rows[0].question_exists > 0;
+
+    if (questionExists) {
+      console.log(questionExists);
+      return {
+        type: "failure",
+        message: "Question Entry Matches Existing Record!",
+      };
+    }
+
+    const client = await pool.connect();
     try {
+      await client.query("BEGIN");
+
       const query =
         "INSERT INTO questions (subject_code, question_text, marks, correct_option) values ($1, $2, $3, $4) RETURNING *";
 
-      const questionResult = await pool.query(query, [
+      const questionResult = await client.query(query, [
         subjectId,
         questionText,
         marks,
@@ -71,12 +105,21 @@ const QuestionModel = {
 
       // Loop over each option and add it to the question_options table
       for (let i = 0; i < options.length; i++) {
-        await pool.query(optionsQuery, [questionId, options[i]]);
+        await client.query(optionsQuery, [questionId, options[i]]);
       }
 
-      return "Question and options added successfully";
+      await client.query("COMMIT");
+      return {
+        type: "success",
+        message: "Question and options added successfully",
+      };
     } catch (error) {
-      throw error;
+      return {
+        type: "failure",
+        message: "Cannot add new question in database!",
+      };
+    } finally {
+      client.release;
     }
   },
 
@@ -85,7 +128,14 @@ const QuestionModel = {
   async getQuestionsWithOptions(questionId) {
     try {
       const questionsResult = await pool.query(
-        "SELECT * FROM questions WHERE question_id = $1",
+        `
+        SELECT 
+          q.*, s.subject_name 
+        FROM 
+          questions q
+        JOIN subjects s ON s.subject_code = q.subject_code
+        WHERE 
+          question_id = $1`,
         [questionId]
       );
       const questions = questionsResult.rows;
@@ -102,6 +152,7 @@ const QuestionModel = {
 
           return {
             subjectId: question.subject_code,
+            subjectName: question.subject_name,
             questionText: question.question_text,
             options,
             correctOption: question.correct_option,
@@ -139,7 +190,7 @@ const QuestionModel = {
   },
 
   // Update a question
-  async update(questionId, questionText, options) {
+  async update(questionId, questionText, options, marks, correctOption) {
     const client = await pool.connect();
 
     try {
@@ -147,14 +198,20 @@ const QuestionModel = {
       await client.query("BEGIN");
 
       const query =
-        "UPDATE questions SET question_text = $1 WHERE question_id = $2 RETURNING *";
+        "UPDATE questions SET question_text = $1, marks = $2, correct_option = $3 WHERE question_id = $4 RETURNING *";
 
-      await pool.query(query, [questionText, questionId]);
-
-      // Clear existing options for the question
-      await pool.query("DELETE FROM question_options WHERE question_id = $1", [
+      await client.query(query, [
+        questionText,
+        marks,
+        correctOption,
         questionId,
       ]);
+
+      // Clear existing options for the question
+      await client.query(
+        "DELETE FROM question_options WHERE question_id = $1",
+        [questionId]
+      );
 
       // Insert new options for the question
       const optionsQuery =
@@ -162,18 +219,24 @@ const QuestionModel = {
 
       // Loop over each option and add it to the question_options table
       for (let i = 0; i < options.length; i++) {
-        const result = await pool.query(optionsQuery, [questionId, options[i]]);
+        await client.query(optionsQuery, [questionId, options[i]]);
       }
 
       // Commit the transaction
       await client.query("COMMIT");
 
-      return "Question and Options updated Successfully";
+      return {
+        type: "success",
+        message: "Question and Options updated Successfully",
+      };
     } catch (error) {
       // ROLLBACK the transaction incase of an error
       console.error(error);
       await client.query("ROLLBACK");
-      throw error;
+      return {
+        type: "failure",
+        message: "Failed to Update Question and Options!",
+      };
     } finally {
       // Release the client back to the pool
       client.release;

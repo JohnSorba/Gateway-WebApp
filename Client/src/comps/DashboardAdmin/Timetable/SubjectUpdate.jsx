@@ -1,14 +1,29 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function SubjectUpdate({ subject, onSave, onCancel }) {
+function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
   const [subjectName, setSubjectName] = useState("");
   const [subjectCode, setSubjectCode] = useState("");
+
+  useEffect(() => {
+    setSubjectCode(subject.subject_code);
+    setSubjectName(subject.subject_name);
+  }, []);
 
   const handleUpdateSubmit = (e) => {
     e.preventDefault();
 
     onSave(subject.id, { subjectCode, subjectName });
+  };
+
+  const changeCode = (e) => {
+    setSubjectCode(e.target.value);
+    onSetMessage("");
+  };
+
+  const changeSubject = (e) => {
+    setSubjectName(e.target.value);
+    onSetMessage("");
   };
 
   return (
@@ -28,7 +43,7 @@ function SubjectUpdate({ subject, onSave, onCancel }) {
             value={subjectCode}
             placeholder="Subject Code"
             className="form-input"
-            onChange={(e) => setSubjectCode(e.target.value)}
+            onChange={changeCode}
           />
         </article>
         <article className="form-group">
@@ -42,7 +57,7 @@ function SubjectUpdate({ subject, onSave, onCancel }) {
             value={subjectName}
             placeholder="Subject Name"
             className="form-input"
-            onChange={(e) => setSubjectName(e.target.value)}
+            onChange={changeSubject}
           />
         </article>
 
@@ -54,6 +69,7 @@ function SubjectUpdate({ subject, onSave, onCancel }) {
             Save
           </button>
         </div>
+        {message && <p className="text-center text-red-500">{message}</p>}
       </form>
     </div>
   );

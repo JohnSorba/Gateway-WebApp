@@ -25,7 +25,17 @@ router.put("/updateSubject/:subjectId", SubjectController.updateSubject);
 // Delete subject
 router.delete("/deleteSubject/:subjectId", SubjectController.deleteSubject);
 
+//////////////////////////////////
 /*******QUESTION ROUTES*******/
+
+// get classes for add question
+router.get("/add-question/classes", QuestionController.getAddQuestionClasses);
+
+// get subjects per classID
+router.get(
+  "/add-question/subjects/:classId",
+  QuestionController.getSubjectsPerClass
+);
 
 // Create a question
 // router.post("/add-question", QuestionController.createQuestion);

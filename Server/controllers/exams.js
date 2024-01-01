@@ -68,14 +68,39 @@ const SubjectController = {
 
 //****************************************** */
 const QuestionController = {
+  // get classes for add question
+  async getAddQuestionClasses(req, res) {
+    try {
+      const classes = await QuestionModel.getAddQuestionClasses();
+
+      res.status(201).json(classes);
+    } catch (error) {
+      console.error("Error adding question: ", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+  // get subjects based on class ID
+  async getSubjectsPerClass(req, res) {
+    try {
+      const { classId } = req.params;
+
+      const Subjects = await QuestionModel.getSubjectsPerClass(classId);
+
+      res.status(201).json(Subjects);
+    } catch (error) {
+      console.error("Error adding question: ", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
   // Add a new question
 
   async addQuestion(req, res) {
     try {
       const { newQuestions, options } = req.body;
-      console.log("in controller: ", options);
 
-      const resultMessage = await QuestionModel.addQuestion(
+      const addedQuestion = await QuestionModel.addQuestion(
         newQuestions.subjectId,
         newQuestions.questionText,
         newQuestions.marks,
@@ -83,7 +108,7 @@ const QuestionController = {
         options
       );
 
-      res.status(201).json(resultMessage);
+      res.status(201).json(addedQuestion);
     } catch (error) {
       console.error("Error adding question: ", error);
       res.status(500).send("Internal Server Error");
@@ -138,12 +163,14 @@ const QuestionController = {
   async updateQuestion(req, res) {
     try {
       const { questionId } = req.params;
-      const { questionText, options } = req.body;
+      const { questionText, options, marks, correctOption } = req.body;
 
       const updatedQuestion = await QuestionModel.update(
         questionId,
         questionText,
-        options
+        options,
+        marks,
+        correctOption
       );
 
       res.status(200).json(updatedQuestion);

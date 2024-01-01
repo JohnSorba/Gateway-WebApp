@@ -19,27 +19,6 @@ function AddExamSubject({ examId, onModalClose, fetchExam }) {
   const [selectedClass, setSelectedClass] = useState("");
   const [newSubject, setNewSubject] = useState(addSubjectForm);
 
-  //   console.log(selectedSubjects);
-
-  // Fetch subjects from the server
-  //   useEffect(() => {
-  //     fetchSubjects();
-  //   }, []);
-
-  //   const fetchSubjects = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:3000/exams/get-subjects`
-  //       );
-
-  //       const data = response.data;
-
-  //       setSubjects(data);
-  //     } catch (error) {
-  //       console.error("Error fetching subjects", error);
-  //     }
-  //   };
-
   // fetch classes
   useEffect(() => {
     // Code to run on component mount

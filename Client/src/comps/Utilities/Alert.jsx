@@ -14,7 +14,7 @@ function Alert({ type, message, onClose, isVisible }) {
     const timer = setTimeout(() => {
       setIsRendered(false);
       onClose();
-    }, 5000); // Auto-dismiss after 3 seconds
+    }, 10000); // Auto-dismiss after 3 seconds
 
     return () => clearTimeout(timer);
   }, [isVisible, onClose]);

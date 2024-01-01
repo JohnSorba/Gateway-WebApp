@@ -3,19 +3,38 @@ import axios from "axios";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import SubjectUpdate from "./SubjectUpdate";
+import Alert from "../../Utilities/Alert";
 import { useState } from "react";
 import "./Timetable.css";
+import ConfirmDelete from "../../Utilities/ConfirmDelete";
 
-function SubjectItem({ subjects, onDelete, onUpdate }) {
+function SubjectItem({
+  subjects,
+  onDelete,
+  onUpdate,
+  showAlert,
+  onSetAlert,
+  onSetType,
+  message,
+  onSetMessage,
+}) {
   const [editingSubject, setEditingSubject] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    open: false,
+    subjectId: null,
+  });
 
-  // handle Delete
-  const handleDelete = async (subjectId) => {
+  // handle Delete subject
+  const handleDeleteSubject = async (subjectId) => {
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `http://localhost:3000/timetable/subjects/${subjectId}`
       );
+
+      setDeleteConfirm({ open: false, subjectId: null });
+      onSetMessage(response.data.message);
+      onSetType(response.data.type);
+      onSetAlert(true);
 
       onDelete();
     } catch (error) {
@@ -28,6 +47,25 @@ function SubjectItem({ subjects, onDelete, onUpdate }) {
   };
 
   const updateSubject = async (subjectId, updatedSubject) => {
+    const subjectCodeFormat = /^G\d{1,2}-[A-Z]{3,}$/;
+
+    const isSubjectCodeValid = subjectCodeFormat.test(
+      updatedSubject.subjectCode
+    );
+
+    // Check if no input is empty
+    if (Object.values(updatedSubject).some((value) => value.trim() === "")) {
+      onSetMessage("Please fill in all fields!");
+      return;
+    }
+    // CHECK IF THE SUBJECT CODE INPUT IS VALID
+    if (!isSubjectCodeValid) {
+      onSetMessage("Invalid Subject Code format. Use the format 'G1-MATH'.");
+      return;
+    }
+
+    onSetMessage("");
+
     try {
       const response = await axios.put(
         `http://localhost:3000/timetable/subjects/${subjectId}`,
@@ -35,23 +73,39 @@ function SubjectItem({ subjects, onDelete, onUpdate }) {
       );
       onUpdate();
 
-      if (response.data) {
-        setEditingSubject(null);
-        setMessage(response.data.message);
-      }
+      console.log(response);
+
+      setEditingSubject(null);
+
+      onSetMessage(response.data.message);
+      onSetAlert(true);
+      onSetType(response.data.type);
     } catch (error) {
       console.error("Error updating subject", error);
-      setMessage(error.response.data.error);
+      onSetMessage(error.response.data.message);
+      onSetType(error.response.data.type);
     }
   };
 
   const cancelEditing = () => {
     setEditingSubject(null);
+    onSetMessage("");
+  };
+
+  const handleCloseAlert = () => {
+    onSetAlert(false);
+  };
+
+  const handleShowDeleteSubject = (subjectId) => {
+    setDeleteConfirm({ open: true, subjectId: subjectId });
   };
 
   return (
     <div>
-      <h3 className="mb-4 text-lg">Total Subjects: {subjects.length}</h3>
+      <h3 className="mb-8 text-lg">
+        Total Subjects:{" "}
+        <span className="font-semibold text-2xl">{subjects.length}</span>
+      </h3>
       <ul className="flex flex-col gap-1">
         <li className="grid grid-cols-[30px_80px_1fr] gap-3 font-semibold mb-2">
           <span>No.</span>
@@ -66,6 +120,8 @@ function SubjectItem({ subjects, onDelete, onUpdate }) {
               subject={editingSubject}
               onSave={updateSubject}
               onCancel={cancelEditing}
+              onSetMessage={onSetMessage}
+              message={message}
             />
           </>
         )}
@@ -74,7 +130,7 @@ function SubjectItem({ subjects, onDelete, onUpdate }) {
         {subjects?.map((subject, index) => (
           <li
             key={subject.subject_code}
-            className="grid grid-cols-[30px_100px_1fr_25px_25px] gap-3 items-center border-b-2 pb-1"
+            className="grid grid-cols-[30px_80px_1fr_20px_20px] gap-3 items-center border-b-2 pb-1"
           >
             <span className="font-semibold">{index + 1}</span>
             <p className="text-[13px] font-semibold">{subject.subject_code}</p>
@@ -84,13 +140,27 @@ function SubjectItem({ subjects, onDelete, onUpdate }) {
               onClick={() => startEditing(subject)}
             />
             <MdDeleteForever
-              className="h-5 w-5 text-red-500 cursor-pointer hover:bg-red-50"
-              onClick={() => handleDelete(subject.id)}
+              className="h-6 w-6 text-red-500 cursor-pointer hover:bg-red-50"
+              onClick={() => handleShowDeleteSubject(subject.subject_code)}
             />
           </li>
         ))}
       </ul>
-      <p>{message}</p>
+
+      {deleteConfirm.open && (
+        <ConfirmDelete
+          item="user"
+          onCancel={() => setDeleteConfirm({ open: false, subjectId: null })}
+          onDelete={() => handleDeleteSubject(deleteConfirm.subjectId)}
+        />
+      )}
+
+      <Alert
+        type="success"
+        message={message}
+        isVisible={showAlert}
+        onClose={handleCloseAlert}
+      />
     </div>
   );
 }

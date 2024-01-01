@@ -43,7 +43,7 @@ function AttendanceClassView({ view }) {
   };
 
   return (
-    <div className="table-container h-[450px] overflow-y-scroll">
+    <div className="table-container h-full overflow-y-scroll">
       <table className="relative">
         <thead className="sticky top-0 left-0 right-0">
           <tr>

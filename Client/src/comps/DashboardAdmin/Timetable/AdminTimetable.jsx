@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import SubjectAdd from "./SubjectAdd";
 import SubjectItem from "./SubjectItem";
+import { MdWarning } from "react-icons/md";
+import Alert from "../../Utilities/Alert";
 
 const initialSubjectData = {
   classAssigned: "",
@@ -17,6 +19,10 @@ function AdminTimetable() {
 
   const [timetable, setTimetable] = useState(null);
   const [subjectFormData, setSubjectFormData] = useState(initialSubjectData);
+
+  const [message, setMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [type, setType] = useState("");
 
   // console.log(subjectFormData);
 
@@ -68,10 +74,6 @@ function AdminTimetable() {
     }
   };
 
-  const handleClassChange = (e) => {
-    setSelectedClass(e.target.value);
-  };
-
   // Shuffle Timetable
   const handleShuffleClick = async () => {
     try {
@@ -90,17 +92,22 @@ function AdminTimetable() {
 
   // Add Subject Modal
   const addSubjectModalOpen = () => {
-    setAddSubject(!addSubject);
+    setAddSubject(true);
+    setMessage("");
   };
   // Cancel Add Subject
   const addSubjectModalClose = () => {
-    setAddSubject(!addSubject);
+    setAddSubject(false);
+    setSubjectFormData({
+      ...initialSubjectData,
+    });
   };
 
-  // Add subject Change
+  // Add subject Change handler
   const handleSubjectChange = (e) => {
     const { name, value } = e.target;
     setSubjectFormData({ ...subjectFormData, [name]: value });
+    setMessage("");
   };
 
   const handleSubjectAdd = () => {
@@ -109,7 +116,6 @@ function AdminTimetable() {
 
     setSubjectFormData({
       ...initialSubjectData,
-      classAssigned: selectedClass,
     });
   };
   const handleSubjectDeleted = () => {
@@ -121,57 +127,13 @@ function AdminTimetable() {
     getTimetable(selectedClass);
   };
 
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+
   return (
     <div className="h-full">
       <div className="flex mb-8">
-        <div className="flex flex-col w-3/6">
-          <h3>Select Class</h3>
-
-          {/* Select Classes from a dropdown list */}
-          <select
-            value={selectedClass}
-            onChange={handleClassChange}
-            className="form-select my-4"
-          >
-            <option value="" disabled>
-              Select Class
-            </option>
-            {classes?.map((cls) => (
-              <option key={cls.class_code} value={cls.class_code}>
-                {cls.class_name}
-              </option>
-            ))}
-          </select>
-
-          {/* Subject List */}
-          <div className="mb-8">
-            {!subjects ? (
-              <div>No Subject Selected</div>
-            ) : (
-              <SubjectItem
-                subjects={subjects}
-                onDelete={handleSubjectDeleted}
-                onUpdate={handleSubjectUpdate}
-              />
-            )}
-          </div>
-
-          <button onClick={addSubjectModalOpen}>Add New Subject</button>
-
-          {/* Conditional rendering of Subject Adding Form */}
-          {addSubject && (
-            <div className="modal-backdrop">
-              <SubjectAdd
-                subjectFormData={subjectFormData}
-                onSubjectChange={handleSubjectChange}
-                onSubjectAdd={handleSubjectAdd}
-                onModalClose={addSubjectModalClose}
-                classes={classes}
-              />
-            </div>
-          )}
-        </div>
-
         {/* Timetable with a grid of subjects and class schedule */}
         <div className="w-full">
           {!timetable ? (
@@ -213,6 +175,69 @@ function AdminTimetable() {
             </div>
           )}
         </div>
+
+        {/* Subject Management */}
+        <div className="flex flex-col w-3/6 border-l-2 pl-6">
+          <h2>Select Class</h2>
+
+          {/* Select Classes from a dropdown list */}
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+            className="form-select my-4"
+          >
+            <option value="" disabled>
+              Select Class
+            </option>
+            {classes?.map((cls) => (
+              <option key={cls.class_code} value={cls.class_code}>
+                {cls.class_name}
+              </option>
+            ))}
+          </select>
+
+          {/* Subject List */}
+          <div className="mb-8">
+            {!subjects ? (
+              <div className="flex gap-2 items-center text-lg font-semibold text-red-600">
+                <MdWarning className="w-6 h-6" />{" "}
+                <span>No Subject Selected</span>
+              </div>
+            ) : (
+              <SubjectItem
+                subjectFormData={subjectFormData}
+                subjects={subjects}
+                onDelete={handleSubjectDeleted}
+                onUpdate={handleSubjectUpdate}
+                onSetMessage={setMessage}
+                message={message}
+                showAlert={showAlert}
+                onSetAlert={setShowAlert}
+                onSetType={setType}
+              />
+            )}
+          </div>
+
+          {/* Button to open the add subject modal*/}
+          <button onClick={addSubjectModalOpen}>Add New Subject</button>
+
+          {/* Conditional rendering of Subject Adding Form */}
+          {addSubject && (
+            <div className="modal-backdrop">
+              <SubjectAdd
+                subjectFormData={subjectFormData}
+                onSubjectChange={handleSubjectChange}
+                onSubjectAdd={handleSubjectAdd}
+                onAddModalClose={addSubjectModalClose}
+                classes={classes}
+                message={message}
+                onSetMessage={setMessage}
+                onShowAlert={setShowAlert}
+                onSetType={setType}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <div>
@@ -220,6 +245,13 @@ function AdminTimetable() {
           Shuffle Timetable
         </button>
       </div>
+
+      <Alert
+        type={type}
+        message={message}
+        onClose={handleCloseAlert}
+        isVisible={showAlert}
+      />
     </div>
   );
 }

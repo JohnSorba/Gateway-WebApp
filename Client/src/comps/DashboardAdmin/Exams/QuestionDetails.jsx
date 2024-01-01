@@ -2,8 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import QuestionEdit from "./QuestionEdit";
-import { PiWarningCircleFill } from "react-icons/pi";
 import Alert from "../../Utilities/Alert";
+import ConfirmDelete from "../../Utilities/ConfirmDelete";
+import { useUser } from "../../../Contexts/UserContext";
+import Loader from "../../../Loader";
 
 function QuestionDetails() {
   const [questionDetails, setQuestionDetails] = useState([]);
@@ -11,6 +13,8 @@ function QuestionDetails() {
   const [deleteModal, setDeleteModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState(" ");
+  const [type, setType] = useState("");
+  const { isLoading, setIsLoading } = useUser();
 
   const navigate = useNavigate();
 
@@ -26,6 +30,7 @@ function QuestionDetails() {
 
   const fetchQuestions = async (questionId) => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `http://localhost:3000/exams/question-details/${questionId}`
       );
@@ -36,6 +41,8 @@ function QuestionDetails() {
       setQuestionDetails(data);
     } catch (error) {
       console.error("Error fetching question details", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,6 +65,8 @@ function QuestionDetails() {
 
   const closeEditModal = () => {
     setEditModal(false);
+    fetchQuestions(questionId);
+    setMessage("");
   };
 
   const handleCloseAlert = () => {
@@ -65,41 +74,58 @@ function QuestionDetails() {
   };
 
   return (
-    <div>
-      <h1>Question Details</h1>
+    <div className="question-details">
+      <header className="mb-8">
+        <h1>
+          Question Details for {question && question.subjectName} (
+          {question && question.subjectId})
+        </h1>
 
-      <button className="form-button" onClick={() => setEditModal(true)}>
-        Edit Question
-      </button>
-      <button className="form-button ml-8" onClick={() => setDeleteModal(true)}>
-        Delete Question
-      </button>
+        <button className="form-button" onClick={() => setEditModal(true)}>
+          Edit Question
+        </button>
+        <button
+          className="form-button ml-8"
+          onClick={() => setDeleteModal(true)}
+        >
+          Delete Question
+        </button>
+      </header>
 
-      {questionDetails.map((data) => (
-        <div key={data.question_id}>
-          <h2>Q: {data.questionText}</h2>
-          <p>{data.subjectId}</p>
-          <ul>
-            <h2>Options</h2>
-            {data.options.map((option, i) => (
-              <li key={i}>
-                Opt {i}: {option}
-              </li>
-            ))}
-          </ul>
-          <span>
-            Correct Option:{" "}
-            {data.correctOption !== null ? (
-              data.correctOption
-            ) : (
-              <span>No Correct Option available</span>
-            )}
-          </span>
-          <p>Question Weight: {data.marks}</p>
-        </div>
-      ))}
-
-      <p>{message}</p>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        questionDetails.map((data) => (
+          <div key={data.question_id}>
+            <h2 className="text-4xl">Q: {data.questionText}</h2>
+            <div className="flex items-center flex-col">
+              <h2 className="border-b-2 pb-2">Options</h2>
+              <ul className="flex flex-col gap-4 text-lg">
+                {data.options.map((option, i) => (
+                  <li key={i} className="flex gap-16">
+                    <span>Option {i + 1}</span> -{" "}
+                    <span className="font-semibold text-xl">{option}</span>
+                  </li>
+                ))}
+                <span className="flex justify-between">
+                  <span>Correct Answer</span>-
+                  {data.correctOption !== null ? (
+                    <span className="font-semibold text-xl">
+                      Option {data.correctOption + 1}
+                    </span>
+                  ) : (
+                    <span>No Correct Option available</span>
+                  )}
+                </span>
+                <p className="flex justify-between">
+                  <span>Marks</span> -{" "}
+                  <span className="font-semibold text-xl">{data.marks}</span>{" "}
+                </p>
+              </ul>
+            </div>
+          </div>
+        ))
+      )}
 
       {editModal && (
         <div>
@@ -108,45 +134,23 @@ function QuestionDetails() {
             questionId={questionId}
             onClose={closeEditModal}
             onShowAlert={setShowAlert}
+            message={message}
             onSetMessage={setMessage}
+            onSetType={setType}
             question={question}
           />
         </div>
       )}
 
       {deleteModal && (
-        <div className="modal flex flex-col items-center">
-          <div className="flex gap-4 items-start">
-            <PiWarningCircleFill className="h-12 w-12 text-red-600" />
-            <div>
-              <p className="font-semibold text-lg">
-                Are you sure you want to delete this question?
-              </p>
-              <p className="text-sm btn-danger mb-8">
-                Upon deletion, you will lose access to all data related to this
-                question.
-              </p>
-            </div>
-          </div>
-
-          <footer className="flex gap-4">
-            <button
-              className="form-button"
-              onClick={() => setDeleteModal(false)}
-            >
-              Deny
-            </button>
-            <button
-              className="bg-red-600"
-              onClick={() => handleDeleteQuestion(questionId)}
-            >
-              Confirm
-            </button>
-          </footer>
-        </div>
+        <ConfirmDelete
+          item="question"
+          onCancel={() => setDeleteModal(false)}
+          onDelete={() => handleDeleteQuestion(questionId)}
+        />
       )}
       <Alert
-        type="success"
+        type={type}
         message={message}
         onClose={handleCloseAlert}
         isVisible={showAlert}

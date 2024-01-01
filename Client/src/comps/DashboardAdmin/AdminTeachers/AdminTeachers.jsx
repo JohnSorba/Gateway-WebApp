@@ -52,7 +52,17 @@ function AdminTeachers() {
               <tr key={teacher.teacher_id}>
                 <td className="bg-blue-50 border-r-2">00{i + 1}</td>
                 <td>
-                  {teacher.first_name} {teacher.last_name}
+                  <span className="flex gap-2 items-center justify-center">
+                    {" "}
+                    <img
+                      src={teacher.profile_photo}
+                      alt="No-Img"
+                      className="w-[40px] h-[40] rounded-full"
+                    />
+                    <span>
+                      {teacher.first_name} {teacher.last_name}
+                    </span>
+                  </span>
                 </td>
                 <td>{teacher.teacher_id}</td>
                 <td>{teacher.gender}</td>
