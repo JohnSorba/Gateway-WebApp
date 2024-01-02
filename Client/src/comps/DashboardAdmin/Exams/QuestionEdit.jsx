@@ -74,7 +74,7 @@ function QuestionEdit({
       </article>
 
       {options.map((option, index) => (
-        <article className="form-group mb-4" key={index}>
+        <article className="form-group mb-4" key={index + 1}>
           <label className="form-label">{`Option ${index + 1}`}</label>
           <input
             type="text"

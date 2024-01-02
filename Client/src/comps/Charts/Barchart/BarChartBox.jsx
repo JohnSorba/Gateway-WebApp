@@ -15,7 +15,7 @@ function BarChartBox({ data }) {
     <div>
       <div className="h-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart width={600} height={300} data={data}>
+          <BarChart width={600} height={200} data={data}>
             <XAxis dataKey="date" />
             <YAxis />
             <CartesianGrid strokeDasharray="3 8" />

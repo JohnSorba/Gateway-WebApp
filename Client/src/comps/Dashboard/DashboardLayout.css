@@ -25,6 +25,7 @@
   padding: 1rem 2rem;
   overflow-y: auto;
   transition: 0.3s all;
+  background-color: #fafafa;
 }
 
 /* https://i.pravatar.cc/48?u=118836 */

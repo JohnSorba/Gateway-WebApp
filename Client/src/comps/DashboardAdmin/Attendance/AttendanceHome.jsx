@@ -104,6 +104,11 @@ export default function AttendanceHome() {
         <p>Absent: 3</p>
         <p>Present: 6</p> */}
 
+        <div className="grid grid-cols-2 gap-8 h-[350px] mb-8">
+          <BarChartBox data={chartData} />
+          <LineChartBox data={chartData} />
+        </div>
+
         <div className="grid grid-cols-[250px_250px_1fr_200px] gap-4 items-start">
           <div className="flex gap-4 items-start">
             <p>Filter by:</p>
@@ -182,11 +187,6 @@ export default function AttendanceHome() {
       ) : (
         <div>Cannot display data at this moment!</div>
       )}
-
-      <div className="grid grid-cols-2 gap-8 h-[350px]">
-        <BarChartBox data={chartData} />
-        <LineChartBox data={chartData} />
-      </div>
     </div>
   );
 }

@@ -82,52 +82,46 @@ const SubjectModel = {
 
   async updateSubject(subjectId, subjectDetails) {
     // Database query to update the subject based on subjectId and subjectDetails
-    const { subjectCode, subjectName } = subjectDetails;
+    const { subjectName } = subjectDetails;
+    console.log("subject name: ", subjectName);
 
-    const subjectCodeFormat = /^G\d{1,2}-[A-Z]{3,}$/;
-    const isCodeValid = subjectCodeFormat.test(subjectCode);
-
-    if (!isCodeValid) {
-      return { type: "failure", message: "Invalid Subject Code Format!" };
+    if (subjectName.length < 3) {
+      return {
+        type: "failure",
+        message: "Subject name must be at least 3 characters long!",
+      };
     }
 
     // Check if subject code received exists in database
     const checkCodeExists = await pool.query(
-      "SELECT * FROM subjects WHERE subject_code = $1",
-      [subjectCode]
+      "SELECT * FROM subjects WHERE id = $1",
+      [subjectId]
     );
 
+    // check if the value received matches the value stored
     const sameValue = checkCodeExists.rows[0];
+    console.log("subject Id: ", subjectId);
+    console.log("same value: ", sameValue);
 
-    if (checkCodeExists.rows.length > 0) {
-      if (
-        sameValue.subject_code === subjectCode &&
-        sameValue.subject_name === subjectName
-      ) {
-        return {
-          type: "failure",
-          message: "Invalid Update: No Changes Detected!",
-        };
-      } else {
-        return {
-          type: "failure",
-          message: `Subject Code '${subjectCode}' exists. Please make another entry!`,
-        };
-      }
+    if (sameValue.subject_name === subjectName) {
+      return {
+        type: "failure",
+        message: "Invalid Update: No Changes Detected!",
+      };
     }
 
     try {
-      const query =
-        "UPDATE subjects SET subject_code = $1, subject_name = $2 WHERE id = $3";
+      const query = "UPDATE subjects SET subject_name = $1 WHERE id = $2";
 
-      await pool.query(query, [subjectCode, subjectName, subjectId]);
+      await pool.query(query, [subjectName, subjectId]);
 
       return {
         type: "success",
         message: `${subjectName} Update Successfull!`,
       };
     } catch (error) {
-      return { type: "failure", message: "Cannot update subject!" };
+      console.error(error);
+      return { type: "failure", message: "Cannot Update Subject!" };
     }
   },
 

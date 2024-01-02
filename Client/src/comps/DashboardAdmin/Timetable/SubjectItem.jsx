@@ -47,20 +47,9 @@ function SubjectItem({
   };
 
   const updateSubject = async (subjectId, updatedSubject) => {
-    const subjectCodeFormat = /^G\d{1,2}-[A-Z]{3,}$/;
-
-    const isSubjectCodeValid = subjectCodeFormat.test(
-      updatedSubject.subjectCode
-    );
-
     // Check if no input is empty
     if (Object.values(updatedSubject).some((value) => value.trim() === "")) {
       onSetMessage("Please fill in all fields!");
-      return;
-    }
-    // CHECK IF THE SUBJECT CODE INPUT IS VALID
-    if (!isSubjectCodeValid) {
-      onSetMessage("Invalid Subject Code format. Use the format 'G1-MATH'.");
       return;
     }
 
@@ -149,7 +138,7 @@ function SubjectItem({
 
       {deleteConfirm.open && (
         <ConfirmDelete
-          item="user"
+          item="subject"
           onCancel={() => setDeleteConfirm({ open: false, subjectId: null })}
           onDelete={() => handleDeleteSubject(deleteConfirm.subjectId)}
         />

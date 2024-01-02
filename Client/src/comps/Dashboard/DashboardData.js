@@ -196,7 +196,7 @@ export function convertDateFormat(dateString) {
   const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-indexed in JS
   const day = String(date.getUTCDate()).padStart(2, "0");
 
-  return `${day}-${month}-${year}`;
+  return `${year}-${month}-${day}`;
 }
 
 export const baseURL = "http://localhost:3000";

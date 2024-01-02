@@ -5,6 +5,8 @@ import { MdDeleteForever } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./ExamHome.css";
 import Alert from "../../Utilities/Alert";
+import ConfirmDelete from "../../Utilities/ConfirmDelete";
+import { localDateString } from "../../Dashboard/DashboardData";
 
 function ExamList() {
   const [exams, setExams] = useState([]);
@@ -12,6 +14,7 @@ function ExamList() {
   const [message, setMessage] = useState("");
   const [newExamModal, setNewExamModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [examDelete, setExamDelete] = useState({ open: false, examId: null });
 
   useEffect(() => {
     fetchExams();
@@ -53,12 +56,16 @@ function ExamList() {
       fetchExams();
       setShowAlert(true);
     } catch (error) {
-      console.error("Error creating exams: ", error);
+      console.error("Error creating exams: ", error.response.data.message);
     }
   };
 
   const handleCloseAlert = () => {
     setShowAlert(false);
+  };
+
+  const handleExamDeleteModal = (examId) => {
+    setExamDelete({ open: true, examId: examId });
   };
 
   //   Delete exam
@@ -74,7 +81,7 @@ function ExamList() {
       setMessage(response.data);
       setShowAlert(true);
     } catch (error) {
-      console.error("Error deleting exam", error);
+      console.error("Error deleting exam", error.response.data.message);
     }
   };
 
@@ -90,12 +97,14 @@ function ExamList() {
         {exams.map((item) => (
           <li key={item.exam_id} className="exam-item">
             <h3>{item.title} </h3>
-            <span>{item.date_created}</span>
+            <span className="text-sm font-semibold">
+              Created: {localDateString(item.date_created)}
+            </span>
             <div className="flex justify-between items-center mt-auto">
               <FaEdit className="w-6 h-6 text-blue-400 icon" />
               <MdDeleteForever
                 className="w-6 h-6 text-red-400 icon"
-                onClick={() => handleDeleteExam(item.exam_id)}
+                onClick={() => handleExamDeleteModal(item.exam_id)}
               />
               <Link
                 to={`/dashboard/admin/exams/exam-details/${item.exam_id}`}
@@ -143,6 +152,14 @@ function ExamList() {
             </div>
           </div>
         </div>
+      )}
+
+      {examDelete.open && (
+        <ConfirmDelete
+          item="exam"
+          onCancel={() => setExamDelete({ open: false, examId: null })}
+          onDelete={() => handleDeleteExam(examDelete.examId)}
+        />
       )}
 
       <Alert

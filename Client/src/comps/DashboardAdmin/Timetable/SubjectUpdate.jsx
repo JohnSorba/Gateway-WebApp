@@ -3,22 +3,15 @@ import { useEffect, useState } from "react";
 
 function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
   const [subjectName, setSubjectName] = useState("");
-  const [subjectCode, setSubjectCode] = useState("");
 
   useEffect(() => {
-    setSubjectCode(subject.subject_code);
     setSubjectName(subject.subject_name);
   }, []);
 
   const handleUpdateSubmit = (e) => {
     e.preventDefault();
 
-    onSave(subject.id, { subjectCode, subjectName });
-  };
-
-  const changeCode = (e) => {
-    setSubjectCode(e.target.value);
-    onSetMessage("");
+    onSave(subject.id, { subjectName });
   };
 
   const changeSubject = (e) => {
@@ -29,23 +22,12 @@ function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
   return (
     <div className="modal">
       <h3 className="modal-header">
-        Editing: <em>{subject.subject_name}</em>
+        Editing:{" "}
+        <em>
+          {subject.subject_name} ({subject.subject_code})
+        </em>
       </h3>
       <form onSubmit={handleUpdateSubmit}>
-        <article className="form-group">
-          <label htmlFor="subjectCode" className="form-label">
-            Subject Code
-          </label>
-          <input
-            type="text"
-            name="subjectCode"
-            id="subjectCode"
-            value={subjectCode}
-            placeholder="Subject Code"
-            className="form-input"
-            onChange={changeCode}
-          />
-        </article>
         <article className="form-group">
           <label htmlFor="subjectName" className="form-label">
             Subject Name

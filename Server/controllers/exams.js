@@ -282,26 +282,35 @@ const ExamController = {
     }
   },
 
+  // get total questions for subject
+  async totalQuestions(req, res) {
+    try {
+      const { subjectId } = req.params;
+
+      const totalQuestions = await ExamModel.totalQuestions(subjectId);
+
+      res.status(201).json(totalQuestions);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
   // Add Subjects to Exam
   async addExamSubject(req, res) {
     try {
       const { examId } = req.params;
       const { newSubject } = req.body;
 
-      console.log(examId, newSubject.subjectCode);
-
-      await ExamModel.addExamSubjects(
+      const result = await ExamModel.addExamSubjects(
         examId,
         newSubject.subjectCode,
         newSubject.date,
         newSubject.startTime,
         newSubject.duration,
-        newSubject.examType,
-        newSubject.numQuestions,
-        newSubject.teacherId
+        newSubject.totalQuestions
       );
 
-      res.status(201).json({ message: "Subject added to exam" });
+      res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
       console.error(error);
@@ -345,6 +354,55 @@ const ExamController = {
       // res.status(500).json({ message: err.message });
       res.status(500).send(err);
       console.error(err);
+    }
+  },
+
+  // fetch exam subject details for update
+  async getExamSubjectDetails(req, res) {
+    const { examId, subjectId } = req.params;
+
+    try {
+      const examSubjectUpdateDetails = await ExamModel.getExamSubjectDetails(
+        examId,
+        subjectId
+      );
+
+      res.status(200).json(examSubjectUpdateDetails);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  // update subject in exam
+  async updateExamSubject(req, res) {
+    const { examId, subjectId } = req.params;
+    const { editSubject } = req.body;
+
+    try {
+      const examSubjectUpdate = await ExamModel.updateExamSubject(
+        examId,
+        subjectId,
+        editSubject.date,
+        editSubject.startTime,
+        editSubject.duration,
+        editSubject.totalQuestions
+      );
+
+      res.status(200).json(examSubjectUpdate);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+  // Delete a subject in an exam
+  async deleteExamSubject(req, res) {
+    try {
+      const { examId, subjectId } = req.params;
+
+      const result = await ExamModel.deleteExamSubject(examId, subjectId);
+
+      res.status(201).json(result);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
   },
 
@@ -457,9 +515,6 @@ const StudentExamController = {
   async takeStudentExam(req, res) {
     const subjectId = req.params.subjectId;
     const examId = req.params.examId;
-
-    console.log("subjectId: ", subjectId);
-    console.log("examId: ", examId);
 
     try {
       const { questionsWithOptions, numQuestions } =

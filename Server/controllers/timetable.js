@@ -58,7 +58,7 @@ const SubjectController = {
 
   async updateSubject(req, res) {
     try {
-      const subjectId = req.params.subjectId;
+      const { subjectId } = req.params;
       const subjectDetails = req.body;
 
       const result = await SubjectModel.updateSubject(
@@ -69,9 +69,7 @@ const SubjectController = {
       res.status(200).send(result);
     } catch (error) {
       console.error("Error updating subject: ", error);
-      res
-        .status(500)
-        .json({ type: "failure", message: "Error updating subject" });
+      res.status(500).json({ type: "failure", message: error.message });
     }
   },
 

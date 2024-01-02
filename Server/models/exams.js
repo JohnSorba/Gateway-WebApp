@@ -350,6 +350,24 @@ const ExamModel = {
     return result.rows[0];
   },
 
+  // fetch total questions for subject
+  async totalQuestions(subjectId) {
+    try {
+      const result = await pool.query(
+        "SELECT COUNT(*) FROM questions WHERE subject_code = $1",
+        [subjectId]
+      );
+
+      return result.rows[0].count;
+    } catch (error) {
+      console.error(error);
+      return {
+        type: "failure",
+        message: error,
+      };
+    }
+  },
+
   // Add Subjects to Exam
   async addExamSubjects(
     examId,
@@ -357,42 +375,149 @@ const ExamModel = {
     date,
     startTime,
     duration,
-    examType,
-    numQuestions,
-    teacherId
+    numQuestions
   ) {
+    const totalQuestions = Number(numQuestions);
+    const numDuration = Number(duration);
+
+    // check if subject exists in exam_subjects table
+    const checkSubjectExists = await pool.query(
+      "SELECT * FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
+      [subjectCode, examId]
+    );
+
+    // check if subject exists in exam already and show Warning
+    if (checkSubjectExists.rows.length > 0) {
+      return {
+        type: "failure",
+        message: `${subjectCode} exists in the current exam already!`,
+      };
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // query database for class of received subject
+    const subjectClassQuery = await pool.query(
+      "SELECT class_assigned from subjects where subject_code = $1",
+      [subjectCode]
+    );
+    const subjectClass = subjectClassQuery.rows[0].class_assigned;
+
+    // determine whether a class can have more than two subjects a day
+    const twoSubjectsQuery = `
+    SELECT 
+      es.exam_id, es.exam_date, c.class_code
+    FROM exam_subjects es
+    JOIN subjects s on s.subject_code = es.subject_code
+    JOIN classes c on c.class_code = s.class_assigned
+
+    WHERE c.class_code = $1
+    AND es.exam_id = $2
+    AND es.exam_date = $3
+      
+    `;
+
+    const twoSubjectsPerDay = await pool.query(twoSubjectsQuery, [
+      subjectClass,
+      examId,
+      date,
+    ]);
+
+    if (twoSubjectsPerDay.rows.length >= 2) {
+      return {
+        type: "failure",
+        message:
+          "Each class is restricted to a maximum of two subjects per day!",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
+
+    // query database for results for current exam date, time and class
+    const dateClashQuery = `
+    SELECT 
+      es.exam_id, es.subject_code, 
+      es.exam_date, es.start_time, 
+      es.start_time + (es.duration || ' minutes')::interval AS end_time, 
+      c.class_code
+
+    FROM exam_subjects es
+    JOIN subjects s on s.subject_code = es.subject_code
+    JOIN classes c on c.class_code = s.class_assigned
+
+    WHERE c.class_code = $1
+      AND es.exam_id = $2 
+      AND es.exam_date= $3
+      AND (
+        ($4 >= es.start_time - INTERVAL '15 minutes' AND $4 < es.start_time + (es.duration + 45 || ' minutes')::interval) OR
+        (es.start_time >= $4 - INTERVAL '15 minutes' AND es.start_time < $4 + ($5 + 45 || ' minutes')::interval)
+      )
+    `;
+
+    const checkDateClash = await pool.query(dateClashQuery, [
+      subjectClass,
+      examId,
+      date,
+      startTime,
+      duration,
+    ]);
+    console.log(checkDateClash.rows);
+
+    console.log("---------------------------");
+
+    // console.log(examDate, examTime, classId, subjectClass, date, startTime);
+
+    // check if the date clashes
+    if (checkDateClash.rows.length > 0) {
+      return {
+        type: "failure",
+        message:
+          "Schedule Conflict: A subject is scheduled for the specific date and time!",
+      };
+    }
+
+    // get questions from question table with the specified subject code
+    // and limited to the number of questions required
+    const totalQuestionsResult = await pool.query(
+      "SELECT * FROM questions WHERE subject_code = $1 LIMIT $2",
+      [subjectCode, totalQuestions]
+    );
+
+    ///////////////////////////////////////////
+    // set the returned array value we receive to a variable
+    const questions = totalQuestionsResult.rows;
+
+    // calculate the total marks
+    const totalMarks = questions.reduce(
+      (sum, question) => sum + question.marks,
+      0
+    );
+
+    // Insert values received into the data base
     const query =
-      "INSERT INTO exam_subjects (exam_id, subject_code, exam_date, start_time, duration, exam_type, no_of_questions, total_marks, teacher_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
+      "INSERT INTO exam_subjects (exam_id, subject_code, exam_date, start_time, duration, no_of_questions, total_marks) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
 
+    const client = pool.connect();
     try {
-      const { rows: questions } = await pool.query(
-        "SELECT * FROM questions WHERE subject_code = $1 LIMIT $2",
-        [subjectCode, numQuestions]
-      );
-
-      // calculate the total marks
-      const totalMarks = questions.reduce(
-        (sum, question) => sum + question.marks,
-        0
-      );
-
-      console.log(totalMarks);
-
-      const result = await pool.query(query, [
+      (await client).query("BEGIN");
+      await pool.query(query, [
         examId,
         subjectCode,
         date,
         startTime,
-        duration,
-        examType,
-        numQuestions,
+        numDuration,
+        totalQuestions,
         totalMarks,
-        teacherId,
       ]);
 
-      return result.rows;
+      (await client).query("COMMIT");
+      return { type: "success", message: "Subject added to Exam" };
     } catch (error) {
-      throw error;
+      (await client).query("ROLLBACK");
+      return {
+        type: "failure",
+        message: error,
+      };
+    } finally {
+      (await client).release;
     }
   },
 
@@ -405,14 +530,277 @@ const ExamModel = {
   // Get exam details
   async getById(examId) {
     const result = await pool.query(
-      `SELECT exams.*, exam_subjects.*
-      FROM exams 
-      JOIN exam_subjects ON exam_subjects.exam_id = exams.exam_id
-      WHERE exams.exam_id = $1`,
+      `SELECT e.*, es.*, s.subject_name, c.class_name
+      FROM exams e
+      JOIN exam_subjects es ON es.exam_id = e.exam_id
+      JOIN subjects s ON s.subject_code = es.subject_code
+      JOIN classes c ON c.class_code = s.class_assigned
+      WHERE e.exam_id = $1
+      ORDER BY es.exam_date 
+      `,
       [examId]
     );
 
     return result.rows;
+  },
+
+  // fetch exam subject details for update
+  async getExamSubjectDetails(examId, subjectId) {
+    try {
+      const result = await pool.query(
+        `SELECT es.*, s.subject_name FROM exam_subjects es
+        JOIN subjects s ON s.subject_code = es.subject_code
+        WHERE es.subject_code = $1 AND es.exam_id = $2`,
+        [subjectId, examId]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      console.error(error);
+      return {
+        type: "failure",
+        message: error,
+      };
+    }
+  },
+
+  // Update subject in an exam
+  async updateExamSubject(
+    examId,
+    subjectId,
+    date,
+    startTime,
+    duration,
+    noOfQuestions
+  ) {
+    //////////////////////////////////////////////////////////////////////
+    const checkSubjectExists = await pool.query(
+      "SELECT * FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
+      [subjectId, examId]
+    );
+
+    const dateQuery = checkSubjectExists.rows[0].exam_date;
+    const newDateQuery = String(dateQuery);
+    const timeQuery = checkSubjectExists.rows[0].start_time;
+    const totalQuestionsQuery = checkSubjectExists.rows[0].no_of_questions;
+    const durationQuery = checkSubjectExists.rows[0].duration;
+
+    const queries = {
+      date: dateQuery,
+      time: timeQuery,
+      totalQuestions: totalQuestionsQuery,
+      duration: durationQuery,
+    };
+
+    const received = {
+      date: dateQuery,
+      time: timeQuery,
+      totalQuestions: totalQuestionsQuery,
+      duration: durationQuery,
+    };
+
+    if (queries == received) {
+      console.log("queries = received");
+    }
+
+    console.log("------------------------");
+
+    console.log("queries: ", queries);
+    console.log("received: ", received);
+
+    console.log("------------------------");
+    console.log("date Query: ", typeof newDateQuery);
+    console.log("time: ", typeof timeQuery);
+    console.log("duration: ", typeof durationQuery);
+    console.log("questions: ", typeof totalQuestionsQuery);
+    console.log("------------------------");
+    console.log("date received: ", typeof date);
+    console.log("time: ", typeof startTime);
+    console.log("duration: ", typeof duration);
+    console.log("questions: ", typeof noOfQuestions);
+    console.log("------------------------");
+
+    console.log(date === newDateQuery);
+    console.log(startTime === timeQuery);
+    console.log(duration === durationQuery);
+    console.log(noOfQuestions === totalQuestionsQuery);
+
+    // check if subject exists in exam already and show Warning
+    if (
+      startTime === timeQuery &&
+      duration === durationQuery &&
+      noOfQuestions === totalQuestionsQuery
+    ) {
+      return {
+        type: "failure",
+        message: `No update for ${subjectId}!`,
+      };
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // query database for class of received subject
+    const subjectClassQuery = await pool.query(
+      "SELECT class_assigned from subjects where subject_code = $1",
+      [subjectId]
+    );
+    const subjectClass = subjectClassQuery.rows[0].class_assigned;
+
+    // determine whether a class can have more than two subjects a day
+    const twoSubjectsQuery = `
+    SELECT 
+      es.exam_id, es.exam_date, c.class_code
+    FROM exam_subjects es
+    JOIN subjects s on s.subject_code = es.subject_code
+    JOIN classes c on c.class_code = s.class_assigned
+
+    WHERE c.class_code = $1
+    AND es.exam_id = $2
+    AND es.exam_date = $3
+      
+    `;
+
+    const twoSubjectsPerDay = await pool.query(twoSubjectsQuery, [
+      subjectClass,
+      examId,
+      date,
+    ]);
+
+    if (twoSubjectsPerDay.rows.length >= 2) {
+      return {
+        type: "failure",
+        message:
+          "Each class is restricted to a maximum of two subjects per day!",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
+    // query database for results for current exam date, time and class
+    const dateClashQuery = `
+      SELECT 
+        es.exam_id, es.subject_code, 
+        es.exam_date, es.start_time, 
+        es.start_time + (es.duration || ' minutes')::interval AS end_time, 
+        c.class_code
+
+      FROM exam_subjects es
+      JOIN subjects s on s.subject_code = es.subject_code
+      JOIN classes c on c.class_code = s.class_assigned
+
+      WHERE c.class_code = $1
+        AND es.exam_id = $2 
+        AND es.exam_date= $3
+        AND (
+          ($4 >= es.start_time - INTERVAL '15 minutes' AND $4 < es.start_time + (es.duration + 45 || ' minutes')::interval) OR
+          (es.start_time >= $4 - INTERVAL '15 minutes' AND es.start_time < $4 + ($5 + 45 || ' minutes')::interval)
+   )
+ `;
+
+    const checkDateClash = await pool.query(dateClashQuery, [
+      subjectClass,
+      examId,
+      date,
+      startTime,
+      duration,
+    ]);
+    console.log(checkDateClash.rows);
+
+    console.log("---------------------------");
+
+    // console.log(examDate, examTime, classId, subjectClass, date, startTime);
+
+    // check if the date clashes
+    if (checkDateClash.rows.length > 0) {
+      return {
+        type: "failure",
+        message:
+          "Schedule Conflict: A subject is scheduled for the specific date and time!",
+      };
+    } else {
+      return {
+        type: "success",
+        message: "Mock Update",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
+
+    // get questions from question table with the specified subject code
+    // and limited to the number of questions required
+    const totalQuestionsResult = await pool.query(
+      "SELECT * FROM questions WHERE subject_code = $1 LIMIT $2",
+      [subjectId, noOfQuestions]
+    );
+
+    // set the returned array value we receive to a variable
+    const questions = totalQuestionsResult.rows;
+
+    // calculate the total marks
+    const totalMarks = questions.reduce(
+      (sum, question) => sum + question.marks,
+      0
+    );
+
+    const query = `
+      UPDATE exam_subjects
+      SET
+        exam_date = $1,
+        start_time = $2,
+        duration = $3,
+        no_of_questions = $4,
+        total_marks = $5
+        
+      WHERE exam_id = $6
+      AND subject_code = $7
+    `;
+
+    const client = pool.connect();
+    try {
+      (await client).query("BEGIN");
+
+      await pool.query(query, [
+        date,
+        startTime,
+        duration,
+        noOfQuestions,
+        totalMarks,
+        examId,
+        subjectId,
+      ]);
+
+      (await client).query("COMMIT");
+      return {
+        type: "success",
+        message: `${subjectId} Updated Successfully!`,
+      };
+    } catch (error) {
+      (await client).query("ROLLBACK");
+      console.error(error);
+      return {
+        type: "failure",
+        message: "Unable to update record in the database!",
+      };
+    } finally {
+      (await client).release;
+    }
+  },
+
+  // Delete a subjects from an exam
+  async deleteExamSubject(examId, subjectId) {
+    try {
+      await pool.query(
+        "DELETE FROM exam_subjects WHERE exam_id = $1 AND subject_code = $2",
+        [examId, subjectId]
+      );
+
+      return {
+        type: "success",
+        message: "Subject Deleted From Exam Successfully!",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        type: "failure",
+        message: "Failed to delete subject from exam!",
+      };
+    }
   },
 
   // Update an exam
@@ -427,10 +815,15 @@ const ExamModel = {
   // Delete an exam
   async delete(examId) {
     try {
+      await pool.query("DELETE FROM exam_subjects WHERE exam_id = $1", [
+        examId,
+      ]);
       await pool.query("DELETE FROM exams WHERE exam_id = $1", [examId]);
 
       return "Exam Deleted Successfully!";
     } catch (error) {
+      console.error(error);
+
       throw error;
     }
   },
@@ -445,15 +838,13 @@ const ExamModel = {
   // Get questions with options
   async getQuestionsForExam(subjectId, examId) {
     try {
+      // get number of questions
       const result = await pool.query(
         "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
         [subjectId, examId]
       );
 
-      // console.log("Result: ", result);
-
       const numQuestions = result.rows[0].no_of_questions;
-      console.log("no of questions: ", numQuestions);
 
       const questionsResult = await pool.query(
         `
@@ -465,18 +856,18 @@ const ExamModel = {
         [subjectId, numQuestions]
       );
 
-      // console.log("ques result: ", questionsResult);
-
+      // ASSIGN RETRIEVED QUESTION TO questions VARIABLE
       const questions = questionsResult.rows;
-
-      console.log(questions);
 
       const questionsWithOptions = await Promise.all(
         questions.map(async (question) => {
+          // map through each question and retrieve the options
           const optionsResult = await pool.query(
             "SELECT * FROM question_options WHERE question_id = $1",
             [question.question_id]
           );
+
+          // store options in an array for each question
           const options = optionsResult.rows.map(
             (option) => option.option_text
           );
@@ -490,8 +881,6 @@ const ExamModel = {
           };
         })
       );
-
-      // console.log({ questionsWithOptions, numQuestions });
 
       return { questionsWithOptions, numQuestions };
     } catch (error) {

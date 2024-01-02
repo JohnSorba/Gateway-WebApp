@@ -94,14 +94,35 @@ router.get("/get-all-exams", ExamController.getAllExams);
 // Retrieve exam by quesiton Id
 router.get("/get-exam/:examId", ExamController.getExamById);
 
+// get total questions for selected subject
+router.get("/total-questions/:subjectId", ExamController.totalQuestions);
+
 // Add Exam Subject
 router.post("/:examId/subject", ExamController.addExamSubject);
+
+// Get Details for exam subject edit
+router.get(
+  "/subject/update-info/:examId/:subjectId",
+  ExamController.getExamSubjectDetails
+);
+
+// Edit Exam Subject
+router.put(
+  "/update/exam-subject/:examId/:subjectId",
+  ExamController.updateExamSubject
+);
 
 // Update exam
 router.put("/update-exam/:examId", ExamController.updateExam);
 
 // Delete an exam
 router.delete("/delete-exam/:examId", ExamController.deleteExam);
+
+// Delete a subject in an exam
+router.delete(
+  "/delete/exam-subject/:examId/:subjectId",
+  ExamController.deleteExamSubject
+);
 
 // Take an exam
 router.get("/take-exam/:subjectId", ExamController.takeExam);

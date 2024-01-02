@@ -81,15 +81,17 @@ function QuestionDetails() {
           {question && question.subjectId})
         </h1>
 
-        <button className="form-button" onClick={() => setEditModal(true)}>
-          Edit Question
-        </button>
-        <button
-          className="form-button ml-8"
-          onClick={() => setDeleteModal(true)}
-        >
-          Delete Question
-        </button>
+        <div className="flex justify-end">
+          <button className="form-button" onClick={() => setEditModal(true)}>
+            Edit Question
+          </button>
+          <button
+            className="form-button ml-8"
+            onClick={() => setDeleteModal(true)}
+          >
+            Delete Question
+          </button>
+        </div>
       </header>
 
       {isLoading ? (
@@ -102,7 +104,7 @@ function QuestionDetails() {
               <h2 className="border-b-2 pb-2">Options</h2>
               <ul className="flex flex-col gap-4 text-lg">
                 {data.options.map((option, i) => (
-                  <li key={i} className="flex gap-16">
+                  <li key={i + 1} className="flex gap-16">
                     <span>Option {i + 1}</span> -{" "}
                     <span className="font-semibold text-xl">{option}</span>
                   </li>

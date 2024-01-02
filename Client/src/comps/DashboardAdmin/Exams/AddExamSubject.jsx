@@ -1,23 +1,36 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { baseURL } from "../../Dashboard/DashboardData";
+import { useUser } from "../../../Contexts/UserContext";
+import Loader from "../../../Loader";
 
 const addSubjectForm = {
   subjectCode: "",
   date: "",
   startTime: "",
-  duration: 30,
-  totalQuestions: 3,
-  examType: "Online",
-  teacherId: "",
+  duration: Number(30),
+  totalQuestions: Number(0),
 };
 
 /* eslint-disable react/prop-types */
-function AddExamSubject({ examId, onModalClose, fetchExam }) {
+function AddExamSubject({
+  examId,
+  onModalClose,
+  fetchExam,
+  onSetMessage,
+  onSetType,
+  onShowAlert,
+}) {
+  const [newSubject, setNewSubject] = useState(addSubjectForm);
   const [subjects, setSubjects] = useState([]);
-  //   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
-  const [newSubject, setNewSubject] = useState(addSubjectForm);
+  const [warning, setWarning] = useState("");
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const { isLoading, setIsLoading } = useUser();
+
+  // console.log(newSubject);
+  const subjectCode = newSubject.subjectCode && newSubject.subjectCode;
 
   // fetch classes
   useEffect(() => {
@@ -44,10 +57,15 @@ function AddExamSubject({ examId, onModalClose, fetchExam }) {
     if (selectedClass.length > 0) {
       getSubjectsByClass(selectedClass);
     }
-  }, [selectedClass]);
+
+    if (subjectCode && subjectCode.length > 0) {
+      getTotalSubjectQuestions();
+    }
+  }, [selectedClass, subjectCode]);
 
   const getSubjectsByClass = async (selectedClass) => {
     try {
+      setIsLoading(true);
       const res = await axios.get(
         `http://localhost:3000/timetable/${selectedClass}`
       );
@@ -58,25 +76,39 @@ function AddExamSubject({ examId, onModalClose, fetchExam }) {
       setSubjects(subjectData);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getTotalSubjectQuestions = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${baseURL}/exams/total-questions/${subjectCode}`
+      );
+
+      const totalQuestions = response.data;
+
+      setTotalQuestions(totalQuestions);
+
+      if (totalQuestions == 0) {
+        setWarning("Currenty selected subject has no questions!");
+      } else {
+        setWarning(`${totalQuestions} question(s) available for this subject!`);
+      }
+
+      setNewSubject({ ...newSubject, totalQuestions: totalQuestions });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
   };
-
-  //   const handleCheckboxChange = (e) => {
-  //     const { value } = e.target;
-  //     setSelectedSubjects((prevSubjects) => {
-  //       if (prevSubjects.includes(value)) {
-  //         // if the subject is already selected, unselect it
-  //         return prevSubjects.filter((subjectId) => subjectId !== value);
-  //       } else {
-  //         // If the subject is not selected, select it
-  //         return [...prevSubjects, value];
-  //       }
-  //     });
-  //   };
 
   const handleAddSubjectChange = (e) => {
     const { name, value } = e.target;
@@ -85,239 +117,177 @@ function AddExamSubject({ examId, onModalClose, fetchExam }) {
 
   //   Add Subject to Exam
   const handleAddSubject = async () => {
+    if (
+      !newSubject.subjectCode ||
+      !newSubject.date ||
+      !newSubject.duration ||
+      !newSubject.startTime ||
+      !newSubject.totalQuestions
+    ) {
+      setWarning("Please fill out all details!");
+      return;
+    }
+
+    if (totalQuestions < 3) {
+      setWarning("Subject must have at least 3 questions!");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:3000/exams/${examId}/subject`,
         { newSubject }
       );
 
-      console.log(response.data);
+      // alert pop up
+      onSetMessage(response.data.message);
+      onSetType(response.data.type);
+      onShowAlert(true);
 
-      const res = response.data.title;
-      const status = response.statusText;
-      console.log(res + " " + status);
-
-      //   const message = res + " " + status;
-      console.log(res, status);
-      //   setMessage(message);
-      setNewSubject("");
+      onModalClose();
+      setWarning("");
+      setNewSubject(addSubjectForm);
       fetchExam(examId);
     } catch (error) {
       console.error("Error creating exams: ", error);
     }
   };
 
-  // handle form submit events
-  //   const handleAddSubject = (e) => {
-  //     e.preventDefault();
-
-  //     // Add each selected subject to the exam
-  //     selectedSubjects.forEach((subjectId) => {
-  //       try {
-  //         const response = axios.post(
-  //           `http://localhost:3000/exams/${examId}/exam-subjects`,
-  //           {
-  //             subjectId,
-  //           }
-  //         );
-
-  //         const data = response.data.message;
-  //         console.log(data);
-  //       } catch (error) {
-  //         console.error("Error adding subject details", error);
-  //       }
-  //     });
-  //   };
-
   return (
     <div className="modals">
       <div>
         <div className="modal-backdrop"></div>
-        <div className="modal">
-          <h3 className="text-lg font-semibold mb-4">Enter Subject Details</h3>
-          {/* Select Classes from a dropdown list */}
-          <article>
-            <label className="form-label">Class Name</label>
-            <select
-              value={selectedClass}
-              onChange={handleClassChange}
-              className="form-select mt-1 mb-4"
-            >
-              <option value="" disabled>
-                Select Class
-              </option>
-              {classes?.map((cls) => (
-                <option key={cls.class_code} value={cls.class_code}>
-                  {cls.class_name}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <div className="modal">
+            <header className="mb-4">
+              <h3 className="text-lg font-semibold">Enter Subject Details</h3>
+              <p className="text-red-500">
+                Adding subjects is subject to question availability
+              </p>
+            </header>
+
+            {/* Select Classes from a dropdown list */}
+            <article>
+              <label className="form-label">Class Name</label>
+              <select
+                value={selectedClass}
+                onChange={handleClassChange}
+                className="form-select mt-1 mb-4"
+              >
+                <option value="" disabled>
+                  Select Class
                 </option>
-              ))}
-            </select>
-          </article>
+                {classes?.map((cls) => (
+                  <option key={cls.class_code} value={cls.class_code}>
+                    {cls.class_name}
+                  </option>
+                ))}
+              </select>
+            </article>
 
-          {/* Select subjects from dropdown */}
-          <article className="form-group">
-            <label className="form-label">Subject Name</label>
-            <select
-              name="subjectCode"
-              value={newSubject.subjectCode}
-              className="form-select"
-              onChange={handleAddSubjectChange}
-            >
-              <option value="" disabled>
-                Select Subject
-              </option>
-              {subjects.map((subject) => (
-                <option key={subject.subject_code} value={subject.subject_code}>
-                  {subject.subject_name}
+            {/* Select subjects from dropdown */}
+            <article className="form-group">
+              <label className="form-label">Subject Name</label>
+              <select
+                name="subjectCode"
+                value={newSubject.subjectCode}
+                className="form-select"
+                onChange={handleAddSubjectChange}
+              >
+                <option value="" disabled>
+                  Select Subject
                 </option>
-              ))}
-            </select>
-          </article>
-          <div className="flex gap-4">
-            {/* Start Time Input */}
-            <article className="form-group">
-              <label className="form-label">Start Time</label>
-              <input
-                type="time"
-                name="startTime"
-                value={newSubject.startTime}
-                className="form-input"
-                onChange={handleAddSubjectChange}
-              />
+                {subjects.map((subject) => (
+                  <option
+                    key={subject.subject_code}
+                    value={subject.subject_code}
+                  >
+                    {subject.subject_name}
+                  </option>
+                ))}
+              </select>
             </article>
+            <div className="flex gap-4">
+              {/* Start Time Input */}
+              <article className="form-group">
+                <label className="form-label">Start Time</label>
+                <input
+                  type="time"
+                  name="startTime"
+                  value={newSubject.startTime}
+                  className="form-input"
+                  onChange={handleAddSubjectChange}
+                />
+              </article>
 
-            {/* Date Input */}
-            <article className="form-group">
-              <label className="form-label">Date</label>
-              <input
-                type="date"
-                name="date"
-                value={newSubject.date}
-                className="form-input"
-                onChange={handleAddSubjectChange}
-              />
-            </article>
+              {/* Date Input */}
+              <article className="form-group">
+                <label className="form-label">Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={newSubject.date}
+                  className="form-input"
+                  onChange={handleAddSubjectChange}
+                />
+              </article>
+            </div>
+
+            <div className="flex gap-4">
+              {/* Total Questions */}
+              <article className="form-group">
+                <label htmlFor="totalQuestions" className="form-label">
+                  Total Questions
+                </label>
+                <input
+                  type="number"
+                  min={3}
+                  max={totalQuestions < 3 ? 0 : totalQuestions}
+                  name="totalQuestions"
+                  value={newSubject.totalQuestions}
+                  className="form-input"
+                  onChange={handleAddSubjectChange}
+                />
+              </article>
+
+              {/* Duration */}
+              <article className="form-group">
+                <label className="form-label">Duration</label>
+                <input
+                  type="number"
+                  min={30}
+                  max={60}
+                  name="duration"
+                  value={newSubject.duration}
+                  className="form-input"
+                  onChange={handleAddSubjectChange}
+                />
+              </article>
+            </div>
+
+            <p className="text-red-500">{warning}</p>
+
+            <div className="flex gap-4 mt-4">
+              <button
+                type="button"
+                className="form-button"
+                onClick={() => onModalClose(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="form-button"
+                onClick={handleAddSubject}
+              >
+                Add subject
+              </button>
+            </div>
           </div>
-
-          <div className="flex gap-4">
-            {/* Total Questions */}
-            <article className="form-group">
-              <label className="form-label">Total Questions</label>
-              <input
-                type="number"
-                min="3"
-                max="10"
-                name="totalQuestions"
-                value={newSubject.totalQuestions}
-                className="form-input"
-                onChange={handleAddSubjectChange}
-              />
-            </article>
-
-            {/* Duration */}
-            <article className="form-group">
-              <label className="form-label">Duration</label>
-              <input
-                type="number"
-                min="30"
-                max="60"
-                name="duration"
-                value={newSubject.duration}
-                className="form-input"
-                onChange={handleAddSubjectChange}
-              />
-            </article>
-          </div>
-
-          {/* Exam Type */}
-          <article className="form-group">
-            <label className="form-label">Exam Type</label>
-            <select
-              name="examType"
-              value={newSubject.examType}
-              className="form-select"
-              onChange={handleAddSubjectChange}
-            >
-              <option value="Online">Online</option>
-              <option value="inPerson">In Person</option>
-            </select>
-          </article>
-
-          {/* Teacher ID */}
-          <article className="form-group">
-            <label className="form-label">Teacher Name</label>
-            <input
-              type="text"
-              name="teacherId"
-              value={newSubject.teacherId}
-              className="form-input"
-              onChange={handleAddSubjectChange}
-            />
-          </article>
-          {/* <p>{message}</p> */}
-
-          <div className="flex gap-4 mt-4">
-            <button
-              type="button"
-              className="form-button"
-              onClick={() => onModalClose(false)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="form-button"
-              onClick={handleAddSubject}
-            >
-              Add subject
-            </button>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* <form onSubmit={handleSubmit}>
-        {subjects.map((subject) => (
-          <div key={subject.id}>
-            <label>
-              <input
-                type="checkbox"
-                value={subject.id}
-                onChange={handleCheckboxChange}
-                className="form-input"
-              />
-              {subject.subject_name}
-              <span>{subject.subject_code}</span>
-            </label>
-            <input
-              type="number"
-              placeholder="Number of questions"
-              className="form-input"
-            />
-            <input
-              type="number"
-              placeholder="Duration"
-              className="form-input"
-            />
-            <input
-              type="time"
-              placeholder="Start time"
-              className="form-input"
-            />
-            <input type="date" placeholder="Date" className="form-input" />
-            <input
-              type="text"
-              placeholder="Teacher name"
-              className="form-input"
-            />
-          </div>
-        ))}
-        <button type="submit" className="form-button">
-          Add Subjects to Exam
-        </button>
-        <button type="button" className="form-button">
-          Cancel
-        </button>
-      </form> */}
     </div>
   );
 }

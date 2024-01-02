@@ -17,8 +17,8 @@ function QuestionsAdd() {
   const [subjects, setSubjects] = useState([]);
 
   const [options, setOptions] = useState(["", "", "", ""]);
-  const [message, setMessage] = useState("");
 
+  const [message, setMessage] = useState("");
   const [warning, setWarning] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [type, setType] = useState("");
@@ -31,6 +31,7 @@ function QuestionsAdd() {
     }
   }, [selectedClass]);
 
+  // fetch classes for subject display
   const fetchClasses = async () => {
     try {
       const response = await axios.get(`${baseURL}/exams/add-question/classes`);
@@ -41,6 +42,7 @@ function QuestionsAdd() {
     }
   };
 
+  // fetch subjects based on the classId
   const fetchSubjects = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +55,7 @@ function QuestionsAdd() {
     }
   };
 
+  // add a question to the database
   const handleAddQuestion = async () => {
     try {
       // Ensure questionText and options are not empty
@@ -83,12 +86,14 @@ function QuestionsAdd() {
     }
   };
 
+  // manage the input of each form control
   const handleAddQuestionInput = (e) => {
     const { name, value } = e.target;
     setNewQuestions({ ...newQuestions, [name]: value });
     setMessage("");
   };
 
+  // close the alert button after success or failure
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
@@ -183,6 +188,7 @@ function QuestionsAdd() {
           </article>
         ))}
 
+        {/* Marks and Correct Option Inputs */}
         <div className="flex gap-8">
           {/* Marks Input */}
           <article className="form-group">
