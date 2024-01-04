@@ -109,7 +109,6 @@ const AdminDashboardHome = () => {
                     <th>Class</th>
                     <th>Mark</th>
                     <th>Grade</th>
-                    <th>Fee Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -134,8 +133,9 @@ const AdminDashboardHome = () => {
                           {Number(data.avg).toFixed(0) || "n.a."}%
                         </td>
 
-                        <td>{calculateGrade(data.avg && data.avg)}</td>
-                        <td style={{ color: "green" }}>Paid</td>
+                        <td className="font-semibold">
+                          {calculateGrade(data.avg && data.avg)}
+                        </td>
                       </tr>
                     ))}
                 </tbody>

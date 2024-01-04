@@ -595,7 +595,7 @@ const ExamModel = {
     return { examDetails: details, examCount: rowCount };
   },
 
-  // Get exam details for exam selected by exam Id
+  // Get exam details for draft exam selected by exam Id
   async getExamDetailsById(examId) {
     console.log("exam id :", examId);
 
@@ -618,6 +618,38 @@ const ExamModel = {
       const result = await pool.query(query, [examId]);
 
       console.log(result.rows);
+
+      return result.rows;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  // Get exam details for Ongoing exam
+  async getOngoingExamDetails(examId) {
+    const query = `
+    WITH class_student_count AS (
+      SELECT c.class_code, COUNT(DISTINCT s.student_id) as total_students
+      FROM classes c
+      join student_admission sa on sa.class_code = c.class_code
+      JOIN students s ON s.student_id = sa.student_id
+      GROUP BY c.class_code
+    ),
+    
+    exam_taken_count AS (
+      SELECT seg.class_code, COUNT(DISTINCT seg.student_id) as students_taken_exam
+      FROM student_exam_grades seg
+      WHERE seg.exam_id = $1
+      GROUP BY seg.class_code
+    )
+
+    SELECT csc.class_code, csc.total_students, etc.students_taken_exam
+    FROM class_student_count csc
+    JOIN exam_taken_count etc ON csc.class_code = etc.class_code
+    `;
+
+    try {
+      const result = await pool.query(query, [examId]);
 
       return result.rows;
     } catch (error) {
@@ -911,59 +943,6 @@ const ExamModel = {
 
   //   await pool.query(query, [subjectId]);
   // },
-
-  // TAKE EXAM: Retrieve all questions with options
-  async getQuestionsForExam(subjectId, examId) {
-    try {
-      // get number of questions
-      const result = await pool.query(
-        "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
-        [subjectId, examId]
-      );
-
-      const numQuestions = result.rows[0].no_of_questions;
-
-      const questionsResult = await pool.query(
-        `
-        SELECT * from questions        
-        WHERE subject_code = $1
-        ORDER BY RANDOM()
-        LIMIT $2
-        `,
-        [subjectId, numQuestions]
-      );
-
-      // ASSIGN RETRIEVED QUESTION TO questions VARIABLE
-      const questions = questionsResult.rows;
-
-      const questionsWithOptions = await Promise.all(
-        questions.map(async (question) => {
-          // map through each question and retrieve the options
-          const optionsResult = await pool.query(
-            "SELECT * FROM question_options WHERE question_id = $1",
-            [question.question_id]
-          );
-
-          // store options in an array for each question
-          const options = optionsResult.rows.map(
-            (option) => option.option_text
-          );
-
-          return {
-            subjectId: question.subject_code,
-            questionText: question.question_text,
-            options,
-            correctOption: question.correct_option,
-            marks: question.marks,
-          };
-        })
-      );
-
-      return { questionsWithOptions, numQuestions };
-    } catch (error) {
-      throw error;
-    }
-  },
 };
 
 ////////////////////////////////////////////////////////////////
@@ -1002,231 +981,6 @@ const ExamQuestionsModel = {
   },
 };
 
-/////////////////////////////////////////////////
-////////////////////////
-// STUDENT EXAMS MODEL
-////////////////////////
-
-const studentExamModel = {
-  async getAllExams() {
-    try {
-      const result = await pool.query("SELECT * FROM exams");
-      return result.rows;
-    } catch (error) {
-      console.log("Error fetching Exams:", error);
-      throw error;
-    }
-  },
-
-  // fetch examId for displaying relevant exams on exam list page
-
-  async getExamIdForExamListDisplay() {
-    const result = await pool.query("SELECT exam_id FROM exams");
-    const examId = result.rows;
-
-    // console.log("exam id: ", examId);
-
-    return examId;
-  },
-
-  // Get Class Exam
-  async getExamsByClassId(classId, studentId) {
-    try {
-      const result = await pool.query(
-        `
-      SELECT e.*, COUNT(es.subject_code) AS totalSubjects,
-        su.class_assigned
-      FROM 
-        exams e
-      LEFT JOIN 
-        exam_subjects es ON es.exam_id = e.exam_id
-      LEFT JOIN
-        subjects su ON su.subject_code = es.subject_code
-      LEFT JOIN
-        student_exam_grades seg 
-      ON 
-        e.exam_id = seg.exam_id
-      AND
-        es.subject_code = seg.subject_code
-      AND 
-        seg.student_id = $2
-
-
-      WHERE su.class_assigned = $1 AND e.published = true
-      AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
-
-      GROUP BY
-        e.exam_id, su.class_assigned
-      `,
-        [classId, studentId]
-      );
-
-      console.log(result.rows);
-
-      return result.rows;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Get exam details by classId
-  async getExamDetailsByClassIdAndStudentId(examId, classId, studentId) {
-    const result = await pool.query(
-      `SELECT e.*, es.*, su.*, seg.*
-        FROM 
-          exams e
-        JOIN 
-          exam_subjects es ON e.exam_id = es.exam_id
-        JOIN
-          subjects su ON es.subject_code = su.subject_code
-        LEFT JOIN
-          student_exam_grades seg 
-          ON 
-            e.exam_id = seg.exam_id
-          AND
-            es.subject_code = seg.subject_code
-          AND 
-            seg.student_id = $3
-          
-    
-        WHERE e.exam_id = $1 AND su.class_assigned = $2
-        AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
-        `,
-      [examId, classId, studentId]
-    );
-
-    return result.rows;
-  },
-
-  async submitExamResult(
-    studentId,
-    examId,
-    subjectId,
-    marksObtained,
-    isComplete,
-    classCode
-  ) {
-    const submitGradeQuery =
-      "INSERT INTO student_exam_grades (student_id, exam_id, subject_code, marks_obtained, completed, class_code) VALUES ($1, $2, $3, $4, $5, $6)";
-
-    // const client = pool.connect();
-    try {
-      await pool.query(submitGradeQuery, [
-        studentId,
-        examId,
-        subjectId,
-        marksObtained,
-        isComplete,
-        classCode,
-      ]);
-
-      return {
-        type: "success",
-        failure: "You have successfully completed your exam!",
-      };
-    } catch (error) {
-      console.log(error);
-
-      throw error;
-    }
-  },
-};
-
-//////////////////////////////////////////////
-
-const AdminReportModel = {
-  // Get report by exam
-
-  async getAllExamResult() {
-    const query = `
-    SELECT DISTINCT e.*, seg.completed 
-    FROM student_exam_grades seg
-    JOIN exams e
-    ON e.exam_id = seg.exam_id
-    WHERE seg.completed = true`;
-
-    try {
-      const result = await pool.query(query);
-
-      return result.rows;
-    } catch (error) {
-      throw error;
-    }
-  },
-  // Get report result
-  async getAllStudentResult(examId) {
-    const query = `
-    SELECT seg.student_id, AVG(seg.marks_obtained) AS average_grade, s.first_name, s.last_name, su.class_assigned 
-    FROM student_exam_grades seg
-    JOIN students s ON s.student_id = seg.student_id
-    LEFT JOIN subjects su ON su.subject_code = seg.subject_code
-    WHERE seg.exam_id = $1
-    GROUP BY seg.student_id, s.first_name, s.last_name, su.class_assigned
-
-    `;
-
-    try {
-      const result = await pool.query(query, [examId]);
-      // console.log(result.rows);
-
-      return result.rows;
-    } catch (error) {
-      console.log("Cannot display all student results");
-      throw error;
-    }
-  },
-
-  // Get Individaul Student Result
-  async getStudentResultById(studentId, examId) {
-    const query = `
-    SELECT seg.*, e.title, e.date_created, s.first_name, s.last_name, s.age, su.*
-    FROM student_exam_grades seg
-    JOIN exams e ON e.exam_id = seg.exam_id
-    JOIN students s
-    ON s.student_id = seg.student_id
-    LEFT JOIN subjects su
-    ON su.subject_code = seg.subject_code
-    WHERE seg.student_id = $1 AND seg.exam_id = $2
-
-    `;
-
-    try {
-      const result = await pool.query(query, [studentId, examId]);
-      // console.log("in get by student ID: ", result.rows);
-
-      return result.rows;
-    } catch (error) {
-      console.log("Cannot display Individual results");
-      throw error;
-    }
-  },
-
-  ////// IN STUDENT PANEL
-  // Get by student id
-  async getByStudentId(studentId) {
-    const query = `
-    SELECT seg.*, s.first_name, s.last_name, su.* 
-    FROM student_exam_grades seg
-    JOIN students s
-    ON s.student_id = seg.student_id
-    LEFT JOIN subjects su
-    ON su.subject_code = seg.subject_code
-    WHERE seg.student_id = $1
-
-    `;
-
-    try {
-      const result = await pool.query(query, [studentId]);
-      // console.log(result.rows);
-
-      return result.rows;
-    } catch (error) {
-      console.log("Cannot display results");
-      throw error;
-    }
-  },
-};
-
 module.exports = {
   SubjectModel,
   QuestionModel,
@@ -1234,6 +988,4 @@ module.exports = {
   ClassModel,
   ExamModel,
   ExamQuestionsModel,
-  studentExamModel,
-  AdminReportModel,
 };

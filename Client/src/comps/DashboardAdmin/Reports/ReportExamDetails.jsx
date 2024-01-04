@@ -16,7 +16,7 @@ function ReportExamDetails() {
     const fetchResults = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/get-result/${examId}`
+          `http://localhost:3000/admin/report/get-result/${examId}`
         );
 
         // console.log(response.data);
@@ -36,9 +36,9 @@ function ReportExamDetails() {
 
   return (
     <div>
-      <header className="bg-blue-200 py-8 px-4 mb-8 rounded-xl">
-        <h2>Exam Details</h2>
-        <h3>Exam report for {examId}</h3>
+      <header className="header">
+        <h2>Exam {examId} Report Details</h2>
+        <h3></h3>
       </header>
 
       <input

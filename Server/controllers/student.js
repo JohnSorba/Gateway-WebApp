@@ -1,4 +1,8 @@
-const { StudentModel, StudentAttendanceModel } = require("../models/student");
+const {
+  StudentModel,
+  StudentAttendanceModel,
+  studentExamModel,
+} = require("../models/student");
 
 const StudentController = {
   async getStudentById(req, res) {
@@ -47,4 +51,88 @@ const StudentAttendanceController = {
   },
 };
 
-module.exports = { StudentController, StudentAttendanceController };
+const StudentExamController = {
+  async getAllExams(req, res) {
+    const allExams = await studentExamModel.getAllExams();
+
+    res.status(200).json(allExams);
+  },
+
+  async getExamsByClassId(req, res) {
+    const { classId, studentId } = req.params;
+
+    try {
+      const allExams = await studentExamModel.getExamsByClassId(
+        classId,
+        studentId
+      );
+
+      res.status(200).json(allExams);
+    } catch (error) {
+      console.error("Error fetching student exams: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  async getExamDetailsByClassIdAndStudentId(req, res) {
+    const { examId, classId, studentId } = req.params;
+
+    try {
+      const allExams =
+        await studentExamModel.getExamDetailsByClassIdAndStudentId(
+          examId,
+          classId,
+          studentId
+        );
+
+      res.status(200).json(allExams);
+    } catch (error) {
+      console.error("Error fetching student exams: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  // TAKE EXAM: Retrieve all questions with options
+  async takeStudentExam(req, res) {
+    const { subjectId, examId } = req.params;
+
+    try {
+      const { questionsWithOptions, numQuestions } =
+        await studentExamModel.takeStudentExam(subjectId, examId);
+
+      res.status(200).json({ questionsWithOptions, numQuestions });
+    } catch (error) {
+      console.error("Error fetching questions: ", error);
+      res.status(500).json({ error: error });
+    }
+  },
+
+  // Submit grades for exam
+  async submitExamResult(req, res) {
+    const { examId, subjectId } = req.params;
+    const { studentId, marksObtained, isComplete, classCode } = req.body;
+
+    try {
+      const submitGrade = await studentExamModel.submitExamResult(
+        studentId,
+        examId,
+        subjectId,
+        marksObtained,
+        isComplete,
+        classCode
+      );
+
+      res.status(200).json({ message: submitGrade });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+};
+
+module.exports = {
+  StudentController,
+  StudentAttendanceController,
+  StudentExamController,
+};

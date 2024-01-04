@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useUser } from "../../../../Contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "../../DashboardData";
 
 /* eslint-disable react/prop-types */
 function FinishScreen({
@@ -30,7 +31,7 @@ function FinishScreen({
   const handleExamCompletion = async (examId, subjectId) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/exams/submit-grades/${examId}/${subjectId}`,
+        `${baseURL}/student/submit-grades/${examId}/${subjectId}`,
         { studentId, marksObtained, isComplete: true, classCode }
       );
       console.log(response.data.message);

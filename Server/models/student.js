@@ -72,4 +72,183 @@ const StudentAttendanceModel = {
   },
 };
 
-module.exports = { StudentModel, StudentAttendanceModel };
+/////////////////////////////////////////////////
+////////////////////////
+// STUDENT EXAMS MODEL
+////////////////////////
+
+const studentExamModel = {
+  async getAllExams() {
+    try {
+      const result = await pool.query("SELECT * FROM exams");
+
+      return result.rows;
+    } catch (error) {
+      console.log("Error fetching Exams:", error);
+      throw error;
+    }
+  },
+
+  // Get Class Exam
+  async getExamsByClassId(classId, studentId) {
+    const query = `
+    SELECT e.*, COUNT(es.subject_code) AS totalSubjects,
+      su.class_assigned
+    FROM 
+      exams e
+    JOIN 
+      exam_subjects es ON es.exam_id = e.exam_id
+    JOIN
+      subjects su ON su.subject_code = es.subject_code
+    LEFT JOIN
+      student_exam_grades seg 
+    ON 
+      e.exam_id = seg.exam_id
+    AND
+      es.subject_code = seg.subject_code
+    AND 
+      seg.student_id = $2
+
+    WHERE su.class_assigned = $1 AND e.published = true
+    AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+
+    GROUP BY
+      e.exam_id, su.class_assigned
+    `;
+
+    try {
+      const result = await pool.query(query, [classId, studentId]);
+
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Get exam details by classId
+  async getExamDetailsByClassIdAndStudentId(examId, classId, studentId) {
+    const query = `
+      SELECT e.*, es.*, su.*, seg.*
+        FROM 
+          exams e
+        JOIN 
+          exam_subjects es ON es.exam_id = e.exam_id
+        JOIN
+          subjects su ON su.subject_code = es.subject_code
+        LEFT JOIN
+          student_exam_grades seg 
+          ON 
+            seg.exam_id = e.exam_id
+          AND
+            seg.subject_code = seg.subject_code
+          AND 
+            seg.student_id = $3          
+    
+        WHERE e.exam_id = $1 AND su.class_assigned = $2
+        AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+        `;
+
+    try {
+      const result = await pool.query(query, [examId, classId, studentId]);
+
+      return result.rows;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  // TAKE EXAM: Retrieve all questions with options
+  async takeStudentExam(subjectId, examId) {
+    try {
+      // get number of questions
+      const result = await pool.query(
+        "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
+        [subjectId, examId]
+      );
+
+      const numQuestions = result.rows[0].no_of_questions;
+
+      const questionsResult = await pool.query(
+        `
+        SELECT q.*, su.subject_name
+        FROM 
+          questions q
+        JOIN 
+          subjects su ON su.subject_code = q.subject_code      
+        WHERE 
+          q.subject_code = $1
+
+        ORDER BY RANDOM()
+        LIMIT $2
+        `,
+        [subjectId, numQuestions]
+      );
+
+      // ASSIGN RETRIEVED QUESTION TO questions VARIABLE
+      const questions = questionsResult.rows;
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          // map through each question and retrieve the options
+          const optionsResult = await pool.query(
+            "SELECT * FROM question_options WHERE question_id = $1",
+            [question.question_id]
+          );
+
+          // store options in an array for each question
+          const options = optionsResult.rows.map(
+            (option) => option.option_text
+          );
+
+          return {
+            subjectId: question.subject_code,
+            subjectName: question.subject_name,
+            questionText: question.question_text,
+            options,
+            correctOption: question.correct_option,
+            marks: question.marks,
+          };
+        })
+      );
+
+      return { questionsWithOptions, numQuestions };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async submitExamResult(
+    studentId,
+    examId,
+    subjectId,
+    marksObtained,
+    isComplete,
+    classCode
+  ) {
+    const submitGradeQuery =
+      "INSERT INTO student_exam_grades (student_id, exam_id, subject_code, marks_obtained, completed, class_code) VALUES ($1, $2, $3, $4, $5, $6)";
+
+    // const client = pool.connect();
+    try {
+      await pool.query(submitGradeQuery, [
+        studentId,
+        examId,
+        subjectId,
+        marksObtained,
+        isComplete,
+        classCode,
+      ]);
+
+      return {
+        type: "success",
+        failure: "You have successfully completed your exam!",
+      };
+    } catch (error) {
+      console.log(error);
+
+      throw error;
+    }
+  },
+};
+
+module.exports = { StudentModel, StudentAttendanceModel, studentExamModel };

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../../../Contexts/UserContext";
 import { jsPDF } from "jspdf";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function ReportStudentDetails() {
   const [result, setResult] = useState([]);
@@ -20,11 +21,8 @@ function ReportStudentDetails() {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `http://localhost:3000/exams/student-result/${examId}/${studentId}`
+          `${baseURL}/admin/report/student-result/${examId}/${studentId}`
         );
-
-        // console.log(response.data);
-        console.log(response.data);
 
         setResult(response.data);
       } catch (error) {
@@ -49,9 +47,15 @@ function ReportStudentDetails() {
   return (
     <div id="details">
       <>
-        <h2>Student Report Details for {studentId}</h2>
+        <header className="header">
+          <h2>
+            {examDetails?.first_name} {examDetails?.last_name}&apos;s Report
+            Details
+          </h2>
+          <div></div>
+        </header>
 
-        <header className="flex items-start justify-between">
+        <div className="flex items-start justify-between">
           <div>
             <p>Exam Name: {examDetails?.title}</p>
             <p>Date Created: {examDetails?.date_created}</p>
@@ -65,7 +69,7 @@ function ReportStudentDetails() {
           <button className="form-button" onClick={handlePrint}>
             Print Report
           </button>
-        </header>
+        </div>
 
         <input
           type="search"

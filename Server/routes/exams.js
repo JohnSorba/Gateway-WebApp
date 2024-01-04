@@ -7,8 +7,6 @@ const {
   QuestionController,
   QuestionOptionsController,
   ExamController,
-  StudentExamController,
-  AdminReportController,
 } = require("../controllers/exams");
 
 //////////////////////////////////////////////////////
@@ -104,8 +102,14 @@ router.post("/publish/:examId", ExamController.publishExamSubjects);
 // Retrieve exam by quesiton Id
 router.get("/get-all-exams", ExamController.getAllExams);
 
-// Retrieve exam details by Id
-router.get("/exam-details/:examId", ExamController.getExamDetailsById);
+// Retrieve exam draft details by Id
+router.get("/exam-details/draft/:examId", ExamController.getExamDetailsById);
+
+// get ongoing exam details
+router.get(
+  "/exam-details/ongoing/:examId",
+  ExamController.getOngoingExamDetails
+);
 
 // fetch exam subject details for update
 router.get(
@@ -134,56 +138,4 @@ router.delete("/delete-exam/:examId", ExamController.deleteExam);
 // Take an exam
 router.get("/take-exam/:subjectId", ExamController.takeExam);
 
-/////////////////////////////////////////////////////
-////////////////////////
-// STUDENT EXAMS ROUTES
-////////////////////////
-
-// Fetch all exams for exam home
-router.get("/student-exam", StudentExamController.getAllExams);
-
-router.get("/get-exam-id", StudentExamController.getExamIdForExamListDisplay);
-// Fetch exams by class ID
-router.get(
-  "/student-exam/:classId/:studentId",
-  StudentExamController.getExamsByClassId
-);
-
-// get details for specific exam for a student
-router.get(
-  "/:examId/:classId/:studentId",
-  StudentExamController.getExamDetailsByClassIdAndStudentId
-);
-
-// Take Exam
-router.get(
-  "/take-exam/:examId/:subjectId",
-  StudentExamController.takeStudentExam
-);
-
-// Submit grades
-router.post(
-  "/submit-grades/:examId/:subjectId",
-  StudentExamController.submitExamResult
-);
-
-///////////////////////////////////////////////////////
-////////////////////////
-// EXAM RESULTS //
-////////////////////////
-
-// Get Result for admin
-router.get("/exam-result", AdminReportController.getAllExamResult);
-
-// Get all Result for admin
-router.get("/get-result/:examId", AdminReportController.getAllStudentResult);
-
-// Get student Result for admin
-router.get(
-  "/student-result/:examId/:studentId",
-  AdminReportController.getStudentResultById
-);
-
-// Get result for individual student (student dashboard)
-router.get("/result/:studentId", AdminReportController.getByStudentId);
 module.exports = router;

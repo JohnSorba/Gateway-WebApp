@@ -45,7 +45,7 @@ function ExamDetails() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `${baseURL}/exams/exam-details/${examId}`
+        `${baseURL}/exams/exam-details/draft/${examId}`
       );
 
       const data = response.data;

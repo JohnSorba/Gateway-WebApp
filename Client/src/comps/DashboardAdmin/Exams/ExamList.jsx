@@ -5,7 +5,7 @@ import { FaEdit, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./ExamHome.css";
 import Alert from "../../Utilities/Alert";
-import ConfirmDelete from "../../Utilities/ConfirmDelete";
+// import ConfirmDelete from "../../Utilities/ConfirmDelete";
 import { localDateString } from "../../Dashboard/DashboardData";
 
 function ExamList() {
@@ -15,7 +15,7 @@ function ExamList() {
   const [message, setMessage] = useState("");
   const [type, setType] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [examDelete, setExamDelete] = useState({ open: false, examId: null });
+  // const [examDelete, setExamDelete] = useState({ open: false, examId: null });
 
   useEffect(() => {
     fetchExams();
@@ -64,22 +64,22 @@ function ExamList() {
   // };
 
   //   Delete exam
-  const handleDeleteExam = async (examId) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:3000/exams/delete-exam/${examId}`
-      );
+  // const handleDeleteExam = async (examId) => {
+  //   try {
+  //     const response = await axios.delete(
+  //       `http://localhost:3000/exams/delete-exam/${examId}`
+  //     );
 
-      console.log(response);
+  //     console.log(response);
 
-      fetchExams();
-      setMessage(response.data);
-      setShowAlert(true);
-      setExamDelete({ open: false, examId: null });
-    } catch (error) {
-      console.error("Error deleting exam", error.response.data.message);
-    }
-  };
+  //     fetchExams();
+  //     setMessage(response.data);
+  //     setShowAlert(true);
+  //     setExamDelete({ open: false, examId: null });
+  //   } catch (error) {
+  //     console.error("Error deleting exam", error.response.data.message);
+  //   }
+  // };
 
   return (
     <div>
@@ -119,7 +119,7 @@ function ExamList() {
                   } `}
                 ></div>
                 <p className="text-sm">
-                  {item.published === true ? "Ongoing" : "Draft"}
+                  {item.published === true ? "In progress" : "Draft"}
                 </p>
               </div>
             </div>
@@ -134,9 +134,15 @@ function ExamList() {
                 className="w-6 h-6 text-red-400 icon"
                 onClick={() => handleExamDeleteModal(item.exam_id)}
               /> */}
-              <Link to={`exam-details/${item.exam_id}`}>
-                <FaEye className="w-6 h-6 text-green-600 icon" />
-              </Link>
+              {item.published === false ? (
+                <Link to={`draft/${item.exam_id}`}>
+                  <FaEye className="w-6 h-6 text-green-600 icon" />
+                </Link>
+              ) : (
+                <Link to={`ongoing/${item.exam_id}`}>
+                  <FaEye className="w-6 h-6 text-green-600 icon" />
+                </Link>
+              )}
             </div>
           </li>
         ))}
@@ -179,13 +185,13 @@ function ExamList() {
         </div>
       )}
 
-      {examDelete.open && (
+      {/* {examDelete.open && (
         <ConfirmDelete
           item="exam"
           onCancel={() => setExamDelete({ open: false, examId: null })}
           onDelete={() => handleDeleteExam(examDelete.examId)}
         />
-      )}
+      )} */}
 
       <Alert
         type={type}

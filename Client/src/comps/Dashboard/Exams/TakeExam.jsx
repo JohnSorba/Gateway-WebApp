@@ -136,7 +136,7 @@ export default function TakeExam() {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/exams/take-exam/${examId}/${subjectId}`
+          `${baseURL}/student/take-exam/${examId}/${subjectId}`
         );
 
         if (response.data) {

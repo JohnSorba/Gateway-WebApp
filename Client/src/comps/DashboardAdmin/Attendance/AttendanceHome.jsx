@@ -135,7 +135,7 @@ export default function AttendanceHome() {
           </div>
 
           <div></div>
-          <button>Add Attendance</button>
+          <h2>Attendance Summary</h2>
         </div>
       </header>
       {isLoading ? (

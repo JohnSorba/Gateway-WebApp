@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../../Loader";
 import { useUser } from "../../Contexts/UserContext";
+import { baseURL } from "./DashboardData";
 
 function Reports() {
   const [result, setResult] = useState([]);
@@ -14,7 +15,7 @@ function Reports() {
     const fetchStudents = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/result/${studentId}`
+          `${baseURL}/admin/report/result/${studentId}`
         );
 
         // console.log(response.data);
@@ -47,11 +48,8 @@ function Reports() {
           <tr>
             <th>###</th>
             <th>Exam ID</th>
-            <th>Student ID</th>
             <th>Full Name</th>
             <th>Subject Name</th>
-            <th>Subject Code</th>
-            <th>Class</th>
             <th>Marks (%)</th>
             <th>Action</th>
           </tr>
@@ -78,13 +76,11 @@ function Reports() {
                   <tr key={i}>
                     <td>00{i + 1}</td>
                     <td>{data.exam_id}</td>
-                    <td>{data.student_id}</td>
                     <td>
                       {data.first_name} {data.last_name}
                     </td>
                     <td>{data.subject_name}</td>
-                    <td>{data.subject_code}</td>
-                    <td>{data.class_assigned}</td>
+
                     <td>{data.marks_obtained}</td>
                     <td>
                       <button className="px-6 py-3 bg-blue-500">Details</button>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import Loader from "../../../Loader";
 import { useUser } from "../../../Contexts/UserContext";
-import { localDateString } from "../DashboardData";
+import { baseURL, localDateString } from "../DashboardData";
 // import TakeExam from "./TakeExam";
 
 function StudentExamDetails() {
@@ -20,11 +20,11 @@ function StudentExamDetails() {
     const fetchExams = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/${examId}/${classId}/${studentId}`
+          `${baseURL}/student/exam-details/${examId}/${classId}/${studentId}`
         );
 
         const data = await response.data;
-        //   console.log(data);
+        console.log(data);
 
         setExamDetails(data);
       } catch (error) {
@@ -45,16 +45,9 @@ function StudentExamDetails() {
 
   return (
     <div>
-      <h2>Exam Details</h2>
-      {examDetails && (
-        <div>
-          <h3>
-            <span>Exam Title: </span>
-            {examDetails[0].title}
-          </h3>
-          {/* Display other details */}
-        </div>
-      )}
+      <header className="header">
+        <h2>{examDetails && examDetails[0].title} Details</h2>
+      </header>
 
       {examDetails.length < 1 ? (
         <p>There are no exams available at this time!</p>

@@ -3,10 +3,11 @@ import axios from "axios";
 import Loader from "../../../Loader";
 import { useUser } from "../../../Contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function AdminReports() {
   const [result, setResult] = useState([]);
-  const { isLoading } = useUser();
+  const { isLoading, setIsLoading } = useUser();
 
   const navigate = useNavigate();
 
@@ -15,15 +16,15 @@ function AdminReports() {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/exams/exam-result`
-        );
-
+        setIsLoading(true);
+        const response = await axios.get(`${baseURL}/admin/report/exam-result`);
         // console.log(response.data);
 
         setResult(response.data);
       } catch (error) {
         console.error("Error fetching student results: ", error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -39,7 +40,10 @@ function AdminReports() {
   };
   return (
     <div>
-      <h1>Admin Reports</h1>
+      <header className="header">
+        <h2>Admin Reports</h2>
+        <div></div>
+      </header>
 
       {isLoading ? (
         <Loader />

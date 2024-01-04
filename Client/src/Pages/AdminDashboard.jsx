@@ -21,6 +21,7 @@ import ClassesDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassesDa
 import ClassDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassDailyAttendance";
 import ClassAttendanceDetails from "../comps/DashboardAdmin/Attendance/ClassAttendanceDetails";
 import StudentAttendanceDetails from "../comps/DashboardAdmin/Attendance/StudentAttendanceDetails";
+import ExamOngoing from "../comps/DashboardAdmin/Exams/ExamOngoing";
 
 function AdminDashboard() {
   return (
@@ -67,11 +68,12 @@ function AdminDashboard() {
         {/* EXAMS ROUTES */}
         <Route path="exams">
           <Route index element={<AdminExams />} />
-          <Route path="exam-list" element={<ExamList />} />
-          <Route
-            path="exam-list/exam-details/:examId"
-            element={<ExamDetails />}
-          />
+          <Route path="exam-list">
+            <Route index element={<ExamList />} />
+            <Route path="draft/:examId" element={<ExamDetails />} />
+            <Route path="ongoing/:examId" element={<ExamOngoing />} />
+          </Route>
+
           <Route path="exam-subjects/:examId" />
         </Route>
 

@@ -13,26 +13,25 @@ function Exams() {
   const studentId = userDetails && userDetails.student_id;
 
   useEffect(() => {
-    fetchExams();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const fetchExams = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}/student/all-student-exams/${classId}/${studentId}`
+        );
 
-  const fetchExams = async () => {
-    try {
-      const response = await axios.get(
-        `${baseURL}/exams/student-exam/${classId}/${studentId}`
-      );
+        const data = response.data;
+        // console.log(data);
 
-      const data = response.data;
-      console.log(data);
-
-      if (data) {
-        setExams(data);
+        if (data) {
+          setExams(data);
+        }
+      } catch (error) {
+        console.error("error: ", error);
       }
-    } catch (error) {
-      console.error("error: ", error);
-    }
-  };
+    };
+
+    fetchExams();
+  }, [classId, studentId]);
 
   return (
     <div>

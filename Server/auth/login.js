@@ -33,6 +33,7 @@ const login = async (req, res) => {
 
   try {
     const result = await pool.query(queries.loginQuery, [username]);
+
     // Check if user exists
     if (result.rows.length === 0) {
       return res
@@ -65,6 +66,8 @@ const login = async (req, res) => {
     if (matchDetails) {
       // If successful, create JWT token
       const token = generateAuthToken();
+
+      // response returned to the client
       return res.status(200).json({
         message: "Login successful!",
         token,

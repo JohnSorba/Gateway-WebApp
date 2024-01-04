@@ -5,8 +5,6 @@ const {
   ClassModel,
   ExamModel,
   ExamQuestionsModel,
-  studentExamModel,
-  AdminReportModel,
 } = require("../models/exams");
 const { StudentModel } = require("../models/student");
 
@@ -341,14 +339,27 @@ const ExamController = {
     }
   },
 
-  // Retrieve exam details by ID
+  // Retrieve exam details by Id for draft exam selected
   async getExamDetailsById(req, res) {
     try {
       const { examId } = req.params;
 
       const exam = await ExamModel.getExamDetailsById(examId);
 
-      res.json(exam);
+      res.status(200).json(exam);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  // Get exam details for Ongoing exam
+  async getOngoingExamDetails(req, res) {
+    try {
+      const { examId } = req.params;
+
+      const ongoingExam = await ExamModel.getOngoingExamDetails(examId);
+
+      res.status(200).json(ongoingExam);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -452,161 +463,10 @@ const ExamController = {
   },
 };
 
-const StudentExamController = {
-  async getAllExams(req, res) {
-    const allExams = await studentExamModel.getAllExams();
-
-    res.status(200).json(allExams);
-  },
-
-  // fetch examId for displaying relevant exams on exam list page
-  async getExamIdForExamListDisplay(req, res) {
-    try {
-      const examId = await studentExamModel.getExamIdForExamListDisplay();
-
-      res.status(200).json(examId);
-    } catch (error) {
-      console.error("Error fetching student exams: ", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  },
-
-  async getExamsByClassId(req, res) {
-    const { classId, studentId } = req.params;
-
-    try {
-      const allExams = await studentExamModel.getExamsByClassId(
-        classId,
-        studentId
-      );
-
-      res.status(200).json(allExams);
-    } catch (error) {
-      console.error("Error fetching student exams: ", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  },
-
-  async getExamDetailsByClassIdAndStudentId(req, res) {
-    const { examId, classId, studentId } = req.params;
-
-    try {
-      const allExams =
-        await studentExamModel.getExamDetailsByClassIdAndStudentId(
-          examId,
-          classId,
-          studentId
-        );
-
-      res.status(200).json(allExams);
-    } catch (error) {
-      console.error("Error fetching student exams: ", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  },
-
-  // TAKE EXAM: Retrieve all questions with options
-  async takeStudentExam(req, res) {
-    const subjectId = req.params.subjectId;
-    const examId = req.params.examId;
-
-    try {
-      const { questionsWithOptions, numQuestions } =
-        await ExamModel.getQuestionsForExam(subjectId, examId);
-
-      res.json({ questionsWithOptions, numQuestions });
-    } catch (error) {
-      console.error("Error fetching questions: ", error);
-      res.status(500).json({ error: error });
-    }
-  },
-
-  // Submit grades for exam
-  async submitExamResult(req, res) {
-    const { examId, subjectId } = req.params;
-    const { studentId, marksObtained, isComplete, classCode } = req.body;
-
-    try {
-      const submitGrade = await studentExamModel.submitExamResult(
-        studentId,
-        examId,
-        subjectId,
-        marksObtained,
-        isComplete,
-        classCode
-      );
-
-      res.status(200).json({ message: submitGrade });
-    } catch (error) {
-      console.log(error);
-
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  },
-};
-
-const AdminReportController = {
-  // Get By Exams
-  async getAllExamResult(req, res) {
-    // const {query} = req.params;
-    try {
-      const result = await AdminReportModel.getAllExamResult();
-
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
-  },
-
-  // Get all reports
-  async getAllStudentResult(req, res) {
-    const { examId } = req.params;
-
-    try {
-      const result = await AdminReportModel.getAllStudentResult(examId);
-
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
-  },
-
-  // Get all reports
-  async getStudentResultById(req, res) {
-    const { studentId, examId } = req.params;
-    // console.log("student ID: ", studentId);
-
-    try {
-      const result = await AdminReportModel.getStudentResultById(
-        studentId,
-        examId
-      );
-
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
-  },
-
-  // Get by student ID
-  async getByStudentId(req, res) {
-    const { studentId } = req.params;
-    try {
-      const result = await AdminReportModel.getByStudentId(studentId);
-
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
-  },
-};
-
 module.exports = {
   SubjectController,
   QuestionController,
   QuestionOptionsController,
   ClassController,
   ExamController,
-  StudentExamController,
-  AdminReportController,
 };

@@ -6,7 +6,6 @@ import Modal from "../../comps/RegistrationDetails/Modal";
 import { FaCheckCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../Contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
-import Loader from "../../Loader";
 import "./Login.css";
 import { useUser } from "../../Contexts/UserContext";
 
@@ -17,7 +16,7 @@ function Login({ modalOpen, setModalOpen }) {
   const [errors, setErrors] = useState({ username: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState("password");
-  const [animate, setAnimate] = useState(false);
+  // const [animate, setAnimate] = useState(false);
   const [loginStyle, setLoginStyle] = useState({
     error: false,
     success: false,
@@ -86,7 +85,7 @@ function Login({ modalOpen, setModalOpen }) {
         console.log(response);
 
         const data = response.data;
-        if (response.data) {
+        if (data) {
           // decode the token to access all values
           const decodedToken = jwtDecode(data.token);
           console.log("decoded token: ", decodedToken);
@@ -101,12 +100,14 @@ function Login({ modalOpen, setModalOpen }) {
 
           setMessage(response.data.message);
           setLoginStyle({ error: false, success: true });
+        } else {
+          setMessage("No Internet Connection!");
         }
         console.log(response.data);
       } catch (error) {
         if (error) {
-          setAnimate(false);
-          setTimeout(() => setAnimate(true), 10);
+          // setAnimate(false);
+          // setTimeout(() => setAnimate(true), 10);
           setMessage(error.response.data.error);
           setLoginStyle({ error: true, success: false });
         }
@@ -189,14 +190,26 @@ function Login({ modalOpen, setModalOpen }) {
           </div>
 
           <button
-            className={`${isLoading ? "bg-green-500" : "bg-blue-600"}`}
+            className={`${
+              isLoading
+                ? "bg-green-600"
+                : loginStyle.error === true
+                ? "bg-red-600"
+                : "bg-blue-600"
+            }`}
             type="submit"
           >
-            {isLoading ? <Loader /> : <p>Login</p>}
+            <p>
+              {isLoading
+                ? "Signing In..."
+                : loginStyle.error === true
+                ? message
+                : "Login"}
+            </p>
           </button>
-          <p className={`login-message ${animate ? "animate" : ""}`}>
+          {/* <p className={`login-message ${animate ? "animate" : ""}`}>
             {message}
-          </p>
+          </p> */}
         </form>
         {/* Open modal on login success */}
         <Modal isOpen={modalOpen}>
