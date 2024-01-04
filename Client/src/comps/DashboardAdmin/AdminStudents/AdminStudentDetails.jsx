@@ -6,8 +6,8 @@ import Loader from "../../../Loader";
 
 function AdminStudentDetails() {
   const [students, setStudents] = useState([]);
-  const { studentId } = useParams();
   const { setIsLoading, isLoading } = useUser();
+  const { studentId } = useParams();
 
   console.log(students);
 

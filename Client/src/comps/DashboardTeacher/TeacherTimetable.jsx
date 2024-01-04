@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUser } from "../../Contexts/UserContext";
+import { TimetableHeader } from "../DashboardAdmin/Timetable/AdminTimetable";
 
 function TeacherTimetable() {
   const [timetable, setTimetable] = useState(null);
@@ -63,16 +64,7 @@ function TeacherTimetable() {
           <div>
             <h2>Timetable for Class {userDetails.class_code}</h2>
             <table className="w-[750px] mx-auto">
-              <thead>
-                <tr className="text-sm text-center">
-                  <th className="w-[80px]">Day</th>
-                  <th>Period 1 (08:30)</th>
-                  <th>Period 2 (09:30)</th>
-                  <th>Break (09:30)</th>
-                  <th>Period 3 (10:30)</th>
-                  <th>Period 4 (11:30)</th>
-                </tr>
-              </thead>
+              <TimetableHeader />
 
               <tbody>
                 {timetable?.map((day) => (

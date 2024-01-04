@@ -1,3 +1,4 @@
+const { compareTime, scheduleExamLater } = require("../ServerData");
 const pool = require("../db");
 
 // SUBJECT MODEL
@@ -116,7 +117,8 @@ const QuestionModel = {
     } catch (error) {
       return {
         type: "failure",
-        message: "Cannot add new question in database!",
+        message:
+          "Cannot add new question! Ensure you select a subject before adding questions",
       };
     } finally {
       client.release;
@@ -323,6 +325,7 @@ const QuestionOptionsModel = {
   },
 };
 
+//////////////////////////////////////////////////////////////////
 const ClassModel = {
   async getSubjectsPerClass(classCode) {
     const query = "SELECT * FROM subjects WHERE class_assigned = $1";
@@ -338,19 +341,27 @@ const ClassModel = {
   },
 };
 
+//////////////////////////////////////////////////////////////////////
 /******************************************** */
 //  EXAM MODEL
 const ExamModel = {
   // Create an exam
-  async create(title) {
+  async createExam(title) {
+    if (title.length < 3) {
+      return {
+        type: "failure",
+        message: "Exam title must contain at least three characters!",
+      };
+    }
+
     const result = await pool.query(
-      "INSERT INTO exams ( title) VALUES ($1) RETURNING *",
+      "INSERT INTO exams (title, published) VALUES ($1, false) RETURNING *",
       [title]
     );
     return result.rows[0];
   },
 
-  // fetch total questions for subject
+  // fetch total questions for subject adding
   async totalQuestions(subjectId) {
     try {
       const result = await pool.query(
@@ -369,7 +380,7 @@ const ExamModel = {
   },
 
   // Add Subjects to Exam
-  async addExamSubjects(
+  async addExamSubject(
     examId,
     subjectCode,
     date,
@@ -379,6 +390,30 @@ const ExamModel = {
   ) {
     const totalQuestions = Number(numQuestions);
     const numDuration = Number(duration);
+    //////////////////////////////////////////////////////////////////////
+    // check to ensure exams are not scheduled for previous dates
+    const dateHasPassed = scheduleExamLater(date);
+
+    if (dateHasPassed === true) {
+      return {
+        type: "failure",
+        message:
+          "Cannot schedule exam. The date has already passed or is the current date.",
+      };
+    }
+
+    //////////////////////////////////////////////////////////////////////
+    // check to ensure that exams are only created during the school hours;
+    const isWithinSchoolTime = compareTime(startTime);
+
+    if (isWithinSchoolTime === false) {
+      return {
+        type: "failure",
+        message:
+          "Exams must be created during the school time (8:30 AM - 12:15 PM).",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
 
     // check if subject exists in exam_subjects table
     const checkSubjectExists = await pool.query(
@@ -470,9 +505,16 @@ const ExamModel = {
       return {
         type: "failure",
         message:
-          "Schedule Conflict: A subject is scheduled for the specific date and time!",
+          "Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
       };
     }
+
+    // else {
+    //   return {
+    //     type: "success",
+    //     message: "Mock Update",
+    //   };
+    // }
 
     // get questions from question table with the specified subject code
     // and limited to the number of questions required
@@ -521,27 +563,66 @@ const ExamModel = {
     }
   },
 
-  // Get all exam
-  async getAllExams() {
-    const result = await pool.query("SELECT * FROM exams");
-    return result.rows;
+  // publish Exam Subjects
+  async publishExamSubjects(examId) {
+    try {
+      await pool.query("UPDATE exams SET published = true WHERE exam_id = $1", [
+        examId,
+      ]);
+
+      return {
+        type: "success",
+        message: "Exam Published Successfully!",
+      };
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Failed to publish subjects for exam!",
+      };
+    }
   },
 
-  // Get exam details
-  async getById(examId) {
+  // Get all exams for displaying list of all exams created
+  // Also used to display total count stats on exam home page
+  async getAllExams() {
     const result = await pool.query(
-      `SELECT e.*, es.*, s.subject_name, c.class_name
-      FROM exams e
-      JOIN exam_subjects es ON es.exam_id = e.exam_id
-      JOIN subjects s ON s.subject_code = es.subject_code
-      JOIN classes c ON c.class_code = s.class_assigned
-      WHERE e.exam_id = $1
-      ORDER BY es.exam_date 
-      `,
-      [examId]
+      "SELECT * FROM exams ORDER BY date_created DESC"
     );
 
-    return result.rows;
+    const rowCount = result.rowCount;
+    const details = result.rows;
+
+    return { examDetails: details, examCount: rowCount };
+  },
+
+  // Get exam details for exam selected by exam Id
+  async getExamDetailsById(examId) {
+    console.log("exam id :", examId);
+
+    const query = `
+    SELECT e.*, es.*, s.subject_name, c.class_name
+    FROM 
+      exams e
+    JOIN 
+      exam_subjects es ON es.exam_id = e.exam_id
+    JOIN 
+      subjects s ON s.subject_code = es.subject_code
+    JOIN 
+      classes c ON c.class_code = s.class_assigned  
+      
+    WHERE e.exam_id = $1
+    ORDER BY es.exam_date 
+      `;
+
+    try {
+      const result = await pool.query(query, [examId]);
+
+      console.log(result.rows);
+
+      return result.rows;
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   // fetch exam subject details for update
@@ -564,7 +645,7 @@ const ExamModel = {
     }
   },
 
-  // Update subject in an exam
+  // Update subject in selected exam
   async updateExamSubject(
     examId,
     subjectId,
@@ -573,67 +654,63 @@ const ExamModel = {
     duration,
     noOfQuestions
   ) {
-    //////////////////////////////////////////////////////////////////////
+    const localDateString = (date) => {
+      const retrievedDate = new Date(date);
+      const localDateString = retrievedDate.toLocaleDateString();
+
+      return localDateString;
+    };
+
     const checkSubjectExists = await pool.query(
       "SELECT * FROM exam_subjects WHERE subject_code = $1 AND exam_id = $2",
       [subjectId, examId]
     );
 
+    // Assign values retrieved from database to respective variables
     const dateQuery = checkSubjectExists.rows[0].exam_date;
-    const newDateQuery = String(dateQuery);
+    const dateStored = localDateString(dateQuery);
     const timeQuery = checkSubjectExists.rows[0].start_time;
     const totalQuestionsQuery = checkSubjectExists.rows[0].no_of_questions;
     const durationQuery = checkSubjectExists.rows[0].duration;
 
-    const queries = {
-      date: dateQuery,
-      time: timeQuery,
-      totalQuestions: totalQuestionsQuery,
-      duration: durationQuery,
-    };
+    // convert the date received to appropriate format
+    const dateReceived = localDateString(date);
 
-    const received = {
-      date: dateQuery,
-      time: timeQuery,
-      totalQuestions: totalQuestionsQuery,
-      duration: durationQuery,
-    };
+    //////////////////////////////////////////////////////////////////////
+    // check to ensure exams are not scheduled for previous dates
+    const dateHasPassed = scheduleExamLater(date);
 
-    if (queries == received) {
-      console.log("queries = received");
+    if (dateHasPassed === true) {
+      return {
+        type: "failure",
+        message:
+          "Cannot re-schedule exam to this day. The date has already passed or is the current date.",
+      };
     }
 
-    console.log("------------------------");
+    //////////////////////////////////////////////////////////////////////
+    // check to ensure that exams are only created during the school hours;
+    const isWithinSchoolTime = compareTime(startTime);
 
-    console.log("queries: ", queries);
-    console.log("received: ", received);
-
-    console.log("------------------------");
-    console.log("date Query: ", typeof newDateQuery);
-    console.log("time: ", typeof timeQuery);
-    console.log("duration: ", typeof durationQuery);
-    console.log("questions: ", typeof totalQuestionsQuery);
-    console.log("------------------------");
-    console.log("date received: ", typeof date);
-    console.log("time: ", typeof startTime);
-    console.log("duration: ", typeof duration);
-    console.log("questions: ", typeof noOfQuestions);
-    console.log("------------------------");
-
-    console.log(date === newDateQuery);
-    console.log(startTime === timeQuery);
-    console.log(duration === durationQuery);
-    console.log(noOfQuestions === totalQuestionsQuery);
+    if (isWithinSchoolTime === false) {
+      return {
+        type: "failure",
+        message:
+          "Exams must be created during the school time (8:30 AM - 12:15 PM).",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
 
     // check if subject exists in exam already and show Warning
     if (
+      dateReceived === dateStored &&
       startTime === timeQuery &&
       duration === durationQuery &&
       noOfQuestions === totalQuestionsQuery
     ) {
       return {
         type: "failure",
-        message: `No update for ${subjectId}!`,
+        message: `Alert! No updates were made as the provided values match the existing entries for the subject!`,
       };
     }
 
@@ -668,8 +745,7 @@ const ExamModel = {
     if (twoSubjectsPerDay.rows.length >= 2) {
       return {
         type: "failure",
-        message:
-          "Each class is restricted to a maximum of two subjects per day!",
+        message: "Each class is restricted to a maximum of two exams per day!",
       };
     }
     //////////////////////////////////////////////////////////////////////
@@ -712,7 +788,7 @@ const ExamModel = {
       return {
         type: "failure",
         message:
-          "Schedule Conflict: A subject is scheduled for the specific date and time!",
+          "Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
       };
     } else {
       return {
@@ -756,7 +832,7 @@ const ExamModel = {
       (await client).query("BEGIN");
 
       await pool.query(query, [
-        date,
+        dateReceived,
         startTime,
         duration,
         noOfQuestions,
@@ -803,39 +879,40 @@ const ExamModel = {
     }
   },
 
-  // Update an exam
-  async update(examId, title) {
-    const result = await pool.query(
+  // Update an exam title
+  async updateExamTitle(examId, title) {
+    await pool.query(
       "UPDATE exams SET title = $1 WHERE exam_id = $2 RETURNING *",
       [title, examId]
     );
-    return result.rows[0];
+    return { type: "success", message: `Title updated to '${title}'` };
   },
 
   // Delete an exam
-  async delete(examId) {
+  async deleteExam(examId) {
     try {
+      // Delete related record in exam subject
       await pool.query("DELETE FROM exam_subjects WHERE exam_id = $1", [
         examId,
       ]);
+
+      // Delete main exam record
       await pool.query("DELETE FROM exams WHERE exam_id = $1", [examId]);
 
-      return "Exam Deleted Successfully!";
+      return { type: "success", message: "Exam Deleted Successfully!" };
     } catch (error) {
-      console.error(error);
-
-      throw error;
+      return { type: "failure", message: "Cannot delete exam record!" };
     }
   },
 
-  async noOfQuestions(subjectId) {
-    const query =
-      "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1";
+  // async noOfQuestions(subjectId) {
+  //   const query =
+  //     "SELECT no_of_questions FROM exam_subjects WHERE subject_code = $1";
 
-    await pool.query(query, [subjectId]);
-  },
+  //   await pool.query(query, [subjectId]);
+  // },
 
-  // Get questions with options
+  // TAKE EXAM: Retrieve all questions with options
   async getQuestionsForExam(subjectId, examId) {
     try {
       // get number of questions
@@ -889,6 +966,7 @@ const ExamModel = {
   },
 };
 
+////////////////////////////////////////////////////////////////
 /*********************************************** */
 //  EXAM QUESTIONS MODEL
 const ExamQuestionsModel = {
@@ -924,6 +1002,7 @@ const ExamQuestionsModel = {
   },
 };
 
+/////////////////////////////////////////////////
 ////////////////////////
 // STUDENT EXAMS MODEL
 ////////////////////////
@@ -939,25 +1018,50 @@ const studentExamModel = {
     }
   },
 
+  // fetch examId for displaying relevant exams on exam list page
+
+  async getExamIdForExamListDisplay() {
+    const result = await pool.query("SELECT exam_id FROM exams");
+    const examId = result.rows;
+
+    // console.log("exam id: ", examId);
+
+    return examId;
+  },
+
   // Get Class Exam
-  async getByClassId(classId) {
+  async getExamsByClassId(classId, studentId) {
     try {
       const result = await pool.query(
-        `SELECT exams.exam_id, exams.title, exams.date_created, COUNT(exam_subjects.subject_code) AS numSubjects,
-        subjects.class_assigned
+        `
+      SELECT e.*, COUNT(es.subject_code) AS totalSubjects,
+        su.class_assigned
       FROM 
-        exams 
+        exams e
       LEFT JOIN 
-        exam_subjects ON exams.exam_id = exam_subjects.exam_id 
+        exam_subjects es ON es.exam_id = e.exam_id
       LEFT JOIN
-        subjects ON exam_subjects.subject_code = subjects.subject_code
-      WHERE subjects.class_assigned = $1
-      
+        subjects su ON su.subject_code = es.subject_code
+      LEFT JOIN
+        student_exam_grades seg 
+      ON 
+        e.exam_id = seg.exam_id
+      AND
+        es.subject_code = seg.subject_code
+      AND 
+        seg.student_id = $2
+
+
+      WHERE su.class_assigned = $1 AND e.published = true
+      AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+
       GROUP BY
-        exams.exam_id, subjects.class_assigned
+        e.exam_id, su.class_assigned
       `,
-        [classId]
+        [classId, studentId]
       );
+
+      console.log(result.rows);
 
       return result.rows;
     } catch (error) {
@@ -965,42 +1069,31 @@ const studentExamModel = {
     }
   },
 
-  // Get exam details
-  async getByStudentExamId(examId) {
-    const result = await pool.query(
-      `SELECT exams.*, exam_subjects.*
-        FROM exams 
-        JOIN exam_subjects ON exam_subjects.exam_id = exams.exam_id
-        WHERE exams.exam_id = $1`,
-      [examId]
-    );
-
-    return result.rows;
-  },
-
   // Get exam details by classId
-  async getExamDetailsByClassId(examId, classId, studentId) {
+  async getExamDetailsByClassIdAndStudentId(examId, classId, studentId) {
     const result = await pool.query(
-      `SELECT exams.*, exam_subjects.*, subjects.*, student_exam_grades.*
+      `SELECT e.*, es.*, su.*, seg.*
         FROM 
-          exams 
+          exams e
         JOIN 
-          exam_subjects ON exams.exam_id = exam_subjects.exam_id
+          exam_subjects es ON e.exam_id = es.exam_id
         JOIN
-          subjects ON exam_subjects.subject_code = subjects.subject_code
+          subjects su ON es.subject_code = su.subject_code
         LEFT JOIN
-          student_exam_grades ON exams.exam_id = student_exam_grades.exam_id
-          AND exam_subjects.subject_code = student_exam_grades.subject_code
-          AND student_exam_grades.student_id = $3
+          student_exam_grades seg 
+          ON 
+            e.exam_id = seg.exam_id
+          AND
+            es.subject_code = seg.subject_code
+          AND 
+            seg.student_id = $3
           
     
-        WHERE exams.exam_id = $1 AND subjects.class_assigned = $2
-        AND (student_exam_grades.completed = false OR student_exam_grades.completed IS NULL OR student_exam_grades.student_id IS NULL)
+        WHERE e.exam_id = $1 AND su.class_assigned = $2
+        AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
         `,
       [examId, classId, studentId]
     );
-
-    console.log("result: ", result.rows);
 
     return result.rows;
   },
@@ -1010,10 +1103,11 @@ const studentExamModel = {
     examId,
     subjectId,
     marksObtained,
-    isComplete
+    isComplete,
+    classCode
   ) {
     const submitGradeQuery =
-      "INSERT INTO student_exam_grades (student_id, exam_id, subject_code, marks_obtained, completed) VALUES ($1, $2, $3, $4, $5)";
+      "INSERT INTO student_exam_grades (student_id, exam_id, subject_code, marks_obtained, completed, class_code) VALUES ($1, $2, $3, $4, $5, $6)";
 
     // const client = pool.connect();
     try {
@@ -1023,9 +1117,13 @@ const studentExamModel = {
         subjectId,
         marksObtained,
         isComplete,
+        classCode,
       ]);
 
-      return "You have successfully completed your exam!";
+      return {
+        type: "success",
+        failure: "You have successfully completed your exam!",
+      };
     } catch (error) {
       console.log(error);
 
@@ -1033,6 +1131,8 @@ const studentExamModel = {
     }
   },
 };
+
+//////////////////////////////////////////////
 
 const AdminReportModel = {
   // Get report by exam

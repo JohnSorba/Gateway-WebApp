@@ -6,7 +6,7 @@ function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
 
   useEffect(() => {
     setSubjectName(subject.subject_name);
-  }, []);
+  }, [subject.subject_name]);
 
   const handleUpdateSubmit = (e) => {
     e.preventDefault();

@@ -68,7 +68,10 @@ function AdminDashboard() {
         <Route path="exams">
           <Route index element={<AdminExams />} />
           <Route path="exam-list" element={<ExamList />} />
-          <Route path="exam-details/:examId" element={<ExamDetails />} />
+          <Route
+            path="exam-list/exam-details/:examId"
+            element={<ExamDetails />}
+          />
           <Route path="exam-subjects/:examId" />
         </Route>
 

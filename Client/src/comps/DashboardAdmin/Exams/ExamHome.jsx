@@ -10,7 +10,7 @@ import { FcViewDetails } from "react-icons/fc";
 import { PiBooksFill } from "react-icons/pi";
 
 function ExamHome() {
-  const [exams, setExams] = useState([]);
+  const [examsCount, setExamsCount] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [subjects, setSubjects] = useState([]);
 
@@ -26,10 +26,9 @@ function ExamHome() {
         `http://localhost:3000/exams/get-all-exams`
       );
 
-      const data = response.data;
-      //   console.log(data);
+      const data = response.data.examCount;
 
-      setExams(data);
+      setExamsCount(data);
     } catch (error) {
       console.error("Error fetching exams: ", error);
     }
@@ -42,7 +41,6 @@ function ExamHome() {
       );
 
       const data = response.data;
-      // console.log(data);
 
       setQuestions(data);
     } catch (error) {
@@ -70,7 +68,7 @@ function ExamHome() {
       title: "Exam List",
       subtitle: "Total Exams",
       icon: <PiStudentFill />,
-      value: exams.length,
+      value: examsCount,
       backgroundColor: "#6DB9EF",
       link: "/dashboard/admin/exams/exam-list",
     },
@@ -110,9 +108,10 @@ function ExamHome() {
 
   return (
     <div>
-      {/* <header className="mb-8 flex justify-end">
+      <header className="header">
+        <h2 className="m-0">Exams Management</h2>
         <button className="text-xl">Create Exam</button>
-      </header> */}
+      </header>
       <div className="exams">
         {examPageData.map((item) => (
           <article

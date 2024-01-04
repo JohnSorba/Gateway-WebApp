@@ -30,7 +30,7 @@ function HomePage() {
 
   return (
     <section className="homepage">
-      <header className="header">
+      <header className="home-header">
         <nav className="navbar container">
           <h1 className="text-3xl font-semibold m-0">
             <img src="/gateway_logo_final.png" alt="gateway logo" />
@@ -96,8 +96,6 @@ function HomePage() {
       </header>
 
       {/* <main>Main</main> */}
-
-      {/* <div className="register"></div> */}
     </section>
   );
 }

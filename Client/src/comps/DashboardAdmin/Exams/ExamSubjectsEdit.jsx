@@ -132,16 +132,16 @@ function ExamSubjectsEdit({
       <div>
         <div className="modal-backdrop"></div>
 
-        <div className="modal">
-          <header className="mb-4">
-            <h3 className="text-lg font-semibold">
-              Editing {subjectDetails && subjectDetails.subject_name} Details
-            </h3>
-            <p className="text-red-500">Fill in details in all fields.</p>
-          </header>
-          {isLoading ? (
-            <Loader />
-          ) : (
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <div className="modal">
+            <header className="mb-4">
+              <h3 className="text-lg font-semibold">
+                Editing {subjectDetails && subjectDetails.subject_name} Details
+              </h3>
+              <p className="text-red-500">Fill in details in all fields.</p>
+            </header>
             <main>
               <div className="flex gap-4">
                 {/* Start Time Input */}
@@ -192,7 +192,7 @@ function ExamSubjectsEdit({
                   <input
                     type="number"
                     min={30}
-                    max={60}
+                    max={45}
                     name="duration"
                     value={editSubject.duration}
                     className="form-input"
@@ -203,25 +203,25 @@ function ExamSubjectsEdit({
 
               <p className="text-red-500 text-center mt-2 mb-8">{warning}</p>
             </main>
-          )}
 
-          <footer className="flex gap-4 justify-center">
-            <button
-              type="button"
-              className="form-button"
-              onClick={() => onModalClose(false)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="form-button"
-              onClick={handleEditExamSubject}
-            >
-              Update subject
-            </button>
-          </footer>
-        </div>
+            <footer className="flex gap-4 justify-center">
+              <button
+                type="button"
+                className="bg-red-600 text-white"
+                onClick={() => onModalClose(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-green-600 text-white"
+                onClick={handleEditExamSubject}
+              >
+                Update subject
+              </button>
+            </footer>
+          </div>
+        )}
       </div>
     </div>
   );

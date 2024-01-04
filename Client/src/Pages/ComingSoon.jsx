@@ -25,9 +25,9 @@ function ComingSoon() {
         <p className=" text-white text-md">
           By Daniel Ndanema — 1100602083 — Major Project II
         </p>
-        <h3 className="text-2xl text-white">Coming Soon!</h3>
+        <h3 className="text-2xl text-white">In Progress!</h3>
 
-        <Link to="home" className="intro-link form-button">
+        <Link to="home" className="intro-link bg-green-500">
           Go to Project
         </Link>
       </div>

@@ -9,15 +9,18 @@ import { jwtDecode } from "jwt-decode";
 // create context
 export const AuthContext = createContext(null);
 
+// Initial state of user authentication values
+const authStateData = {
+  token: null,
+  username: null,
+  role: null,
+  userId: null,
+};
+
 // Provider component
 export function AuthProvider({ children }) {
   const [isAuthChecked, setIsAuthChecked] = useState(false);
-  const [authState, setAuthState] = useState({
-    token: null,
-    username: null,
-    role: null,
-    userId: null,
-  });
+  const [authState, setAuthState] = useState(authStateData);
 
   // Function to update state on login
   const login = (token, role, username, userId) => {
@@ -33,12 +36,16 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("accountData");
+    localStorage.removeItem("editData");
+    localStorage.removeItem("stats");
+    localStorage.removeItem("userDetails");
     setAuthState({ token: null, role: null, username: null, userId: null });
 
     // localStorage.removeItem("userData");
   };
 
   useEffect(() => {
+    // get token when on page refresh
     const token = localStorage.getItem("token");
 
     if (token) {

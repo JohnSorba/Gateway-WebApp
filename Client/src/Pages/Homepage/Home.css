@@ -1,5 +1,5 @@
 /* Homepage Styles */
-.homepage .header::before {
+.homepage .home-header::before {
   content: "";
   position: absolute;
   top: 0;
@@ -14,7 +14,7 @@
   z-index: 1;
 }
 
-.homepage .header {
+.homepage .home-header {
   position: relative;
   display: grid;
   grid-template-columns: auto;
@@ -26,7 +26,7 @@
 }
 
 /* Navbar Styles */
-.header .navbar {
+.home-header .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
@@ -5,27 +7,35 @@ import { MdDeleteForever } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import AddExamSubject from "./AddExamSubject";
 import Loader from "../../../Loader";
-import { localDateString } from "../../Dashboard/DashboardData";
+import { baseURL, localDateString } from "../../Dashboard/DashboardData";
 import Alert from "../../Utilities/Alert";
 import ExamSubjectsEdit from "./ExamSubjectsEdit";
 import ConfirmDelete from "../../Utilities/ConfirmDelete";
+import { useUser } from "../../../Contexts/UserContext";
+import { PiWarningCircleFill } from "react-icons/pi";
+
+const edit = {
+  open: false,
+  subjectId: null,
+};
+const deleteSubject = {
+  open: false,
+  id: null,
+};
 
 function ExamDetails() {
   const { examId } = useParams();
-  const [examDetails, setExamDetails] = useState(null);
+  const [examDetails, setExamDetails] = useState([]);
   const [addSubjectModal, setAddSubjectModal] = useState(false);
-  const [editSubjectModal, setEditSubjectModal] = useState({
-    open: false,
-    subjectId: null,
-  });
-  const [deleteExamSubject, setDeleteExamSubject] = useState({
-    open: false,
-    id: null,
-  });
+  const [editSubjectModal, setEditSubjectModal] = useState(edit);
+  const [deleteExamSubject, setDeleteExamSubject] = useState(deleteSubject);
 
   const [message, setMessage] = useState("");
   const [type, setType] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [publishModal, setPublishModal] = useState(false);
+  const { isLoading, setIsLoading } = useUser();
 
   useEffect(() => {
     fetchExams(examId);
@@ -33,14 +43,33 @@ function ExamDetails() {
 
   const fetchExams = async (examId) => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/exams/get-exam/${examId}`
+        `${baseURL}/exams/exam-details/${examId}`
       );
 
-      const data = await response.data;
-      //   console.log(data);
+      const data = response.data;
 
       setExamDetails(data);
+    } catch (error) {
+      console.error("Error fetching exams: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Publish exam for student interaction
+  const handlePublishExam = async () => {
+    try {
+      const response = await axios.post(`${baseURL}/exams/publish/${examId}`);
+
+      const data = response.data;
+      console.log(data);
+
+      setMessage(data.message);
+      setType(data.type);
+      setShowAlert(true);
+      console.log("Exam published");
     } catch (error) {
       console.error("Error fetching exams: ", error);
     }
@@ -73,35 +102,60 @@ function ExamDetails() {
     setDeleteExamSubject({ open: true, id: subjectId });
   };
 
-  if (examDetails === null) {
+  if (examDetails.length === 0) {
     return <Loader />;
   }
 
   return (
     <div>
-      <h2>Exam Details For {examDetails && examDetails[0]?.title}</h2>
-
-      <button className="mb-8" onClick={() => setAddSubjectModal(true)}>
-        Add Subject To Exam
-      </button>
-      {/* {examDetails && (
+      <header className="header">
         <div>
-          <h3>
-            <span>Exam Title: </span>
-            {examDetails && examDetails[0]?.title}
-          </h3>
+          <h2 className="m-0 text-3xl font-semibold">
+            {examDetails && examDetails[0].title} Details
+          </h2>
+          {examDetails && examDetails.length > 0 ? (
+            <p>{examDetails.length} subjects added to this exam</p>
+          ) : (
+            <p>Add Subjects to this exam!</p>
+          )}
         </div>
-      )} */}
 
-      {examDetails && examDetails.length < 1 ? (
-        <p>There are no exams available at this time!</p>
+        <div className="flex gap-4">
+          <button onClick={() => setAddSubjectModal(true)}>Add Subject</button>
+          <button
+            className="bg-red-600"
+            onClick={() => setShowInstructions(true)}
+          >
+            View Instructions
+          </button>
+          {examDetails.length >= 1 && (
+            <button
+              className="bg-green-600"
+              onClick={() => setPublishModal(true)}
+            >
+              Publish
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* Exam Instructions */}
+      {showInstructions && (
+        <ExamInstructions onShowInstructions={setShowInstructions} />
+      )}
+
+      {/* Table Display */}
+      {isLoading ? (
+        <Loader />
+      ) : examDetails.length < 1 ? (
+        <p>There are no subjects available in this exam!</p>
       ) : (
         <div className="table-container">
           <table>
             <thead>
               <tr>
                 <th>##</th>
-                <th>Subject</th>
+                <th className="text-left pl-5">Subject</th>
                 <th>Code</th>
                 <th>Class</th>
                 <th>Date</th>
@@ -115,10 +169,10 @@ function ExamDetails() {
 
             <tbody>
               {examDetails &&
-                examDetails?.map((item, i) => (
+                examDetails.map((item, i) => (
                   <tr key={item.subject_code}>
                     <td>{i + 1}</td>
-                    <td>{item.subject_name}</td>
+                    <td className="text-left pl-5">{item.subject_name}</td>
                     <td>{item.subject_code}</td>
                     <td>{item.class_name}</td>
                     <td>{localDateString(item.exam_date)}</td>
@@ -128,13 +182,13 @@ function ExamDetails() {
                     <td>{item.total_marks}</td>
                     <td className="flex justify-center gap-4">
                       <FaEdit
-                        className="w-6 h-6 text-green-400 cursor-pointer"
+                        className="w-6 h-6 text-green-600 cursor-pointer"
                         onClick={() =>
                           handleEditSubjectModal(item.subject_code)
                         }
                       />
                       <MdDeleteForever
-                        className="w-6 h-6 text-red-700 cursor-pointer"
+                        className="w-6 h-6 text-red-600 cursor-pointer"
                         onClick={() =>
                           handleDeleteSubjectModal(item.subject_code)
                         }
@@ -184,6 +238,39 @@ function ExamDetails() {
         />
       )}
 
+      {publishModal && (
+        <div className="w-[400px]">
+          {" "}
+          <div className="modal-backdrop"></div>
+          <div className="modal flex flex-col items-center w-[600px]">
+            <div className="flex gap-4 items-start">
+              <PiWarningCircleFill className="h-12 w-12 text-yellow-400" />
+              <div>
+                <p className="font-semibold text-lg">
+                  Are you sure you want to publish this exam?
+                </p>
+                <p className="text-sm btn-danger mb-8">
+                  After publishing, students will be able to take the subjects
+                  based on their classes.
+                </p>
+              </div>
+            </div>
+
+            <footer className="flex gap-4">
+              <button
+                className="bg-red-600"
+                onClick={() => setPublishModal(false)}
+              >
+                Deny
+              </button>
+              <button className="bg-green-600" onClick={handlePublishExam}>
+                Confirm
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
+
       <Alert
         type={type}
         message={message}
@@ -195,3 +282,50 @@ function ExamDetails() {
 }
 
 export default ExamDetails;
+
+export const ExamInstructions = ({ onShowInstructions }) => {
+  return (
+    <article>
+      <div>
+        <div className="modal-backdrop"></div>
+        <div className="modal flex flex-col gap-6 items-start">
+          <h3 className="text-2xl font-semibold border-b-2 border-red-600 w-full pb-2">
+            Exam Instructions
+          </h3>
+          <ol className="list-decimal list-inside flex flex-col gap-2">
+            <li>
+              All exams must be created within the school time (8:30 AM - 12:15
+              PM).
+            </li>
+            <li>
+              It is advisable to set exams for a class at 8:30 AM and 11:00 AM.
+            </li>
+            <li>
+              The Minimum and Maximum duration for an exam is 30 and 45 minutes
+              respectively.
+            </li>
+            <li>
+              Only a single instance of a subject can be added to an exam.
+            </li>
+            <li>Classes can only have two (2) exams per day.</li>
+            <li>
+              Check exam dates and time when adding subjects to avoid potential
+              conflicts in a class.
+            </li>
+            <li>All exams must be scheduled a day after the current date</li>
+            <li>
+              After adding subjects, publish exam for students to attempt based
+              on their classes.
+            </li>
+          </ol>
+          <button
+            className="bg-red-600 text-white"
+            onClick={() => onShowInstructions(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+};

@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import Loader from "../../../Loader";
 import { useUser } from "../../../Contexts/UserContext";
+import { localDateString } from "../DashboardData";
 // import TakeExam from "./TakeExam";
 
 function StudentExamDetails() {
   const [examDetails, setExamDetails] = useState([]);
-  // const [examModal, setExamModal] = useState(false);
-  // const [subjectId, setSubjectId] = useState("");
-  // const [numberOfQuestions, setNumberOfQuestions] = useState(null);
   const { userDetails } = useUser();
   const { examId } = useParams();
 
@@ -18,13 +16,11 @@ function StudentExamDetails() {
   const classId = userDetails.class_code;
   const navigate = useNavigate();
 
-  console.log("student id: ", studentId);
-
   useEffect(() => {
     const fetchExams = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/${examId}/class/${classId}/${studentId}`
+          `http://localhost:3000/exams/${examId}/${classId}/${studentId}`
         );
 
         const data = await response.data;
@@ -68,13 +64,11 @@ function StudentExamDetails() {
             <tr>
               <th>Code</th>
               <th>Subject Name</th>
-
               <th>Date</th>
               <th>Time</th>
-              <th>Duration</th>
+              <th>Duration (mins)</th>
               <th>No. of Questions</th>
               <th>Total Marks</th>
-              <th>Exam Type</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -83,12 +77,11 @@ function StudentExamDetails() {
               <tr key={item.subject_code}>
                 <td>{item.subject_code}</td>
                 <td>{item.subject_name}</td>
-                <td>{item.exam_date}</td>
+                <td>{localDateString(item.exam_date)}</td>
                 <td>{item.start_time.toString()}</td>
-                <td>{item.duration}</td>
+                <td>{item.no_of_questions / 2}</td>
                 <td>{item.no_of_questions}</td>
                 <td>{item.total_marks}</td>
-                <td>{item.exam_type}</td>
                 <td>
                   <button
                     onClick={() =>
@@ -103,16 +96,6 @@ function StudentExamDetails() {
           </tbody>
         </table>
       )}
-
-      {/* {examModal && (
-        <div className="modal">
-          <div className="modal-backdrop"></div>
-          <TakeExam
-            subjectId={subjectId}
-            numberOfQuestions={numberOfQuestions}
-          />
-        </div>
-      )} */}
     </div>
   );
 }

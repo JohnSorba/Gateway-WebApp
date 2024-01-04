@@ -47,10 +47,10 @@ const AdminDashboardHome = () => {
       ) : (
         <section className="admin-home">
           {/* HEADER */}
-          <header className="header flex justify-between items-center mb-4 p-4 bg-blue-100 rounded-xl">
+          <header className="header">
             <article>
-              <h1>Dashboard</h1>
-              <p>Hi Admin, Welcome to your Dashboard!</p>
+              <h2 className="text-left">Hi, Admin </h2>
+              <p>Welcome to your Dashboard!</p>
             </article>
 
             <article>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { baseURL } from "../../Dashboard/DashboardData";
@@ -209,6 +210,8 @@ function AddExamSubject({
                 ))}
               </select>
             </article>
+
+            {/* Start time and Date Inputs */}
             <div className="flex gap-4">
               {/* Start Time Input */}
               <article className="form-group">
@@ -235,6 +238,7 @@ function AddExamSubject({
               </article>
             </div>
 
+            {/* Total questions and Duration inputs */}
             <div className="flex gap-4">
               {/* Total Questions */}
               <article className="form-group">
@@ -244,7 +248,7 @@ function AddExamSubject({
                 <input
                   type="number"
                   min={3}
-                  max={totalQuestions < 3 ? 0 : totalQuestions}
+                  max={totalQuestions}
                   name="totalQuestions"
                   value={newSubject.totalQuestions}
                   className="form-input"
@@ -258,7 +262,7 @@ function AddExamSubject({
                 <input
                   type="number"
                   min={30}
-                  max={60}
+                  max={45}
                   name="duration"
                   value={newSubject.duration}
                   className="form-input"
@@ -272,14 +276,14 @@ function AddExamSubject({
             <div className="flex gap-4 mt-4">
               <button
                 type="button"
-                className="form-button"
+                className="bg-red-600"
                 onClick={() => onModalClose(false)}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="form-button"
+                className="bg-green-600"
                 onClick={handleAddSubject}
               >
                 Add subject

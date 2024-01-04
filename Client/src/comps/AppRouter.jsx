@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ComingSoon from "../Pages/ComingSoon";
 import HomePage from "../Pages/Homepage/HomePage";
 
-import Login from "../Pages/Login";
+import Login from "../Pages/Login/Login";
 
 // Registration Links
 import ConfirmDetails from "./RegistrationDetails/ConfirmDetails";
@@ -34,6 +34,15 @@ function AppRouter() {
         <Route exact path="/" element={<ComingSoon />} />
         <Route path="/home" element={<HomePage />} />
         {/* <Route path="/register" element={<Register />} /> */}
+
+        {/* Login Route */}
+        <Route
+          path="/login"
+          element={<Login modalOpen={modalOpen} setModalOpen={setModalOpen} />}
+        />
+
+        {/* Logout Route */}
+        <Route path="/logout" element={<HomePage />} />
 
         {/* Registration Route */}
         <Route
@@ -71,15 +80,6 @@ function AppRouter() {
             element={<TakeExam />}
           />
         </Route>
-
-        {/* Login Route */}
-        <Route
-          path="/login"
-          element={<Login modalOpen={modalOpen} setModalOpen={setModalOpen} />}
-        />
-
-        {/* Logout Route */}
-        <Route path="/logout" element={<HomePage />} />
 
         {/* Dashboard Routes */}
         <Route path="dashboard" element={<DashboardLayout />}>

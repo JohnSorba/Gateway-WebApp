@@ -14,6 +14,7 @@ import Timer from "./TakeExam/Timer";
 import Footer from "./TakeExam/Footer";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { baseURL } from "../DashboardData";
 
 const SECS_PER_QUESTION = 30;
 
@@ -76,13 +77,11 @@ function reducer(state, action) {
         correctOption: null,
       };
     case "examCompleted":
-      // const { examId } = action.payload;
       return {
         ...state,
         status: "examCompleteded",
         highscore:
           state.marks > state.highscore ? state.marks : state.highscore,
-        // currentExamId: examId,
       };
 
     case "navigateToExamDetails":
@@ -137,7 +136,7 @@ export default function TakeExam() {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/exams/take-exam/${examId}/${subjectId}`
+          `${baseURL}/exams/take-exam/${examId}/${subjectId}`
         );
 
         if (response.data) {

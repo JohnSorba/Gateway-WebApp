@@ -274,7 +274,7 @@ const ExamController = {
     try {
       const { examTitle } = req.body;
 
-      const newExam = await ExamModel.create(examTitle);
+      const newExam = await ExamModel.createExam(examTitle);
 
       res.status(201).json(newExam);
     } catch (err) {
@@ -301,7 +301,7 @@ const ExamController = {
       const { examId } = req.params;
       const { newSubject } = req.body;
 
-      const result = await ExamModel.addExamSubjects(
+      const result = await ExamModel.addExamSubject(
         examId,
         newSubject.subjectCode,
         newSubject.date,
@@ -317,6 +317,19 @@ const ExamController = {
     }
   },
 
+  // publish exam for students
+  async publishExamSubjects(req, res) {
+    try {
+      const { examId } = req.params;
+
+      const result = await ExamModel.publishExamSubjects(examId);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   // Retrieve all exams
   async getAllExams(req, res) {
     try {
@@ -329,31 +342,15 @@ const ExamController = {
   },
 
   // Retrieve exam details by ID
-  async getExamById(req, res) {
+  async getExamDetailsById(req, res) {
     try {
       const { examId } = req.params;
 
-      const exam = await ExamModel.getById(examId);
+      const exam = await ExamModel.getExamDetailsById(examId);
 
       res.json(exam);
     } catch (err) {
       res.status(500).json({ message: err.message });
-    }
-  },
-
-  // Update an exam
-  async updateExam(req, res) {
-    try {
-      const { examId } = req.params;
-      const { title } = req.body;
-
-      const updatedExam = await ExamModel.update(examId, title);
-
-      res.json(updatedExam);
-    } catch (err) {
-      // res.status(500).json({ message: err.message });
-      res.status(500).send(err);
-      console.error(err);
     }
   },
 
@@ -373,7 +370,7 @@ const ExamController = {
     }
   },
 
-  // update subject in exam
+  // update subject in selected exam
   async updateExamSubject(req, res) {
     const { examId, subjectId } = req.params;
     const { editSubject } = req.body;
@@ -393,7 +390,8 @@ const ExamController = {
       res.status(500).json({ message: err.message });
     }
   },
-  // Delete a subject in an exam
+
+  // Delete a subject from an exam
   async deleteExamSubject(req, res) {
     try {
       const { examId, subjectId } = req.params;
@@ -402,7 +400,21 @@ const ExamController = {
 
       res.status(201).json(result);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ type: "failure", message: err.message });
+    }
+  },
+
+  // Update an exam title
+  async updateExamTitle(req, res) {
+    try {
+      const { examId } = req.params;
+      const { title } = req.body;
+
+      const updatedExam = await ExamModel.updateExamTitle(examId, title);
+
+      res.json(updatedExam);
+    } catch (err) {
+      res.status(500).json({ type: "failure", message: "Cannot Update Exam!" });
     }
   },
 
@@ -411,11 +423,11 @@ const ExamController = {
     try {
       const { examId } = req.params;
 
-      const result = await ExamModel.delete(examId);
+      const result = await ExamModel.deleteExam(examId);
 
       res.status(201).json(result);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ type: "failure", message: err.message });
     }
   },
 
@@ -433,7 +445,9 @@ const ExamController = {
       res.json(questionsWithOptions);
     } catch (error) {
       console.error("Error fetching questions: ", error);
-      res.status(500).json({ error: "Internal Server Error: ", error });
+      res
+        .status(500)
+        .json({ type: "failure", error: "Internal Server Error: ", error });
     }
   },
 };
@@ -445,64 +459,44 @@ const StudentExamController = {
     res.status(200).json(allExams);
   },
 
-  async getExamsByClassId(req, res) {
-    const { classId } = req.params;
-
-    console.log(classId);
-
+  // fetch examId for displaying relevant exams on exam list page
+  async getExamIdForExamListDisplay(req, res) {
     try {
-      const allExams = await studentExamModel.getByClassId(classId);
+      const examId = await studentExamModel.getExamIdForExamListDisplay();
 
-      // console.log(allExams);
-
-      // console.log("got exams");
-
-      // res.send(allExams);
-      res.status(200).json(allExams);
-      // res.status(200).json(filteredExams);
+      res.status(200).json(examId);
     } catch (error) {
       console.error("Error fetching student exams: ", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   },
 
-  // Retrieve exam details by ID
-  async getExamById(req, res) {
-    const { classId } = req.params;
+  async getExamsByClassId(req, res) {
+    const { classId, studentId } = req.params;
 
     try {
-      const allExams = await studentExamModel.getByStudentExamId(classId);
-
-      //Filter subjects basedon the student's class
-      const filteredExams = allExams.map((exam) => {
-        const filteredSubjects = exam.subjects.filter(
-          (subject) => subject.classId === classId
-        );
-        return { ...exam, subjects: filteredSubjects };
-      });
-
-      console.log(filteredExams);
-
-      res.json(exam);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  },
-
-  async getStudentExamDetails(req, res) {
-    const { examId, classId, studentId } = req.params;
-    // const { studentId } = req.body;
-
-    console.log("student id: ", studentId);
-    console.log("exam id: ", examId);
-    console.log("class id: ", classId);
-
-    try {
-      const allExams = await studentExamModel.getExamDetailsByClassId(
-        examId,
+      const allExams = await studentExamModel.getExamsByClassId(
         classId,
         studentId
       );
+
+      res.status(200).json(allExams);
+    } catch (error) {
+      console.error("Error fetching student exams: ", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  async getExamDetailsByClassIdAndStudentId(req, res) {
+    const { examId, classId, studentId } = req.params;
+
+    try {
+      const allExams =
+        await studentExamModel.getExamDetailsByClassIdAndStudentId(
+          examId,
+          classId,
+          studentId
+        );
 
       res.status(200).json(allExams);
     } catch (error) {
@@ -530,7 +524,7 @@ const StudentExamController = {
   // Submit grades for exam
   async submitExamResult(req, res) {
     const { examId, subjectId } = req.params;
-    const { studentId, marksObtained, isComplete } = req.body;
+    const { studentId, marksObtained, isComplete, classCode } = req.body;
 
     try {
       const submitGrade = await studentExamModel.submitExamResult(
@@ -538,7 +532,8 @@ const StudentExamController = {
         examId,
         subjectId,
         marksObtained,
-        isComplete
+        isComplete,
+        classCode
       );
 
       res.status(200).json({ message: submitGrade });

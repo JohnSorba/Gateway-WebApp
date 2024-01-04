@@ -11,6 +11,7 @@ const {
   AdminReportController,
 } = require("../controllers/exams");
 
+//////////////////////////////////////////////////////
 /********SUBJECT ROUTES***********/
 
 // Get all subjects
@@ -25,7 +26,7 @@ router.put("/updateSubject/:subjectId", SubjectController.updateSubject);
 // Delete subject
 router.delete("/deleteSubject/:subjectId", SubjectController.deleteSubject);
 
-//////////////////////////////////
+///////////////////////////////////////////////////////
 /*******QUESTION ROUTES*******/
 
 // get classes for add question
@@ -37,6 +38,7 @@ router.get(
   QuestionController.getSubjectsPerClass
 );
 
+//////////////////////////////////////////////////////
 // Create a question
 // router.post("/add-question", QuestionController.createQuestion);
 router.post("/add-question", QuestionController.addQuestion);
@@ -65,6 +67,7 @@ router.delete(
   QuestionController.deleteQuestion
 );
 
+/////////////////////////////////////////////////////
 /**********QUESTION OPTIONS ROUTES*********** */
 // Create option
 router.post("/create-option", QuestionOptionsController.createOption);
@@ -84,15 +87,10 @@ router.delete(
   QuestionOptionsController.deleteOption
 );
 
+///////////////////////////////////////////////////
 /**********EXAM ROUTES*********** */
 // Create exam
 router.post("/create-exam", ExamController.createExam);
-
-// Retrieve exam by quesiton Id
-router.get("/get-all-exams", ExamController.getAllExams);
-
-// Retrieve exam by quesiton Id
-router.get("/get-exam/:examId", ExamController.getExamById);
 
 // get total questions for selected subject
 router.get("/total-questions/:subjectId", ExamController.totalQuestions);
@@ -100,46 +98,61 @@ router.get("/total-questions/:subjectId", ExamController.totalQuestions);
 // Add Exam Subject
 router.post("/:examId/subject", ExamController.addExamSubject);
 
-// Get Details for exam subject edit
+// Publish exam after subject adding
+router.post("/publish/:examId", ExamController.publishExamSubjects);
+
+// Retrieve exam by quesiton Id
+router.get("/get-all-exams", ExamController.getAllExams);
+
+// Retrieve exam details by Id
+router.get("/exam-details/:examId", ExamController.getExamDetailsById);
+
+// fetch exam subject details for update
 router.get(
   "/subject/update-info/:examId/:subjectId",
   ExamController.getExamSubjectDetails
 );
 
-// Edit Exam Subject
+// Update subject in selected exam
 router.put(
   "/update/exam-subject/:examId/:subjectId",
   ExamController.updateExamSubject
 );
 
-// Update exam
-router.put("/update-exam/:examId", ExamController.updateExam);
-
-// Delete an exam
-router.delete("/delete-exam/:examId", ExamController.deleteExam);
-
-// Delete a subject in an exam
+// Delete a subject from an exam
 router.delete(
   "/delete/exam-subject/:examId/:subjectId",
   ExamController.deleteExamSubject
 );
 
+// Update an exam title
+router.put("/update-exam/:examId", ExamController.updateExamTitle);
+
+// Delete an exam
+router.delete("/delete-exam/:examId", ExamController.deleteExam);
+
 // Take an exam
 router.get("/take-exam/:subjectId", ExamController.takeExam);
 
+/////////////////////////////////////////////////////
 ////////////////////////
 // STUDENT EXAMS ROUTES
 ////////////////////////
 
-// Fetch all exams
+// Fetch all exams for exam home
 router.get("/student-exam", StudentExamController.getAllExams);
 
-// Fetch by class ID
-router.get("/student-exam/:classId", StudentExamController.getExamsByClassId);
-
+router.get("/get-exam-id", StudentExamController.getExamIdForExamListDisplay);
+// Fetch exams by class ID
 router.get(
-  "/:examId/class/:classId/:studentId",
-  StudentExamController.getStudentExamDetails
+  "/student-exam/:classId/:studentId",
+  StudentExamController.getExamsByClassId
+);
+
+// get details for specific exam for a student
+router.get(
+  "/:examId/:classId/:studentId",
+  StudentExamController.getExamDetailsByClassIdAndStudentId
 );
 
 // Take Exam
@@ -154,6 +167,7 @@ router.post(
   StudentExamController.submitExamResult
 );
 
+///////////////////////////////////////////////////////
 ////////////////////////
 // EXAM RESULTS //
 ////////////////////////

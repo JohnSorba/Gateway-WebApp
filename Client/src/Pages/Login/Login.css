@@ -1,0 +1,132 @@
+.login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.login-page {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 400px;
+  height: 475px;
+  padding: 2rem 2rem;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 1px 1px 6px -1px rgba(0, 0, 0, 0.1),
+    -1px -1px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: border 0.1s ease-in;
+}
+
+.login-form .school-logo {
+  height: 70px;
+  width: 250px;
+  align-self: center;
+}
+
+.login-form.border-red {
+  border-color: red;
+}
+
+.login-form.border-green {
+  border-color: green;
+}
+
+.login-page .password {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 2px 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.login-page .password.error {
+  border-color: red;
+  box-shadow: 2px 2px 4px -2px rgba(255, 0, 0, 0.5);
+}
+
+.login-page .password:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 149, 0.25);
+}
+
+.login-page input {
+  width: 100%;
+  background-color: white;
+}
+.login-page input:focus {
+  outline: none;
+  border-color: none;
+  box-shadow: none;
+}
+
+/* Change the white to any color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+.login-container .left {
+  background: url(/female_teacher_blk.jpg);
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(63, 63, 63);
+  color: white;
+  text-align: center;
+  z-index: 2;
+}
+
+.login-container .left::before {
+  content: "";
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.left h2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 3rem;
+  font-weight: 600;
+  padding: 0;
+  margin: 0;
+  z-index: 3;
+}
+
+.left .school-name {
+  font-size: 4.5rem;
+}
+
+.login-message {
+  color: red;
+  margin-top: 0.15rem;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  /* display: none; */
+}
+
+.login-message.animate {
+  display: block;
+  animation: slideDown 0.25s forwards;
+}

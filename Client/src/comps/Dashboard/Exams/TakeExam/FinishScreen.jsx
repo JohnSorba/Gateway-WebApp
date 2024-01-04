@@ -18,7 +18,7 @@ function FinishScreen({
   const navigate = useNavigate();
 
   const studentId = userDetails.student_id;
-  console.log(studentId);
+  const classCode = userDetails.class_code;
 
   let emoji;
   if (percent === 100) emoji = "🎖️";
@@ -31,7 +31,7 @@ function FinishScreen({
     try {
       const response = await axios.post(
         `http://localhost:3000/exams/submit-grades/${examId}/${subjectId}`,
-        { studentId, marksObtained, isComplete: true }
+        { studentId, marksObtained, isComplete: true, classCode }
       );
       console.log(response.data.message);
 

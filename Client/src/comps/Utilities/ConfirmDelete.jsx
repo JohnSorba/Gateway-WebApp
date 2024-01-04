@@ -22,10 +22,10 @@ function ConfirmDelete({ item, onCancel, onDelete }) {
         </div>
 
         <footer className="flex gap-4">
-          <button className="bg-green-500" onClick={onCancel}>
+          <button className="bg-green-600" onClick={onCancel}>
             Deny
           </button>
-          <button className="bg-red-500" onClick={onDelete}>
+          <button className="bg-red-600" onClick={onDelete}>
             Confirm
           </button>
         </footer>

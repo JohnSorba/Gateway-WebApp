@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,8 +21,6 @@ function QuestionDetails() {
 
   const { questionId } = useParams();
 
-  // console.log(newQuestions);
-  // console.log(questionDetails);
   const question = questionDetails[0];
 
   useEffect(() => {

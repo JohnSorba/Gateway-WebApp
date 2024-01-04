@@ -3,13 +3,14 @@ import axios from "axios";
 import "../../DashboardAdmin/Exams/ExamHome.css";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../Contexts/UserContext";
+import { baseURL, localDateString } from "../DashboardData";
 
 function Exams() {
   const [exams, setExams] = useState([]);
   const { userDetails } = useUser();
 
-  // const studentId = userDetails.student_id;
   const classId = userDetails && userDetails.class_code;
+  const studentId = userDetails && userDetails.student_id;
 
   useEffect(() => {
     fetchExams();
@@ -19,13 +20,15 @@ function Exams() {
   const fetchExams = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/exams/student-exam/${classId}`
+        `${baseURL}/exams/student-exam/${classId}/${studentId}`
       );
 
       const data = response.data;
-      // console.log(data);
+      console.log(data);
 
-      setExams(data);
+      if (data) {
+        setExams(data);
+      }
     } catch (error) {
       console.error("error: ", error);
     }
@@ -44,8 +47,16 @@ function Exams() {
           exams.map((item) => (
             <li key={item.exam_id} className="exam-item">
               <h3>{item.title} </h3>
-              <span>{item.date_created}</span>
-              <div className="flex justify-between items-center mt-auto">
+              <span className="text-sm mb-1">
+                Created: {localDateString(item.date_created)}
+              </span>
+              <span className="self-end">
+                Total Subjects:{" "}
+                <span className="text-xl font-semibold">
+                  {item.totalsubjects}
+                </span>
+              </span>
+              <div className="flex justify-between items-center mt-auto self-end">
                 <Link
                   to={`/dashboard/student/exams/exam-details/${item.exam_id}`}
                   className="form-button"

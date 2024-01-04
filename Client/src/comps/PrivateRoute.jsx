@@ -3,14 +3,10 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 
 const PrivateRoute = ({ children, requiredRole }) => {
-  const { authState, isAuthChecked } = useAuth();
+  const { authState } = useAuth();
 
-  if (!isAuthChecked) {
-    return <div>Loading...</div>;
-  }
-
+  // If token does not exist: User not logged in so redirect to the login page
   if (!authState.token) {
-    // Not logged in so redirect to the login page
     return <Navigate to="/login" replace />;
   }
 

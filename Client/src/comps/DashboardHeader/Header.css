@@ -60,6 +60,7 @@
   padding: 0.5rem 1rem 0.5rem 0.5rem;
   border-radius: 0.75rem;
   background-color: #ffd;
+  z-index: 10;
 }
 .user-actions .user-profile:hover {
   background-color: #fef;

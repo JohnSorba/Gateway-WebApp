@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
+import { FaEdit, FaEye } from "react-icons/fa";
+// import { MdDeleteForever } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./ExamHome.css";
 import Alert from "../../Utilities/Alert";
@@ -9,10 +9,11 @@ import ConfirmDelete from "../../Utilities/ConfirmDelete";
 import { localDateString } from "../../Dashboard/DashboardData";
 
 function ExamList() {
-  const [exams, setExams] = useState([]);
+  const [examList, setExamList] = useState([]);
   const [examTitle, setExamTitle] = useState("");
-  const [message, setMessage] = useState("");
   const [newExamModal, setNewExamModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [examDelete, setExamDelete] = useState({ open: false, examId: null });
 
@@ -26,10 +27,10 @@ function ExamList() {
         `http://localhost:3000/exams/get-all-exams`
       );
 
-      const data = response.data;
-      //   console.log(data);
+      const examList = response.data.examDetails;
+      console.log(response.data);
 
-      setExams(data);
+      setExamList(examList);
     } catch (error) {
       console.error("Error fetching exams: ", error);
     }
@@ -42,19 +43,13 @@ function ExamList() {
         { examTitle }
       );
 
-      console.log(response.data);
-
-      const res = response.data.title;
-      const status = response.statusText;
-
-      const message = res + " " + status;
-      console.log(res, status);
+      setMessage(response.data.message);
+      setType(response.data.type);
+      setShowAlert(true);
 
       setNewExamModal(false);
-      setMessage(message);
       setExamTitle("");
       fetchExams();
-      setShowAlert(true);
     } catch (error) {
       console.error("Error creating exams: ", error.response.data.message);
     }
@@ -64,9 +59,9 @@ function ExamList() {
     setShowAlert(false);
   };
 
-  const handleExamDeleteModal = (examId) => {
-    setExamDelete({ open: true, examId: examId });
-  };
+  // const handleExamDeleteModal = (examId) => {
+  //   setExamDelete({ open: true, examId: examId });
+  // };
 
   //   Delete exam
   const handleDeleteExam = async (examId) => {
@@ -80,6 +75,7 @@ function ExamList() {
       fetchExams();
       setMessage(response.data);
       setShowAlert(true);
+      setExamDelete({ open: false, examId: null });
     } catch (error) {
       console.error("Error deleting exam", error.response.data.message);
     }
@@ -87,30 +83,59 @@ function ExamList() {
 
   return (
     <div>
-      <header className="py-8 mb-8 border-b-2">
-        <button onClick={() => setNewExamModal(true)} className="form-button">
-          Create Exam
-        </button>
+      <header className="header">
+        <h2 className="m-0">Exam List</h2>
+        <div className="flex items-end gap-6">
+          <button
+            onClick={() => setNewExamModal(true)}
+            className="bg-green-600 font-semibold"
+          >
+            Create Exam
+          </button>
+        </div>
       </header>
+
+      <div className="flex justify-end mb-4">
+        <p>tehst</p>
+        <select className="form-select bg-red-500 self-end">
+          <option>All</option>
+          <option>Ongoing</option>
+          <option>Completed</option>
+        </select>
+      </div>
       {/* Display exams fetched from API */}
       <ul className="exam-list">
-        {exams.map((item) => (
-          <li key={item.exam_id} className="exam-item">
+        {examList.map((item) => (
+          <li key={item.exam_id} className={`exam-item`}>
             <h3>{item.title} </h3>
-            <span className="text-sm font-semibold">
-              Created: {localDateString(item.date_created)}
-            </span>
-            <div className="flex justify-between items-center mt-auto">
-              <FaEdit className="w-6 h-6 text-blue-400 icon" />
-              <MdDeleteForever
+            <div>
+              <span className="text-sm font-semibold">
+                Created: {localDateString(item.date_created)}
+              </span>
+              <div className="flex items-center gap-1">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    item.published === true ? "bg-green-500" : "bg-red-500"
+                  } `}
+                ></div>
+                <p className="text-sm">
+                  {item.published === true ? "Ongoing" : "Draft"}
+                </p>
+              </div>
+            </div>
+
+            <div
+              className="flex justify-end items-center
+            
+             gap-3 mt-auto"
+            >
+              <FaEdit className="w-6 h-6 text-blue-600 icon" />
+              {/* <MdDeleteForever
                 className="w-6 h-6 text-red-400 icon"
                 onClick={() => handleExamDeleteModal(item.exam_id)}
-              />
-              <Link
-                to={`/dashboard/admin/exams/exam-details/${item.exam_id}`}
-                className="form-button"
-              >
-                View Exam
+              /> */}
+              <Link to={`exam-details/${item.exam_id}`}>
+                <FaEye className="w-6 h-6 text-green-600 icon" />
               </Link>
             </div>
           </li>
@@ -163,7 +188,7 @@ function ExamList() {
       )}
 
       <Alert
-        type="success"
+        type={type}
         message={message}
         onClose={handleCloseAlert}
         isVisible={showAlert}

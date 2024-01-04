@@ -144,17 +144,7 @@ function AdminTimetable() {
             <div>
               <h2>Timetable for Class {selectedClass}</h2>
               <table className="w-[750px] mx-auto">
-                <thead>
-                  <tr className="text-sm text-center">
-                    <th className="w-[80px]">Day</th>
-                    <th>Period 1 (08:30)</th>
-                    <th>Period 2 (09:30)</th>
-                    <th>Break (09:30)</th>
-                    <th>Period 3 (10:30)</th>
-                    <th>Period 4 (11:30)</th>
-                  </tr>
-                </thead>
-
+                <TimetableHeader />
                 <tbody>
                   {timetable?.map((day) => (
                     <tr key={day.day}>
@@ -257,3 +247,33 @@ function AdminTimetable() {
 }
 
 export default AdminTimetable;
+
+export const TimetableHeader = () => {
+  return (
+    <thead>
+      <tr className="text-sm text-center">
+        <th className="w-[80px]">Day</th>
+        <th>
+          <span>1st Period</span>
+          <p>(08:30 - 9:30)</p>
+        </th>
+        <th>
+          <span>2nd Period</span>
+          <p>(09:30 - 10:30)</p>
+        </th>
+        <th>
+          <span>Break</span>
+          <p>(10:30 - 11:00)</p>
+        </th>
+        <th>
+          <span>3rd Period</span>
+          <p>(11:00 - 12:00)</p>
+        </th>
+        <th>
+          <span>4th Period</span>
+          <p>(12:00 - 13:00)</p>
+        </th>
+      </tr>
+    </thead>
+  );
+};

@@ -22,33 +22,34 @@ html {
     sans-serif;
 }
 
-/* body {
+.take-exam {
   min-height: 100vh;
   color: var(--color-light);
   background-color: var(--color-darkest);
+  background-color: rgb(15 23 42);
   padding: 3.2rem;
-} */
+}
 
-/* .take-exam {
+.take-exam {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-} */
+}
 
-/* .main {
+.take-exam main {
   width: 50rem;
-} */
+}
 
-/* .app-header {
+.take-exam .app-header {
   width: 66rem;
   margin-bottom: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-} */
+}
 
-.error {
+.take-exam .error {
   text-align: center;
   font-size: 1.6rem;
   font-weight: 500;
@@ -57,44 +58,44 @@ html {
   border-radius: 100px;
 }
 
-img {
+.take-exam img {
   width: 14rem;
 }
 
-h1 {
+.take-exam h1 {
   font-family: "Open Sans";
   font-size: 5.6rem;
 }
 
-h2 {
+.take-exam h2 {
   font-size: 3.6rem;
   margin-bottom: 2rem;
 }
 
-h3 {
+.take-exam h3 {
   font-size: 2.4rem;
   font-weight: 600;
   margin-bottom: 4rem;
 }
 
-h4 {
+.take-exam h4 {
   font-size: 2.2rem;
   font-weight: 600;
   margin-bottom: 2.4rem;
 }
 
-.start {
+.take-exam .exam-start {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.start p {
+.take-exam .exam-start p {
   font-size: 2.25em;
   font-weight: bold;
   margin-bottom: 3rem;
 }
 
-.progress {
+.take-exam .progress {
   margin-bottom: 4rem;
   display: grid;
   justify-content: space-between;
@@ -104,23 +105,23 @@ h4 {
   color: var(--color-medium);
 }
 
-progress {
+.take-exam progress {
   -webkit-appearance: none;
   width: 100%;
   height: 12px;
   grid-column: 1 / -1;
 }
 
-::-webkit-progress-bar {
+.take-exam ::-webkit-progress-bar {
   background-color: var(--color-medium);
   border-radius: 100px;
 }
-::-webkit-progress-value {
+.take-exam ::-webkit-progress-value {
   background-color: var(--color-theme);
   border-radius: 100px;
 }
 
-.btn {
+.take-exam .btn {
   display: block;
   font-family: inherit;
   color: inherit;
@@ -133,50 +134,50 @@ progress {
   transition: 0.3s;
 }
 
-.btn:not([disabled]):hover {
+.take-exam .btn:not([disabled]):hover {
   background-color: var(--color-darkest);
 }
 
-.btn-option:not([disabled]):hover {
+.take-exam .btn-option:not([disabled]):hover {
   transform: translateX(1.2rem);
 }
 
-.btn[disabled]:hover {
+.take-exam .btn[disabled]:hover {
   cursor: not-allowed;
 }
 
-.btn-ui {
+.take-exam .btn-ui {
   float: right;
 }
 
-.options {
+.take-exam .options {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
   margin-bottom: 3.2rem;
 }
 
-.btn-option {
+.take-exam .btn-option {
   width: 100%;
   text-align: left;
 }
 
-.btn-option.correct {
+.take-exam .btn-option.correct {
   background-color: var(--color-theme);
   border: 2px solid var(--color-theme);
   color: var(--color-light);
 }
-.btn-option.wrong {
+.take-exam .btn-option.wrong {
   background-color: var(--color-accent);
   border: 2px solid var(--color-accent);
   color: var(--color-darkest);
 }
 
-.answer {
+.take-exam .answer {
   transform: translateX(2rem);
 }
 
-.result {
+.take-exam .result {
   background-color: var(--color-theme);
   color: var(--color-light);
   border-radius: 100px;
@@ -187,18 +188,18 @@ progress {
   margin-bottom: 1.6rem;
 }
 
-.result span {
+.take-exam .result span {
   font-size: 2.2rem;
   margin-right: 4px;
 }
 
-.highscore {
+.take-exam .highscore {
   font-size: 1.8rem;
   text-align: center;
   margin-bottom: 4.8rem;
 }
 
-.loader-container {
+.take-exam .loader-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -210,7 +211,7 @@ progress {
   font-size: 1.4rem;
 }
 
-.timer {
+.take-exam .timer {
   float: left;
   font-size: 1.8rem;
   color: var(--color-medium);
@@ -220,7 +221,7 @@ progress {
 }
 
 /* CREDIT: https://dev.to/afif/i-made-100-css-loaders-for-your-next-project-4eje */
-.loader {
+.take-exam .loader {
   width: 50px;
   height: 24px;
   background: radial-gradient(circle closest-side, currentColor 90%, #0000) 0%
@@ -249,7 +250,7 @@ progress {
 
 /* ********** */
 /* First counter example */
-.counter {
+.take-exam .counter {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -259,7 +260,7 @@ progress {
   margin: 6rem;
 }
 
-.counter * {
+.take-exam .counter * {
   font-size: inherit;
   padding: 0.8rem;
 }
