@@ -2,14 +2,15 @@
 // import { GiHamburgerMenu } from "react-icons/gi";
 import { MdNotifications } from "react-icons/md";
 import { BiChevronDown, BiLogOut } from "react-icons/bi";
-import { FaHamburger, FaSearch, FaUser } from "react-icons/fa";
+import { FaHamburger, FaUser } from "react-icons/fa";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Contexts/AuthContext";
 import { useUser } from "../../Contexts/UserContext";
-import "./Header.css";
 import { GrPrevious } from "react-icons/gr";
 import DateTimeDisplay from "../Utilities/DateTimeDisplay";
+import "./Header.css";
+import Search from "../Search";
 
 function Header({ handleClick }) {
   const { authState, logout } = useAuth();
@@ -43,16 +44,7 @@ function Header({ handleClick }) {
         </div>
       </article>
       <article className="user-actions">
-        {authState.role === "admin" && (
-          <div className="search-container">
-            <FaSearch className="h-4 w-4 search-icon" />
-            <input
-              type="search"
-              className="search-bar"
-              placeholder="Search..."
-            />
-          </div>
-        )}
+        {authState.role === "admin" && <Search />}
         <span>
           <MdNotifications className="w-6 h-6 text-red-400" />
         </span>

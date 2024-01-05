@@ -6,7 +6,7 @@ function CourseForm({ formData, prevStep }) {
   console.log("Form Data: ", formData);
 
   const goToDashboard = () => {
-    navigate("/dashboard/admin/users");
+    navigate(-4);
   };
 
   return (

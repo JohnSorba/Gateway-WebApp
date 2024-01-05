@@ -109,6 +109,32 @@ button:active {
   transform: scale(0.98);
 }
 
+/* BUTTON */
+
+.btn-black {
+  background-color: #1a1a1a; /* Dark Black */
+  color: #ffffff; /* White text for contrast */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Subtle white glow */
+}
+
+/* Hover State */
+.btn-black:hover {
+  background-color: #333333; /* Slightly darker on hover */
+}
+
+/* Focus State */
+.btn-black:focus {
+  outline: none; /* Remove default focus outline */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Enhanced white glow on focus */
+}
+
+/* Active/Pressed State */
+.btn-black:active {
+  background-color: #0d0d0d; /* Darker on click */
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* Intensified white glow on click */
+}
+/* *********************** */
+
 @media (prefers-color-schreme: light) {
   :root {
     color: #213547;
@@ -127,10 +153,14 @@ button:active {
   justify-content: space-between;
   align-items: flex-end;
   height: 150px;
-  background-color: rgb(191, 219, 254);
   border-radius: 0.5rem;
   padding: 1.5rem 0.75rem;
   margin: 0 0 2rem;
+  /* background-color: rgb(191, 219, 254); */
+  background: linear-gradient(to right, #9fdfff, #5fafff, #9fdfff);
+  background: linear-gradient(to right, #66ccff, #3399ff);
+  background: linear-gradient(to right, #ffd700, #ffcc00);
+  background: linear-gradient(to right, #66ff66, #72e972);
 }
 
 .header h2 {

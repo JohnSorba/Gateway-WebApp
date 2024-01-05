@@ -165,15 +165,15 @@ export const studentData = [
 
 export const calculateGrade = (grade) => {
   switch (true) {
-    case grade >= 90:
+    case grade > 89:
       return "AA 🎖️";
-    case grade >= 80 && grade < 90:
+    case grade > 79:
       return "A 😎";
-    case grade >= 70 && grade < 80:
+    case grade > 69:
       return "B 😉";
-    case grade >= 60 && grade < 70:
+    case grade > 59:
       return "B- 😃";
-    case grade >= 50 && grade < 60:
+    case grade > 49:
       return "C 🙂";
     default:
       return "D 🤡";

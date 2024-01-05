@@ -85,7 +85,7 @@ export function UserProvider({ children }) {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/student/details/personal/${userId}`
+        `${baseURL}/student/details/personal/${userId}`
       );
       const data = response.data;
 
@@ -106,7 +106,7 @@ export function UserProvider({ children }) {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/student/details/account/${userId}`
+        `${baseURL}/student/details/account/${userId}`
       );
       const data = await response.data;
       if (response.data) {
@@ -123,6 +123,7 @@ export function UserProvider({ children }) {
       setIsLoading(false);
     }
   };
+
   return (
     <UserContext.Provider
       value={{

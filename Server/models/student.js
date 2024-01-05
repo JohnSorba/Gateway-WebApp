@@ -30,8 +30,6 @@ const StudentModel = {
 const StudentAttendanceModel = {
   // get student attendance
   async getAttendance(studentId) {
-    console.log("studentId: ", studentId);
-
     const statsQuery = `
     SELECT 
       a.student_id, s.first_name, s.last_name,
@@ -60,8 +58,6 @@ const StudentAttendanceModel = {
 
       const attendanceData = attQuery.rows;
       const stats = statsQueryResult.rows[0];
-
-      console.log({ attendanceData, stats });
 
       return { attendanceData, stats };
     } catch (error) {
@@ -92,32 +88,63 @@ const studentExamModel = {
   // Get Class Exam
   async getExamsByClassId(classId, studentId) {
     const query = `
-    SELECT e.*, COUNT(es.subject_code) AS totalSubjects,
-      su.class_assigned
-    FROM 
-      exams e
-    JOIN 
-      exam_subjects es ON es.exam_id = e.exam_id
-    JOIN
-      subjects su ON su.subject_code = es.subject_code
-    LEFT JOIN
-      student_exam_grades seg 
-    ON 
-      e.exam_id = seg.exam_id
-    AND
-      es.subject_code = seg.subject_code
-    AND 
-      seg.student_id = $2
+      SELECT e.*, COUNT(es.subject_code) AS totalSubjects
+      FROM exams e
+      
+      LEFT JOIN 
+        exam_subjects es ON es.exam_id = e.exam_id
+      LEFT JOIN 
+        subjects su ON su.subject_code = es.subject_code
+      LEFT JOIN 
+        student_exam_grades seg 
+      ON seg.exam_id = e.exam_id
+      AND seg.subject_code = es.subject_code
+      AND seg.student_id = $2
 
-    WHERE su.class_assigned = $1 AND e.published = true
-    AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+      WHERE su.class_assigned = $1
+      AND e.published = true
 
-    GROUP BY
-      e.exam_id, su.class_assigned
+      GROUP BY e.exam_id, e.title
+
+      HAVING COUNT(seg.completed = true) < COUNT(es.subject_code) 
+      OR COUNT(seg.completed) = 0;
+
+
     `;
+
+    // const query = `
+    // SELECT e.*, COUNT(es.subject_code) AS totalSubjects,
+    //   su.class_assigned
+    // FROM
+    //   exams e
+    // JOIN
+    //   exam_subjects es ON es.exam_id = e.exam_id
+    // JOIN
+    //   subjects su ON su.subject_code = es.subject_code
+    // LEFT JOIN
+    //   student_exam_grades seg
+    // ON
+    //   e.exam_id = seg.exam_id
+    // AND
+    //   es.subject_code = seg.subject_code
+    // AND
+    //   seg.student_id = $2
+
+    // WHERE
+    //  su.class_assigned = $1
+    // AND
+    //   e.published = true
+    // AND
+    //  (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+
+    // GROUP BY
+    //   e.exam_id, su.class_assigned
+    // `;
 
     try {
       const result = await pool.query(query, [classId, studentId]);
+
+      console.log(result.rows);
 
       return result.rows;
     } catch (error) {
@@ -126,7 +153,7 @@ const studentExamModel = {
   },
 
   // Get exam details by classId
-  async getExamDetailsByClassIdAndStudentId(examId, classId, studentId) {
+  async getExamDetailsByClassId(examId, classId, studentId) {
     const query = `
       SELECT e.*, es.*, su.*, seg.*
         FROM 
@@ -140,12 +167,16 @@ const studentExamModel = {
           ON 
             seg.exam_id = e.exam_id
           AND
-            seg.subject_code = seg.subject_code
+            seg.subject_code = es.subject_code
           AND 
             seg.student_id = $3          
     
-        WHERE e.exam_id = $1 AND su.class_assigned = $2
-        AND (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
+        WHERE 
+          e.exam_id = $1
+        AND 
+          su.class_assigned = $2
+        AND 
+          (seg.completed = false OR seg.completed IS NULL OR seg.student_id IS NULL)
         `;
 
     try {

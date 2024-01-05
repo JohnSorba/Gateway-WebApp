@@ -49,17 +49,17 @@ const login = async (req, res) => {
 
     // Utility function to generate JWT
     const generateAuthToken = () => {
-      const expiresIn = "1h";
+      // const expiresIn = "6h";
       return jwt.sign(
         {
           userId: user.user_id,
           username: user.username,
           role: user.role_name,
         },
-        process.env.JWT_SECRET_KEY,
-        {
-          expiresIn,
-        }
+        process.env.JWT_SECRET_KEY
+        // {
+        //   expiresIn,
+        // }
       );
     };
 

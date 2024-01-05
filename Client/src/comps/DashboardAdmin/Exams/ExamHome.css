@@ -23,10 +23,15 @@
 .exam-list .exam-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  border: 2px solid #ccc;
+  gap: 1.5rem;
+  border: 1px solid transparent;
   padding: 12px;
   border-radius: 8px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15), -1px -1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.exam-list .exam-item:hover {
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
 .exam-item .form-button {

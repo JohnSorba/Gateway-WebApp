@@ -9,13 +9,13 @@ import { localDateString, baseURL } from "../../Dashboard/DashboardData";
 import AttendanceClassView from "./AttendanceClassView";
 import BarChartBox from "../../Charts/Barchart/BarChartBox";
 import LineChartBox from "../../Charts/LineChart/LineChartBox";
+import { useSearch } from "../../../Contexts/SearchContext";
 
 export default function AttendanceHome() {
   const [attendanceData, setAttendanceData] = useState([]);
   const [studentAttendance, setStudentAttendance] = useState([]);
   const [chartData, setChartData] = useState(null);
   const [view, setView] = useState("date");
-  const [query, setQuery] = useState("");
   const { isLoading, setIsLoading } = useUser();
 
   const navigate = useNavigate();
@@ -122,17 +122,6 @@ export default function AttendanceHome() {
               <option value="student">Student View</option>
             </select>
           </div>
-          <div>
-            {view === "student" && (
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name..."
-                className="form-input"
-              />
-            )}
-          </div>
 
           <div></div>
           <h2>Attendance Summary</h2>
@@ -178,7 +167,6 @@ export default function AttendanceHome() {
         </div>
       ) : view === "student" ? (
         <AttendanceStudentView
-          query={query}
           studentAttendance={studentAttendance}
           onViewStudentDetails={viewStudentAttendanceDetails}
         />
@@ -192,10 +180,10 @@ export default function AttendanceHome() {
 }
 
 export function AttendanceStudentView({
-  query,
   studentAttendance,
   onViewStudentDetails,
 }) {
+  const { searchQuery } = useSearch();
   return (
     <div className="table-container h-[450px] overflow-y-scroll">
       <table className="relative">
@@ -213,7 +201,7 @@ export function AttendanceStudentView({
         <tbody>
           {studentAttendance
             .filter((data) =>
-              data.first_name.toLowerCase().includes(query.toLowerCase())
+              data.first_name.toLowerCase().includes(searchQuery.toLowerCase())
             )
             .map((data, i) => (
               <tr key={i}>
@@ -235,7 +223,7 @@ export function AttendanceStudentView({
                 </td>
                 {!data.first_name
                   .toLowerCase()
-                  .includes(query.toLowerCase()) && (
+                  .includes(searchQuery.toLowerCase()) && (
                   <p>No rows matches your query!</p>
                 )}
               </tr>

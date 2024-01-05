@@ -6,7 +6,7 @@ import axios from "axios";
 import { baseURL } from "../../Dashboard/DashboardData";
 import Loader from "../../../Loader";
 
-function ExamOngoing() {
+function ExamCompleted() {
   const [examOngoing, setExamOngoing] = useState([]);
   const { isLoading, setIsLoading } = useUser();
   const { examId } = useParams();
@@ -45,7 +45,7 @@ function ExamOngoing() {
     <div>
       <header className="header">
         <div>
-          <h2>Ongoing Exam</h2>
+          <h2>Completed Exam</h2>
         </div>
 
         <div></div>
@@ -65,6 +65,7 @@ function ExamOngoing() {
                 <th>Exams Taken</th>
                 <th>Total Students In Class</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
@@ -89,6 +90,7 @@ function ExamOngoing() {
                           : "Pending"}
                       </span>
                     </td>
+                    <td>View</td>
                   </tr>
                 ))}
             </tbody>
@@ -99,4 +101,4 @@ function ExamOngoing() {
   );
 }
 
-export default ExamOngoing;
+export default ExamCompleted;

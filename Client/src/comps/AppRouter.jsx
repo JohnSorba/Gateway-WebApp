@@ -83,14 +83,14 @@ function AppRouter() {
 
         {/* Dashboard Routes */}
         <Route path="dashboard" element={<DashboardLayout />}>
-          <Route
+          {/* <Route
             index
             element={
               <PrivateRoute requiredRole="admin">
                 <AdminDashboard />
               </PrivateRoute>
             }
-          />
+          /> */}
           <Route
             path="admin/*"
             element={

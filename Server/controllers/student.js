@@ -74,16 +74,15 @@ const StudentExamController = {
     }
   },
 
-  async getExamDetailsByClassIdAndStudentId(req, res) {
+  async getExamDetailsByClassId(req, res) {
     const { examId, classId, studentId } = req.params;
 
     try {
-      const allExams =
-        await studentExamModel.getExamDetailsByClassIdAndStudentId(
-          examId,
-          classId,
-          studentId
-        );
+      const allExams = await studentExamModel.getExamDetailsByClassId(
+        examId,
+        classId,
+        studentId
+      );
 
       res.status(200).json(allExams);
     } catch (error) {

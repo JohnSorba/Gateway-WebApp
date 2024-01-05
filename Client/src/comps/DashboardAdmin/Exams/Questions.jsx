@@ -4,11 +4,14 @@ import { FaEye } from "react-icons/fa";
 import Loader from "../../../Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../../Contexts/UserContext";
+import { baseURL } from "../../Dashboard/DashboardData";
+import { useSearch } from "../../../Contexts/SearchContext";
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
   const [query, setQuery] = useState("");
   const { isLoading, setIsLoading } = useUser();
+  const { searchQuery } = useSearch();
 
   const navigate = useNavigate();
 
@@ -18,9 +21,7 @@ function Questions() {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/exams/get-questions`
-      );
+      const response = await axios.get(`${baseURL}/exams/get-questions`);
 
       const data = response.data;
       // console.log(data);
@@ -78,13 +79,13 @@ function Questions() {
                   (item) =>
                     item.class_assigned
                       .toLowerCase()
-                      .includes(query.toLowerCase()) ||
+                      .includes(searchQuery.toLowerCase()) ||
                     item.subject_name
                       .toLowerCase()
-                      .includes(query.toLowerCase()) ||
+                      .includes(searchQuery.toLowerCase()) ||
                     item.question_text
                       .toLowerCase()
-                      .includes(query.toLowerCase())
+                      .includes(searchQuery.toLowerCase())
                 )
                 .map((question, i) => (
                   <tr key={i} className="py-2 text-sm">

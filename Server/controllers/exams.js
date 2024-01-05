@@ -4,7 +4,6 @@ const {
   QuestionOptionsModel,
   ClassModel,
   ExamModel,
-  ExamQuestionsModel,
 } = require("../models/exams");
 const { StudentModel } = require("../models/student");
 
@@ -334,17 +333,28 @@ const ExamController = {
       const exams = await ExamModel.getAllExams();
 
       res.status(201).json(exams);
-    } catch (error) {
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  // Retrieve total count exams
+  async getTotalExams(req, res) {
+    try {
+      const totalExams = await ExamModel.getTotalExams();
+
+      res.status(201).json(totalExams);
+    } catch (err) {
       res.status(500).json({ message: err.message });
     }
   },
 
   // Retrieve exam details by Id for draft exam selected
-  async getExamDetailsById(req, res) {
+  async getExamDraftDetailsById(req, res) {
     try {
       const { examId } = req.params;
 
-      const exam = await ExamModel.getExamDetailsById(examId);
+      const exam = await ExamModel.getExamDraftDetailsById(examId);
 
       res.status(200).json(exam);
     } catch (err) {
@@ -362,6 +372,19 @@ const ExamController = {
       res.status(200).json(ongoingExam);
     } catch (err) {
       res.status(500).json({ message: err.message });
+    }
+  },
+
+  // Determine whether all students have taken an exam
+  async markExamComplete(req, res) {
+    const { examId } = req.params;
+
+    try {
+      const examComplete = await ExamModel.markExamComplete(examId);
+
+      res.status(200).json(examComplete);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   },
 
@@ -398,7 +421,7 @@ const ExamController = {
 
       res.status(200).json(examSubjectUpdate);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ type: "failure", message: err.message });
     }
   },
 
@@ -439,26 +462,6 @@ const ExamController = {
       res.status(201).json(result);
     } catch (err) {
       res.status(500).json({ type: "failure", message: err.message });
-    }
-  },
-
-  // TAKE EXAM: Retrieve all questions with options
-  async takeExam(req, res) {
-    const { subjectId } = req.params;
-
-    console.log(subjectId);
-
-    try {
-      const questionsWithOptions = await ExamModel.getQuestionsForExam(
-        subjectId
-      );
-
-      res.json(questionsWithOptions);
-    } catch (error) {
-      console.error("Error fetching questions: ", error);
-      res
-        .status(500)
-        .json({ type: "failure", error: "Internal Server Error: ", error });
     }
   },
 };

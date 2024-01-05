@@ -8,6 +8,7 @@ import { PiQuestionBold, PiStudentFill } from "react-icons/pi";
 import { TbReportAnalytics } from "react-icons/tb";
 import { FcViewDetails } from "react-icons/fc";
 import { PiBooksFill } from "react-icons/pi";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function ExamHome() {
   const [examsCount, setExamsCount] = useState(0);
@@ -22,11 +23,9 @@ function ExamHome() {
 
   const fetchExams = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/exams/get-all-exams`
-      );
+      const response = await axios.get(`${baseURL}/exams/get-total-exams`);
 
-      const data = response.data.examCount;
+      const data = response.data;
 
       setExamsCount(data);
     } catch (error) {
@@ -36,9 +35,7 @@ function ExamHome() {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/exams/get-questions`
-      );
+      const response = await axios.get(`${baseURL}/exams/get-questions`);
 
       const data = response.data;
 
@@ -50,10 +47,7 @@ function ExamHome() {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/exams/get-subjects`
-      );
-
+      const response = await axios.get(`${baseURL}/exams/get-subjects`);
       const data = response.data;
       // console.log(data);
 
@@ -110,7 +104,6 @@ function ExamHome() {
     <div>
       <header className="header">
         <h2 className="m-0">Exams Management</h2>
-        <button className="text-xl">Create Exam</button>
       </header>
       <div className="exams">
         {examPageData.map((item) => (

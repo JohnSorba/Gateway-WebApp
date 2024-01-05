@@ -45,6 +45,13 @@ const SubjectModel = {
       };
     }
 
+    if (subjectName.length < 3) {
+      return {
+        type: "failure",
+        message: "Subject name must be at least 3 characters long!",
+      };
+    }
+
     const client = await pool.connect();
     await client.query("BEGIN");
 
@@ -83,7 +90,6 @@ const SubjectModel = {
   async updateSubject(subjectId, subjectDetails) {
     // Database query to update the subject based on subjectId and subjectDetails
     const { subjectName } = subjectDetails;
-    console.log("subject name: ", subjectName);
 
     if (subjectName.length < 3) {
       return {

@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useState } from "react";
 import Modal from "./Modal";
+import { baseURL } from "../Dashboard/DashboardData";
 
 function ConfirmDetails({
   formData,
@@ -20,10 +21,7 @@ function ConfirmDetails({
     // Update form data
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/auth/register",
-        formData
-      );
+      const response = await axios.post(`${baseURL}/auth/register`, formData);
       console.log(response);
 
       if (response.data) {

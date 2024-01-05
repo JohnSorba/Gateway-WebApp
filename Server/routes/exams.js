@@ -99,17 +99,25 @@ router.post("/:examId/subject", ExamController.addExamSubject);
 // Publish exam after subject adding
 router.post("/publish/:examId", ExamController.publishExamSubjects);
 
-// Retrieve exam by quesiton Id
+// Retrieve all exams for home page
 router.get("/get-all-exams", ExamController.getAllExams);
 
+router.get("/get-total-exams", ExamController.getTotalExams);
+
 // Retrieve exam draft details by Id
-router.get("/exam-details/draft/:examId", ExamController.getExamDetailsById);
+router.get(
+  "/exam-details/draft/:examId",
+  ExamController.getExamDraftDetailsById
+);
 
 // get ongoing exam details
 router.get(
   "/exam-details/ongoing/:examId",
   ExamController.getOngoingExamDetails
 );
+
+// get mark exam complete
+router.get("/exam-complete/:examId", ExamController.markExamComplete);
 
 // fetch exam subject details for update
 router.get(
@@ -134,8 +142,5 @@ router.put("/update-exam/:examId", ExamController.updateExamTitle);
 
 // Delete an exam
 router.delete("/delete-exam/:examId", ExamController.deleteExam);
-
-// Take an exam
-router.get("/take-exam/:subjectId", ExamController.takeExam);
 
 module.exports = router;

@@ -8,17 +8,19 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import Alert from "../Utilities/Alert";
 import ConfirmDelete from "../Utilities/ConfirmDelete";
-import { convertDateFormat } from "../Dashboard/DashboardData";
+import { baseURL, convertDateFormat } from "../Dashboard/DashboardData";
+import { useSearch } from "../../Contexts/SearchContext";
 
 function UserAccounts() {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [type, setType] = useState("");
-  const [query, setQuery] = useState("");
   const [showModal, setShowModal] = useState({ open: false, userId: null });
-  const { isLoading, setIsLoading } = useUser();
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
+
+  const { isLoading, setIsLoading } = useUser();
+  const { searchQuery } = useSearch();
 
   useEffect(() => {
     fetchUsers();
@@ -27,9 +29,7 @@ function UserAccounts() {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        "http://localhost:3000/users/get-all-users"
-      );
+      const response = await axios.get(`${baseURL}/users/get-all-users`);
 
       const data = response.data;
 
@@ -49,9 +49,7 @@ function UserAccounts() {
     try {
       setIsLoading(true);
 
-      const response = await axios.delete(
-        `http://localhost:3000/users/delete/${userId}`
-      );
+      const response = await axios.delete(`${baseURL}/users/delete/${userId}`);
 
       const data = response.data;
       setMessage(data.message);
@@ -82,16 +80,9 @@ function UserAccounts() {
   return (
     <div>
       <h1>User Account Information</h1>
-      <div className="flex justify-between mb-8">
-        <input
-          type="search"
-          placeholder="Filter by username, user type..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="form-input w-[400px]"
-        />
+      <div className="flex justify-end mb-8">
         <button
-          className="form-button z-0 flex gap-2 items-center"
+          className="bg-green-600 flex gap-2 items-center"
           onClick={addNewUser}
         >
           <FaUserPlus />
@@ -130,8 +121,10 @@ function UserAccounts() {
                   (item) =>
                     item.role_name
                       .toLowerCase()
-                      .includes(query.toLowerCase()) ||
-                    item.username.toLowerCase().includes(query.toLowerCase())
+                      .includes(searchQuery.toLowerCase()) ||
+                    item.username
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
                 )
                 .map((user, i) => (
                   <tr key={user.user_id}>

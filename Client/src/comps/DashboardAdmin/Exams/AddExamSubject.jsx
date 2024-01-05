@@ -38,11 +38,9 @@ function AddExamSubject({
     // Code to run on component mount
     const fetchClasses = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/auth/admission-classes"
-        );
+        const response = await axios.get(`${baseURL}/auth/admission-classes`);
+
         const data = await response.data;
-        // console.log(data);
 
         setClasses(data);
       } catch (error) {
@@ -135,10 +133,11 @@ function AddExamSubject({
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:3000/exams/${examId}/subject`,
-        { newSubject }
-      );
+      const response = await axios.post(`${baseURL}/exams/${examId}/subject`, {
+        newSubject,
+      });
+
+      console.log(response);
 
       // alert pop up
       onSetMessage(response.data.message);

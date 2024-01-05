@@ -7,6 +7,7 @@ import Alert from "../../Utilities/Alert";
 import ConfirmDelete from "../../Utilities/ConfirmDelete";
 import { useUser } from "../../../Contexts/UserContext";
 import Loader from "../../../Loader";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function QuestionDetails() {
   const [questionDetails, setQuestionDetails] = useState([]);
@@ -31,11 +32,10 @@ function QuestionDetails() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/exams/question-details/${questionId}`
+        `${baseURL}/exams/question-details/${questionId}`
       );
 
       const data = response.data;
-      // console.log(data);
 
       setQuestionDetails(data);
     } catch (error) {
@@ -48,13 +48,12 @@ function QuestionDetails() {
   const handleDeleteQuestion = async (questionId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/exams/question/delete/${questionId}`
+        `${baseURL}/exams/question/delete/${questionId}`
       );
 
-      console.log(response);
       setMessage(response.data);
 
-      navigate("/dashboard/admin/questions");
+      navigate(-1);
       setDeleteModal(false);
       setShowAlert(true);
     } catch (error) {

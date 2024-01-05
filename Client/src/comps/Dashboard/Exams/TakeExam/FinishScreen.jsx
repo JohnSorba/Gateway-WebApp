@@ -30,13 +30,12 @@ function FinishScreen({
 
   const handleExamCompletion = async (examId, subjectId) => {
     try {
-      const response = await axios.post(
+      await axios.post(
         `${baseURL}/student/submit-grades/${examId}/${subjectId}`,
         { studentId, marksObtained, isComplete: true, classCode }
       );
-      console.log(response.data.message);
 
-      navigate(`/dashboard/student/exams/exam-details/${examId}`);
+      navigate(-1);
     } catch (error) {
       console.error("Error submitting grades: ", error);
     }

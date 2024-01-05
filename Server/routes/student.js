@@ -36,7 +36,7 @@ router.get(
 // get details for specific exam for a student
 router.get(
   "/exam-details/:examId/:classId/:studentId",
-  StudentExamController.getExamDetailsByClassIdAndStudentId
+  StudentExamController.getExamDetailsByClassId
 );
 
 // Take Exam

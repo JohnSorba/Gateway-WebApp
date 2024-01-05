@@ -347,18 +347,39 @@ const ClassModel = {
 const ExamModel = {
   // Create an exam
   async createExam(title) {
-    if (title.length < 3) {
+    const titleQuery = await pool.query(
+      "SELECT * FROM exams WHERE title = $1",
+      [title]
+    );
+
+    if (titleQuery.rows.length > 0) {
       return {
         type: "failure",
-        message: "Exam title must contain at least three characters!",
+        message: "A duplicate exam title exists!",
       };
     }
 
-    const result = await pool.query(
-      "INSERT INTO exams (title, published) VALUES ($1, false) RETURNING *",
-      [title]
-    );
-    return result.rows[0];
+    if (title.length < 3 || title.length > 25) {
+      return {
+        type: "failure",
+        message:
+          "Exam title must contain at least three characters and no more than 30 characters!",
+      };
+    }
+
+    try {
+      await pool.query(
+        "INSERT INTO exams (title, published) VALUES ($1, false) RETURNING *",
+        [title]
+      );
+
+      return { type: "success", message: `${title} created successfully!` };
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Cannot create a new exam!",
+      };
+    }
   },
 
   // fetch total questions for subject adding
@@ -371,7 +392,6 @@ const ExamModel = {
 
       return result.rows[0].count;
     } catch (error) {
-      console.error(error);
       return {
         type: "failure",
         message: error,
@@ -537,9 +557,7 @@ const ExamModel = {
     const query =
       "INSERT INTO exam_subjects (exam_id, subject_code, exam_date, start_time, duration, no_of_questions, total_marks) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
 
-    const client = pool.connect();
     try {
-      (await client).query("BEGIN");
       await pool.query(query, [
         examId,
         subjectCode,
@@ -550,16 +568,12 @@ const ExamModel = {
         totalMarks,
       ]);
 
-      (await client).query("COMMIT");
       return { type: "success", message: "Subject added to Exam" };
     } catch (error) {
-      (await client).query("ROLLBACK");
       return {
         type: "failure",
-        message: error,
+        message: "Cannot add subject to this exam. Please try again!",
       };
-    } finally {
-      (await client).release;
     }
   },
 
@@ -585,30 +599,52 @@ const ExamModel = {
   // Get all exams for displaying list of all exams created
   // Also used to display total count stats on exam home page
   async getAllExams() {
-    const result = await pool.query(
-      "SELECT * FROM exams ORDER BY date_created DESC"
-    );
+    try {
+      const result = await pool.query(
+        "SELECT * FROM exams ORDER BY date_created DESC"
+      );
 
-    const rowCount = result.rowCount;
-    const details = result.rows;
+      // const rowCount = result.rowCount;
+      const details = result.rows;
 
-    return { examDetails: details, examCount: rowCount };
+      return details;
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Cannot fetch exams",
+      };
+    }
+  },
+  // Get all exams for displaying list of all exams created
+  // Also used to display total count stats on exam home page
+  async getTotalExams() {
+    try {
+      const result = await pool.query("SELECT * FROM exams");
+
+      const rowCount = result.rowCount;
+      // const details = result.rows;
+
+      return rowCount;
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Cannot fetch exams",
+      };
+    }
   },
 
   // Get exam details for draft exam selected by exam Id
-  async getExamDetailsById(examId) {
-    console.log("exam id :", examId);
-
+  async getExamDraftDetailsById(examId) {
     const query = `
-    SELECT e.*, es.*, s.subject_name, c.class_name
+    SELECT e.*, es.*, su.subject_name, c.class_name
     FROM 
       exams e
     JOIN 
       exam_subjects es ON es.exam_id = e.exam_id
     JOIN 
-      subjects s ON s.subject_code = es.subject_code
+      subjects su ON su.subject_code = es.subject_code
     JOIN 
-      classes c ON c.class_code = s.class_assigned  
+      classes c ON c.class_code = su.class_assigned  
       
     WHERE e.exam_id = $1
     ORDER BY es.exam_date 
@@ -617,16 +653,19 @@ const ExamModel = {
     try {
       const result = await pool.query(query, [examId]);
 
-      console.log(result.rows);
-
       return result.rows;
     } catch (error) {
-      console.error(error);
+      return {
+        type: "failure",
+        message: "Cannot fetch details for exam!",
+      };
     }
   },
 
   // Get exam details for Ongoing exam
   async getOngoingExamDetails(examId) {
+    // This query returns the total number of students in each class in an
+    // exam and also the total students who have completed an exam
     const query = `
     WITH class_student_count AS (
       SELECT c.class_code, COUNT(DISTINCT s.student_id) as total_students
@@ -634,7 +673,7 @@ const ExamModel = {
       join student_admission sa on sa.class_code = c.class_code
       JOIN students s ON s.student_id = sa.student_id
       GROUP BY c.class_code
-    ),
+    ),  
     
     exam_taken_count AS (
       SELECT seg.class_code, COUNT(DISTINCT seg.student_id) as students_taken_exam
@@ -654,6 +693,99 @@ const ExamModel = {
       return result.rows;
     } catch (error) {
       console.error(error);
+      return {
+        type: "failure",
+        message: "Cannot retrieve details for ongoing exams!",
+      };
+    }
+  },
+
+  // know when all students have taken an exam and update the exam status
+  async markExamComplete(examId) {
+    // Fetch total students in exam class and total students
+    // who have completed the exam
+
+    const query = `
+    WITH class_student_count AS (
+      SELECT
+        c.class_code,
+        COUNT(DISTINCT s.student_id) as total_students
+      FROM classes c
+      JOIN student_admission sa ON sa.class_code = c.class_code
+      JOIN students s ON s.student_id = sa.student_id
+      GROUP BY c.class_code
+    ),
+    exam_taken_count AS (
+      SELECT
+        seg.class_code,
+        COUNT(DISTINCT seg.student_id) as students_taken_exam
+      FROM student_exam_grades seg
+      WHERE seg.exam_id = $1
+      GROUP BY seg.class_code
+    )
+  
+    SELECT
+      csc.class_code,
+      csc.total_students,
+      etc.students_taken_exam
+    FROM class_student_count csc
+    JOIN exam_taken_count etc ON csc.class_code = etc.class_code;
+  `;
+
+    // check if examId has been updated
+    const updatedExamIdQuery = await pool.query(
+      "SELECT * FROM exams where exam_id = $1",
+      [examId]
+    );
+
+    try {
+      const totalStudentsResult = await pool.query(query, [examId]);
+
+      const { rows } = totalStudentsResult;
+
+      console.log(totalStudentsResult.rows);
+
+      // Check if all students have completed the exam
+      const allStudentsCompleted = rows.every(
+        (row) => row.students_taken_exam === row.total_students
+      );
+
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].students_taken_exam === 0 && rows[i].total_students === 0) {
+          console.log("all students completed has both equals zero (0)");
+
+          return;
+        }
+      }
+
+      for (let row of rows) {
+        if (
+          row.total_students === row.total_students &&
+          row.students_taken_exam === 0
+        ) {
+          console.log("rows equal zero");
+
+          return; // Stops the function execution
+        }
+        // Your status update code here...
+        if (allStudentsCompleted) {
+          // Update the exams table to mark the exam as complete
+          await pool.query("UPDATE exams SET status = $1 WHERE exam_id = $2", [
+            "completed",
+            examId,
+          ]);
+        }
+      }
+
+      const completeStatus = updatedExamIdQuery.rows[0].status;
+      if (completeStatus === "completed") {
+        return;
+      }
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Students have not completed the exams!",
+      };
     }
   },
 
@@ -661,9 +793,15 @@ const ExamModel = {
   async getExamSubjectDetails(examId, subjectId) {
     try {
       const result = await pool.query(
-        `SELECT es.*, s.subject_name FROM exam_subjects es
-        JOIN subjects s ON s.subject_code = es.subject_code
-        WHERE es.subject_code = $1 AND es.exam_id = $2`,
+        `
+        SELECT es.*, s.subject_name 
+        FROM 
+          exam_subjects es
+        JOIN 
+          subjects s ON s.subject_code = es.subject_code
+        WHERE 
+          es.subject_code = $1 AND es.exam_id = $2`,
+
         [subjectId, examId]
       );
 
@@ -672,7 +810,7 @@ const ExamModel = {
       console.error(error);
       return {
         type: "failure",
-        message: error,
+        message: "Cannot retrieve subject details for update!",
       };
     }
   },
@@ -822,12 +960,14 @@ const ExamModel = {
         message:
           "Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
       };
-    } else {
-      return {
-        type: "success",
-        message: "Mock Update",
-      };
     }
+
+    // else {
+    //   return {
+    //     type: "success",
+    //     message: "Mock Update",
+    //   };
+    // }
     //////////////////////////////////////////////////////////////////////
 
     // get questions from question table with the specified subject code
@@ -913,11 +1053,18 @@ const ExamModel = {
 
   // Update an exam title
   async updateExamTitle(examId, title) {
-    await pool.query(
-      "UPDATE exams SET title = $1 WHERE exam_id = $2 RETURNING *",
-      [title, examId]
-    );
-    return { type: "success", message: `Title updated to '${title}'` };
+    try {
+      await pool.query(
+        "UPDATE exams SET title = $1 WHERE exam_id = $2 RETURNING *",
+        [title, examId]
+      );
+      return { type: "success", message: `Title updated to '${title}'` };
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Cannot update title!",
+      };
+    }
   },
 
   // Delete an exam
@@ -933,7 +1080,7 @@ const ExamModel = {
 
       return { type: "success", message: "Exam Deleted Successfully!" };
     } catch (error) {
-      return { type: "failure", message: "Cannot delete exam record!" };
+      return { type: "failure", message: "Could not delete exam record!" };
     }
   },
 

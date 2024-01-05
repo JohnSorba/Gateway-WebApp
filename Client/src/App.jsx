@@ -1,5 +1,6 @@
 import "./App.css";
 import { AuthProvider } from "./Contexts/AuthContext";
+import { SearchProvider } from "./Contexts/SearchContext";
 import { UserProvider } from "./Contexts/UserContext";
 import AppRouter from "./comps/AppRouter";
 
@@ -8,7 +9,9 @@ function App() {
     <div className="app">
       <AuthProvider>
         <UserProvider>
-          <AppRouter />
+          <SearchProvider>
+            <AppRouter />
+          </SearchProvider>
         </UserProvider>
       </AuthProvider>
     </div>

@@ -69,6 +69,7 @@ function ExamDetails() {
       setMessage(data.message);
       setType(data.type);
       setShowAlert(true);
+      setPublishModal(false);
       console.log("Exam published");
     } catch (error) {
       console.error("Error fetching exams: ", error);
@@ -78,7 +79,7 @@ function ExamDetails() {
   const handleDeleteExamSubject = async (subjectId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/exams/delete/exam-subject/${examId}/${subjectId}`
+        `${baseURL}/exams/delete/exam-subject/${examId}/${subjectId}`
       );
 
       const data = response.data;
@@ -121,7 +122,12 @@ function ExamDetails() {
         </div>
 
         <div className="flex gap-4">
-          <button onClick={() => setAddSubjectModal(true)}>Add Subject</button>
+          <button
+            className="btn-black"
+            onClick={() => setAddSubjectModal(true)}
+          >
+            Add Subject
+          </button>
           <button
             className="bg-red-600"
             onClick={() => setShowInstructions(true)}
