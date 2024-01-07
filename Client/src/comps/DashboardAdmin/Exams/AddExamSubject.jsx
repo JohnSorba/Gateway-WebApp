@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { baseURL } from "../../Dashboard/DashboardData";
 import { useUser } from "../../../Contexts/UserContext";
 import Loader from "../../../Loader";
+import { useNavigate } from "react-router-dom";
 
 const addSubjectForm = {
   subjectCode: "",
@@ -29,6 +30,7 @@ function AddExamSubject({
   const [warning, setWarning] = useState("");
   const [totalQuestions, setTotalQuestions] = useState(0);
   const { isLoading, setIsLoading } = useUser();
+  const navigate = useNavigate();
 
   // console.log(newSubject);
   const subjectCode = newSubject.subjectCode && newSubject.subjectCode;
@@ -153,6 +155,11 @@ function AddExamSubject({
     }
   };
 
+  // Add Question to subjects without
+  const handleAddQuestion = () => {
+    navigate("/dashboard/admin/questions/add");
+  };
+
   return (
     <div className="modals">
       <div>
@@ -272,22 +279,27 @@ function AddExamSubject({
 
             <p className="text-red-500">{warning}</p>
 
-            <div className="flex gap-4 mt-4">
-              <button
-                type="button"
-                className="bg-red-600"
-                onClick={() => onModalClose(false)}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="bg-green-600"
-                onClick={handleAddSubject}
-              >
-                Add subject
-              </button>
-            </div>
+            <article className="flex gap-4 mt-4 items-end justify-between">
+              <div className="flex gap-4 mt-4">
+                <button
+                  type="button"
+                  className="bg-red-600"
+                  onClick={() => onModalClose(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-600"
+                  onClick={handleAddSubject}
+                >
+                  Add subject
+                </button>
+              </div>
+              {totalQuestions <= 3 && totalQuestions !== 0 && (
+                <button onClick={handleAddQuestion}>Add Question</button>
+              )}
+            </article>
           </div>
         )}
       </div>

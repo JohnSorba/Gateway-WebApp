@@ -3,12 +3,24 @@
   justify-content: space-between;
   align-items: center;
   outline: 2px solid black;
-  padding: 0.75rem 2rem;
+  padding: 0.5rem 2rem;
   /* border-bottom: 1px solid #ccc; */
-  background-color: #121212;
-  background-color: #232323;
-  background-color: #454545;
   color: #fff;
+}
+
+.dashboard-header.admin {
+  background-color: var(--admin-bg-color);
+}
+
+.dashboard-header.teacher {
+  background: var(--teacher-bg-color);
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.dashboard-header.student {
+  background: var(--student-bg-color);
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-header .nav-menu {
@@ -22,24 +34,38 @@
   height: 2.5rem;
 }
 
+.nav-menu .back-btn {
+  background-color: #263036;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  /* border: 1px solid black; */
+}
+.nav-menu .back-btn.admin {
+  background-color: var(--admin-accent-color);
+}
+.nav-menu .back-btn.teacher {
+  background-color: var(--teacher-accent-color);
+}
+
 .search-container {
   position: relative;
   width: 350px;
 }
 
 .search-container .search-bar {
-  width: 100%;
+  width: 200px;
   padding: 0.5rem;
   padding-left: 2.5rem;
   /* border: 1px solid #ccc; */
   border-radius: 1rem;
   outline: none;
   transition: 0.3s all;
-  background-color: #343434;
+  background-color: var(--admin-accent-color);
 }
-/* input[type="search"]:focus {
-  width: 200px;
-} */
+input[type="search"]:focus {
+  width: 100%;
+}
 
 .search-container .search-icon {
   position: absolute;
@@ -61,15 +87,28 @@
   border: 2px solid #f39c12;
 }
 
-.user-profile {
+.user-actions .user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
-  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  padding: 0.35rem 1rem 0.35rem 0.5rem;
   border-radius: 0.75rem;
-  background-color: #ffd;
-  background-color: #343434;
   z-index: 10;
   color: #3498db;
+  /* color: white; */
 }
+
+.user-actions .user-profile.admin {
+  background-color: var(--admin-accent-color);
+}
+.user-actions .user-profile.teacher {
+  background-color: var(--teacher-accent-color);
+}
+.user-actions .user-profile.student {
+  background-color: var(--student-accent-color);
+}
+
 .user-actions .user-profile:hover {
   /* background-color: #fef; */
   background-color: rgba(13, 13, 13, 0.5);

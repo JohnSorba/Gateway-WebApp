@@ -98,35 +98,35 @@ export default function AttendanceHome() {
 
   return (
     <div>
-      <header>
-        <h1>School Attendance Report</h1>
-        {/* <p>Overall Attendance: 9</p>
+      <header className="header">
+        <h2>School Attendance Report Overview</h2>
+      </header>
+      {/* <p>Overall Attendance: 9</p>
         <p>Absent: 3</p>
         <p>Present: 6</p> */}
 
-        <div className="grid grid-cols-2 gap-8 h-[350px] mb-8">
-          <BarChartBox data={chartData} />
-          <LineChartBox data={chartData} />
+      <div className="grid grid-cols-2 gap-8 h-[350px] mb-8">
+        <BarChartBox data={chartData} />
+        <LineChartBox data={chartData} />
+      </div>
+
+      <div className="grid grid-cols-[250px_250px_1fr_200px] gap-4 items-start">
+        <div className="flex gap-4 items-start">
+          <p>Filter by:</p>
+          <select
+            value={view}
+            onChange={(e) => setView(e.target.value)}
+            className="form-select"
+          >
+            <option value="date">Date View</option>
+            <option value="classes">Class View</option>
+            <option value="student">Student View</option>
+          </select>
         </div>
 
-        <div className="grid grid-cols-[250px_250px_1fr_200px] gap-4 items-start">
-          <div className="flex gap-4 items-start">
-            <p>Filter by:</p>
-            <select
-              value={view}
-              onChange={(e) => setView(e.target.value)}
-              className="form-select"
-            >
-              <option value="date">Date View</option>
-              <option value="classes">Class View</option>
-              <option value="student">Student View</option>
-            </select>
-          </div>
-
-          <div></div>
-          <h2>Attendance Summary</h2>
-        </div>
-      </header>
+        <div></div>
+        <h2>Attendance Summary</h2>
+      </div>
       {isLoading ? (
         <Loader />
       ) : attendanceData.length < 1 ? (

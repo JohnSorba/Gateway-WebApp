@@ -4,6 +4,7 @@ import SubjectAdd from "./SubjectAdd";
 import SubjectItem from "./SubjectItem";
 import { MdWarning } from "react-icons/md";
 import Alert from "../../Utilities/Alert";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 const initialSubjectData = {
   classAssigned: "",
@@ -31,9 +32,8 @@ function AdminTimetable() {
     // Code to run on component mount
     const fetchClasses = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/auth/admission-classes"
-        );
+        const response = await axios.get(`${baseURL}/auth/admission-classes`);
+
         const data = await response.data;
         // console.log(data);
 
@@ -55,9 +55,7 @@ function AdminTimetable() {
 
   const getTimetable = async (selectedClass) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/timetable/${selectedClass}`
-      );
+      const res = await axios.get(`${baseURL}/timetable/${selectedClass}`);
 
       const TimetableData = await res.data.timetable;
       const subjectData = await res.data.subjects;
@@ -78,7 +76,7 @@ function AdminTimetable() {
   const handleShuffleClick = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/timetable/shuffleTimetable/${selectedClass}`
+        `${baseURL}/timetable/shuffleTimetable/${selectedClass}`
       );
 
       const data = response.data;
@@ -133,6 +131,9 @@ function AdminTimetable() {
 
   return (
     <div className="h-full">
+      <header className="header">
+        <h2>Subject and Timetable Management</h2>
+      </header>
       <div className="flex mb-8">
         {/* Timetable with a grid of subjects and class schedule */}
         <div className="w-full">

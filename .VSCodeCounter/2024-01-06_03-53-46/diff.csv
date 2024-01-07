@@ -1,0 +1,11 @@
+"filename", "language", "JavaScript", "Markdown", "JSON", "XML", "HTML", "comment", "blank", "total"
+"c:\Dev\gateway-web-app\Client\.eslintrc.cjs", "JavaScript", -20, 0, 0, 0, 0, 0, -1, -21
+"c:\Dev\gateway-web-app\Client\README.md", "Markdown", 0, -5, 0, 0, 0, 0, -4, -9
+"c:\Dev\gateway-web-app\Client\index.html", "HTML", 0, 0, 0, 0, -13, 0, -1, -14
+"c:\Dev\gateway-web-app\Client\package-lock.json", "JSON", 0, 0, -5220, 0, 0, 0, -1, -5221
+"c:\Dev\gateway-web-app\Client\package.json", "JSON", 0, 0, -39, 0, 0, 0, -1, -40
+"c:\Dev\gateway-web-app\Client\postcss.config.js", "JavaScript", -6, 0, 0, 0, 0, 0, -1, -7
+"c:\Dev\gateway-web-app\Client\public\vite.svg", "XML", 0, 0, 0, -1, 0, 0, 0, -1
+"c:\Dev\gateway-web-app\Client\tailwind.config.js", "JavaScript", -7, 0, 0, 0, 0, -1, -1, -9
+"c:\Dev\gateway-web-app\Client\vite.config.js", "JavaScript", -5, 0, 0, 0, 0, -1, -2, -8
+"Total", "-", -38, -5, -5259, -1, -13, -2, -12, -5330

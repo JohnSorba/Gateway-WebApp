@@ -26,11 +26,25 @@ function Header({ handleClick }) {
   };
 
   return (
-    <header className="dashboard-header">
+    <header
+      className={`dashboard-header ${
+        authState.role === "admin"
+          ? "admin"
+          : authState.role === "teacher"
+          ? "teacher"
+          : "student"
+      }`}
+    >
       <article className="nav-menu">
         {/* <GiHamburgerMenu className="w-6 h-6 icon" onClick={handleClick} /> */}
         <GrPrevious
-          className="w-8 h-8 text-white font-semibold bg-blue-200 rounded-full p-2 cursor-pointer border-r-2 "
+          className={`back-btn w-8 h-8 ${
+            authState.role === "admin"
+              ? "admin"
+              : authState.role === "teacher"
+              ? "teacher"
+              : "student"
+          }`}
           onClick={prev}
         />
         <FaHamburger className="w-6 h-6 pl-4 icon" onClick={handleClick} />
@@ -51,7 +65,13 @@ function Header({ handleClick }) {
 
         {/* Dropdown Profile Info */}
         <div
-          className="user-profile dropdown flex gap-2 items-center"
+          className={`user-profile dropdown ${
+            authState.role === "admin"
+              ? "admin"
+              : authState.role === "teacher"
+              ? "teacher"
+              : "student"
+          }`}
           onClick={() => setIsOpen(!isOpen)}
         >
           <img

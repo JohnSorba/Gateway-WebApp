@@ -34,7 +34,9 @@ function AdminStudents() {
 
   return (
     <div>
-      <h1 className="my-16">Admin Students Content</h1>
+      <header className="header">
+        <h2 className="my-16">Admin Students Content</h2>
+      </header>
 
       <div className="table-container">
         <table>

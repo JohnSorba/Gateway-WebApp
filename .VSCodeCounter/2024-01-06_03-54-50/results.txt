@@ -1,0 +1,66 @@
+Date : 2024-01-06 03:54:50
+Directory : c:\Dev\gateway-web-app\Server
+Total : 35 files,  5292 codes, 600 comments, 866 blanks, all 6758 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         32 |      3,373 |        600 |        863 |      4,836 |
+| JSON       |          3 |      1,919 |          0 |          3 |      1,922 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                        |         35 |      5,292 |        600 |        866 |      6,758 |
+| . (Files)                                                |          7 |      2,047 |         29 |         53 |      2,129 |
+| auth                                                     |          3 |        291 |         88 |         67 |        446 |
+| controllers                                              |          8 |        881 |        107 |        232 |      1,220 |
+| middleware                                               |          2 |         50 |         16 |         16 |         82 |
+| models                                                   |          7 |      1,800 |        251 |        384 |      2,435 |
+| routes                                                   |          8 |        223 |        109 |        114 |        446 |
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                 | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Dev\gateway-web-app\Server\MOCK_DATA.json             | JSON       |         37 |          0 |          1 |         38 |
+| c:\Dev\gateway-web-app\Server\auth\classes.js            | JavaScript |         18 |          3 |          4 |         25 |
+| c:\Dev\gateway-web-app\Server\auth\login.js              | JavaScript |         61 |         14 |         16 |         91 |
+| c:\Dev\gateway-web-app\Server\auth\register.js           | JavaScript |        212 |         71 |         47 |        330 |
+| c:\Dev\gateway-web-app\Server\controllers\admin.js       | JavaScript |         82 |          6 |         19 |        107 |
+| c:\Dev\gateway-web-app\Server\controllers\attendance.js  | JavaScript |         92 |          8 |         22 |        122 |
+| c:\Dev\gateway-web-app\Server\controllers\exams.js       | JavaScript |        353 |         33 |         90 |        476 |
+| c:\Dev\gateway-web-app\Server\controllers\reports.js     | JavaScript |         45 |          5 |         12 |         62 |
+| c:\Dev\gateway-web-app\Server\controllers\student.js     | JavaScript |        106 |          5 |         27 |        138 |
+| c:\Dev\gateway-web-app\Server\controllers\studentExam.js | JavaScript |          0 |          0 |          1 |          1 |
+| c:\Dev\gateway-web-app\Server\controllers\teachers.js    | JavaScript |        105 |          9 |         31 |        145 |
+| c:\Dev\gateway-web-app\Server\controllers\timetable.js   | JavaScript |         98 |         41 |         30 |        169 |
+| c:\Dev\gateway-web-app\Server\db.js                      | JavaScript |         10 |          2 |          3 |         15 |
+| c:\Dev\gateway-web-app\Server\middleware\authenticate.js | JavaScript |         50 |         16 |         15 |         81 |
+| c:\Dev\gateway-web-app\Server\middleware\authorize.js    | JavaScript |          0 |          0 |          1 |          1 |
+| c:\Dev\gateway-web-app\Server\models\admin.js            | JavaScript |        215 |         24 |         42 |        281 |
+| c:\Dev\gateway-web-app\Server\models\attendance.js       | JavaScript |        187 |          8 |         35 |        230 |
+| c:\Dev\gateway-web-app\Server\models\exams.js            | JavaScript |        828 |        139 |        172 |      1,139 |
+| c:\Dev\gateway-web-app\Server\models\reports.js          | JavaScript |         74 |          9 |         17 |        100 |
+| c:\Dev\gateway-web-app\Server\models\student.js          | JavaScript |        198 |         40 |         48 |        286 |
+| c:\Dev\gateway-web-app\Server\models\teachers.js         | JavaScript |        193 |         17 |         44 |        254 |
+| c:\Dev\gateway-web-app\Server\models\timetable.js        | JavaScript |        105 |         14 |         26 |        145 |
+| c:\Dev\gateway-web-app\Server\package-lock.json          | JSON       |      1,845 |          0 |          1 |      1,846 |
+| c:\Dev\gateway-web-app\Server\package.json               | JSON       |         37 |          0 |          1 |         38 |
+| c:\Dev\gateway-web-app\Server\queries.js                 | JavaScript |         28 |          1 |          9 |         38 |
+| c:\Dev\gateway-web-app\Server\routes\admin.js            | JavaScript |         21 |         13 |         13 |         47 |
+| c:\Dev\gateway-web-app\Server\routes\attendance.js       | JavaScript |         34 |         12 |         12 |         58 |
+| c:\Dev\gateway-web-app\Server\routes\auth.js             | JavaScript |          9 |          4 |          9 |         22 |
+| c:\Dev\gateway-web-app\Server\routes\exams.js            | JavaScript |         72 |         39 |         36 |        147 |
+| c:\Dev\gateway-web-app\Server\routes\reports.js          | JavaScript |         11 |          8 |          8 |         27 |
+| c:\Dev\gateway-web-app\Server\routes\student.js          | JavaScript |         31 |         12 |         12 |         55 |
+| c:\Dev\gateway-web-app\Server\routes\teachers.js         | JavaScript |         32 |         11 |         13 |         56 |
+| c:\Dev\gateway-web-app\Server\routes\timetable.js        | JavaScript |         13 |         10 |         11 |         34 |
+| c:\Dev\gateway-web-app\Server\server.js                  | JavaScript |         37 |         14 |         19 |         70 |
+| c:\Dev\gateway-web-app\Server\serverData.js              | JavaScript |         53 |         12 |         19 |         84 |
+| Total                                                    |            |      5,292 |        600 |        866 |      6,758 |
++----------------------------------------------------------+------------+------------+------------+------------+------------+

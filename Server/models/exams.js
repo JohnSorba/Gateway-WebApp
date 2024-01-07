@@ -46,6 +46,7 @@ const SubjectModel = {
   },
 };
 
+/////////////////////////////////////////////////////////////
 //**************************************************** */
 // QUESTION MODEL
 
@@ -278,6 +279,7 @@ const QuestionModel = {
   },
 };
 
+///////////////////////////////////////////////////////////////
 // QUESTION OPTIONS MODEL
 const QuestionOptionsModel = {
   // Add options to a question
@@ -326,6 +328,7 @@ const QuestionOptionsModel = {
 };
 
 //////////////////////////////////////////////////////////////////
+// CLASS MODEL
 const ClassModel = {
   async getSubjectsPerClass(classCode) {
     const query = "SELECT * FROM subjects WHERE class_assigned = $1";
@@ -514,18 +517,15 @@ const ExamModel = {
       startTime,
       duration,
     ]);
-    console.log(checkDateClash.rows);
 
     console.log("---------------------------");
-
-    // console.log(examDate, examTime, classId, subjectClass, date, startTime);
 
     // check if the date clashes
     if (checkDateClash.rows.length > 0) {
       return {
         type: "failure",
         message:
-          "Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
+          "Subject Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
       };
     }
 
@@ -535,6 +535,46 @@ const ExamModel = {
     //     message: "Mock Update",
     //   };
     // }
+
+    //////////////////////////////////////////////////////////////////////
+    // Ensure two exams do not happen at the same time on the same day
+    const examsClashQuery = `
+    SELECT 
+      es.subject_code, 
+      es.exam_date, es.start_time, 
+      es.start_time + (es.duration || ' minutes')::interval AS end_time, 
+      c.class_code
+
+    FROM exam_subjects es
+    JOIN subjects s on s.subject_code = es.subject_code
+    JOIN classes c on c.class_code = s.class_assigned
+
+    WHERE c.class_code = $1
+      AND es.exam_date= $2
+      AND (
+        ($3 >= es.start_time - INTERVAL '15 minutes' AND $3 < es.start_time + (es.duration + 45 || ' minutes')::interval) OR
+        (es.start_time >= $3 - INTERVAL '15 minutes' AND es.start_time < $3 + ($4 + 45 || ' minutes')::interval)
+      )
+    `;
+
+    const checkExamClash = await pool.query(examsClashQuery, [
+      subjectClass,
+      date,
+      startTime,
+      duration,
+    ]);
+
+    console.log("---------------------------");
+
+    // check if the date clashes
+    if (checkExamClash.rows.length > 0) {
+      return {
+        type: "failure",
+        message:
+          "Exam Schedule Conflict: A different exam is scheduled for this period. Exams in the same class are typically an hour apart!",
+      };
+    }
+    //////////////////////////////////////////////////////////////////////
 
     // get questions from question table with the specified subject code
     // and limited to the number of questions required
@@ -768,7 +808,13 @@ const ExamModel = {
           return; // Stops the function execution
         }
         // Your status update code here...
-        if (allStudentsCompleted) {
+        if (!allStudentsCompleted) {
+          // Update the exams table to mark the exam as incomplete
+          await pool.query("UPDATE exams SET status = $1 WHERE exam_id = $2", [
+            null,
+            examId,
+          ]);
+        } else if (allStudentsCompleted) {
           // Update the exams table to mark the exam as complete
           await pool.query("UPDATE exams SET status = $1 WHERE exam_id = $2", [
             "completed",
@@ -842,6 +888,7 @@ const ExamModel = {
     const timeQuery = checkSubjectExists.rows[0].start_time;
     const totalQuestionsQuery = checkSubjectExists.rows[0].no_of_questions;
     const durationQuery = checkSubjectExists.rows[0].duration;
+    const subjectQuery = checkSubjectExists.rows[0].subject_code;
 
     // convert the date received to appropriate format
     const dateReceived = localDateString(date);
@@ -903,6 +950,7 @@ const ExamModel = {
     WHERE c.class_code = $1
     AND es.exam_id = $2
     AND es.exam_date = $3
+    AND es.subject_code != $4
       
     `;
 
@@ -910,9 +958,10 @@ const ExamModel = {
       subjectClass,
       examId,
       date,
+      subjectId,
     ]);
 
-    if (twoSubjectsPerDay.rows.length >= 2) {
+    if (twoSubjectsPerDay.rows.length > 1) {
       return {
         type: "failure",
         message: "Each class is restricted to a maximum of two exams per day!",
@@ -934,6 +983,7 @@ const ExamModel = {
       WHERE c.class_code = $1
         AND es.exam_id = $2 
         AND es.exam_date= $3
+        AND es.subject_code != $6
         AND (
           ($4 >= es.start_time - INTERVAL '15 minutes' AND $4 < es.start_time + (es.duration + 45 || ' minutes')::interval) OR
           (es.start_time >= $4 - INTERVAL '15 minutes' AND es.start_time < $4 + ($5 + 45 || ' minutes')::interval)
@@ -946,19 +996,15 @@ const ExamModel = {
       date,
       startTime,
       duration,
+      subjectId,
     ]);
-    console.log(checkDateClash.rows);
-
-    console.log("---------------------------");
-
-    // console.log(examDate, examTime, classId, subjectClass, date, startTime);
 
     // check if the date clashes
     if (checkDateClash.rows.length > 0) {
       return {
         type: "failure",
         message:
-          "Schedule Conflict: An exam is scheduled for this period. Exams in the same class are typically an hour apart depending on the duration!",
+          "Subject Schedule Conflict: Subject cannot be rescheduled for this period. An exam is scheduled already at this specified time.",
       };
     }
 
@@ -968,6 +1014,46 @@ const ExamModel = {
     //     message: "Mock Update",
     //   };
     // }
+    //////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////
+    // Ensure two exams do not happen at the same time on the same day
+    const examsClashQuery = `
+    SELECT 
+      es.subject_code, 
+      es.exam_date, es.start_time, 
+      es.start_time + (es.duration || ' minutes')::interval AS end_time, 
+      c.class_code
+
+    FROM exam_subjects es
+    JOIN subjects s on s.subject_code = es.subject_code
+    JOIN classes c on c.class_code = s.class_assigned
+
+    WHERE c.class_code = $1
+      AND es.exam_date= $2
+      AND (
+        ($3 >= es.start_time - INTERVAL '15 minutes' AND $3 < es.start_time + (es.duration + 45 || ' minutes')::interval) OR
+        (es.start_time >= $3 - INTERVAL '15 minutes' AND es.start_time < $3 + ($4 + 45 || ' minutes')::interval)
+      )
+    `;
+
+    const checkExamClash = await pool.query(examsClashQuery, [
+      subjectClass,
+      date,
+      startTime,
+      duration,
+    ]);
+
+    console.log("---------------------------");
+
+    // check if the date clashes
+    if (checkExamClash.rows.length > 0 && subjectQuery !== subjectId) {
+      return {
+        type: "failure",
+        message:
+          "Exam Schedule Conflict: A different exam is scheduled for this period. Exams in the same class are typically an hour apart!",
+      };
+    }
     //////////////////////////////////////////////////////////////////////
 
     // get questions from question table with the specified subject code

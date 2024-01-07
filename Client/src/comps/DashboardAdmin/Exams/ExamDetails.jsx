@@ -1,18 +1,19 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AddExamSubject from "./AddExamSubject";
 import Loader from "../../../Loader";
-import { baseURL, localDateString } from "../../Dashboard/DashboardData";
 import Alert from "../../Utilities/Alert";
 import ExamSubjectsEdit from "./ExamSubjectsEdit";
 import ConfirmDelete from "../../Utilities/ConfirmDelete";
 import { useUser } from "../../../Contexts/UserContext";
+import { FaEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 import { PiWarningCircleFill } from "react-icons/pi";
+import { baseURL, localDateString } from "../../Dashboard/DashboardData";
 
 const edit = {
   open: false,
@@ -36,6 +37,7 @@ function ExamDetails() {
   const [showInstructions, setShowInstructions] = useState(false);
   const [publishModal, setPublishModal] = useState(false);
   const { isLoading, setIsLoading } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchExams(examId);
@@ -70,7 +72,7 @@ function ExamDetails() {
       setType(data.type);
       setShowAlert(true);
       setPublishModal(false);
-      console.log("Exam published");
+      navigate(-1);
     } catch (error) {
       console.error("Error fetching exams: ", error);
     }
@@ -103,22 +105,18 @@ function ExamDetails() {
     setDeleteExamSubject({ open: true, id: subjectId });
   };
 
-  if (examDetails.length === 0) {
-    return <Loader />;
-  }
-
   return (
     <div>
       <header className="header">
         <div>
-          <h2 className="m-0 text-3xl font-semibold">
-            {examDetails && examDetails[0].title} Details
-          </h2>
-          {examDetails && examDetails.length > 0 ? (
+          {examDetails.length > 0 ? (
             <p>{examDetails.length} subjects added to this exam</p>
           ) : (
             <p>Add Subjects to this exam!</p>
           )}
+          <h2 className="m-0 text-3xl font-semibold">
+            {examDetails[0]?.title} Details
+          </h2>
         </div>
 
         <div className="flex gap-4">
@@ -245,36 +243,10 @@ function ExamDetails() {
       )}
 
       {publishModal && (
-        <div className="w-[400px]">
-          {" "}
-          <div className="modal-backdrop"></div>
-          <div className="modal flex flex-col items-center w-[600px]">
-            <div className="flex gap-4 items-start">
-              <PiWarningCircleFill className="h-12 w-12 text-yellow-400" />
-              <div>
-                <p className="font-semibold text-lg">
-                  Are you sure you want to publish this exam?
-                </p>
-                <p className="text-sm btn-danger mb-8">
-                  After publishing, students will be able to take the subjects
-                  based on their classes.
-                </p>
-              </div>
-            </div>
-
-            <footer className="flex gap-4">
-              <button
-                className="bg-red-600"
-                onClick={() => setPublishModal(false)}
-              >
-                Deny
-              </button>
-              <button className="bg-green-600" onClick={handlePublishExam}>
-                Confirm
-              </button>
-            </footer>
-          </div>
-        </div>
+        <PublishModal
+          onModalOpen={setPublishModal}
+          onPublishExam={handlePublishExam}
+        />
       )}
 
       <Alert
@@ -289,6 +261,7 @@ function ExamDetails() {
 
 export default ExamDetails;
 
+// Instructions for exam
 export const ExamInstructions = ({ onShowInstructions }) => {
   return (
     <article>
@@ -318,6 +291,10 @@ export const ExamInstructions = ({ onShowInstructions }) => {
               Check exam dates and time when adding subjects to avoid potential
               conflicts in a class.
             </li>
+            <li>
+              Ensure that two separate exams do not fall on the same date and
+              time in a class
+            </li>
             <li>All exams must be scheduled a day after the current date</li>
             <li>
               After adding subjects, publish exam for students to attempt based
@@ -333,5 +310,38 @@ export const ExamInstructions = ({ onShowInstructions }) => {
         </div>
       </div>
     </article>
+  );
+};
+
+// Publish exam dialog
+export const PublishModal = ({ onModalOpen, onPublishExam }) => {
+  return (
+    <div className="w-[400px]">
+      {" "}
+      <div className="modal-backdrop"></div>
+      <div className="modal flex flex-col items-center w-[600px]">
+        <div className="flex gap-4 items-start">
+          <PiWarningCircleFill className="h-12 w-12 text-yellow-400" />
+          <div>
+            <p className="font-semibold text-lg">
+              Are you sure you want to publish this exam?
+            </p>
+            <p className="text-sm btn-danger mb-8">
+              After publishing, students will be able to take the subjects based
+              on their classes.
+            </p>
+          </div>
+        </div>
+
+        <footer className="flex gap-4">
+          <button className="bg-red-600" onClick={() => onModalOpen(false)}>
+            Deny
+          </button>
+          <button className="bg-green-600" onClick={onPublishExam}>
+            Confirm
+          </button>
+        </footer>
+      </div>
+    </div>
   );
 };

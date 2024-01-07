@@ -9,7 +9,6 @@ import { useSearch } from "../../../Contexts/SearchContext";
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
-  const [query, setQuery] = useState("");
   const { isLoading, setIsLoading } = useUser();
   const { searchQuery } = useSearch();
 
@@ -38,22 +37,13 @@ function Questions() {
 
   return (
     <div>
-      <header>
+      <header className="header">
         <h2>Question Bank</h2>
 
-        <div className="flex justify-between items-center mb-4">
-          <input
-            type="search"
-            placeholder="Filter by Subject name, Question, Class..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="form-input w-[400px]"
-          />
-          <div className="flex gap-4">
-            <Link to="/dashboard/admin/questions/add">
-              <button className="form-button">Add Question</button>
-            </Link>
-          </div>
+        <div className="flex gap-4">
+          <button>
+            <Link to="/dashboard/admin/questions/add">Add Question</Link>
+          </button>{" "}
         </div>
       </header>
 

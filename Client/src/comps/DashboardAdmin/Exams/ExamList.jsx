@@ -53,10 +53,6 @@ function ExamList() {
     (exam) => exam.published && exam.status === "completed"
   );
 
-  console.log("draft: ", draft);
-  console.log("pending: ", pending);
-  console.log("complete: ", complete);
-
   // create exam
   const handleCreateExam = async () => {
     try {
@@ -88,7 +84,7 @@ function ExamList() {
   const handleDeleteExam = async (examId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/exams/delete-exam/${examId}`
+        `${baseURL}/exams/delete-exam/${examId}`
       );
 
       console.log(response);
@@ -432,6 +428,7 @@ function ExamList() {
             </div>
           )}
 
+          {/* Confirmation dialogue for deleting exam */}
           {examDelete.open && (
             <ConfirmDelete
               item="exam"

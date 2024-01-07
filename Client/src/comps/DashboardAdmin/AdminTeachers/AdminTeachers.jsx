@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../DashboardAdmin.css";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function AdminTeachers() {
   const [teachers, setTeachers] = useState([]);
@@ -10,9 +11,7 @@ function AdminTeachers() {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/admin/get-teachers"
-        );
+        const response = await axios.get(`${baseURL}/admin/get-teachers`);
 
         const data = response.data;
 
@@ -33,7 +32,9 @@ function AdminTeachers() {
   };
   return (
     <div>
-      <h1 className="my-16">Admin Teachers Content</h1>
+      <header className="header">
+        <h2>Admin Teachers Content</h2>
+      </header>
 
       <div className="table-container">
         <table>

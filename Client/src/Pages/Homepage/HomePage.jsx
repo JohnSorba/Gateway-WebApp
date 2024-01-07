@@ -75,7 +75,7 @@ function HomePage() {
             {/* <li>
               <Link to="/admin/register/step-1">Register</Link>
             </li> */}
-            <button className="font-bold uppercase">Get App</button>
+            <button className="btn-black uppercase">Get App</button>
           </ul>
         </nav>
         <section className="hero-section container">
@@ -84,10 +84,10 @@ function HomePage() {
           </h1>
           <p>Welcome to Gateway Pre-School Student Portal</p>
           <div className="flex gap-4">
-            <Link to="/login" className="form-button">
+            <Link to="/login" className="btn-black">
               Login
             </Link>
-            <Link to="/" className="form-button">
+            <Link to="/" className="btn-black">
               Back to Flash Screen
             </Link>
             {/* {message} */}

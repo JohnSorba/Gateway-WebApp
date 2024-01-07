@@ -1,28 +1,39 @@
 import { Route, Routes } from "react-router-dom";
+// ADMIN DASHBOARD HOME ROUTES
+import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
 
+// PROFILE ROUTES
 import AdminStudents from "../comps/DashboardAdmin/AdminStudents/AdminStudents";
 import AdminTeachers from "../comps/DashboardAdmin/AdminTeachers/AdminTeachers";
-import AdminExams from "../comps/DashboardAdmin/Exams/AdminExams";
-import AdminTimetable from "../comps/DashboardAdmin/Timetable/AdminTimetable";
-import AttendanceHome from "../comps/DashboardAdmin/Attendance/AttendanceHome";
-import AdminReports from "../comps/DashboardAdmin/Reports/AdminReports";
-import AdminDashboardHome from "../comps/DashboardAdmin/AdminDashboardHome";
-import ExamDetails from "../comps/DashboardAdmin/Exams/ExamDetails";
-import Questions from "../comps/DashboardAdmin/Exams/Questions";
-import QuestionsAdd from "../comps/DashboardAdmin/Exams/QuestionsAdd";
-import ExamList from "../comps/DashboardAdmin/Exams/ExamList";
-import QuestionDetails from "../comps/DashboardAdmin/Exams/QuestionDetails";
-import ReportExamDetails from "../comps/DashboardAdmin/Reports/ReportExamDetails";
-import ReportStudentDetails from "../comps/DashboardAdmin/Reports/ReportStudentDetails";
-import UserAccounts from "../comps/DashboardAdmin/UserAccounts";
 import AdminStudentDetails from "../comps/DashboardAdmin/AdminStudents/AdminStudentDetails";
 import AdminTeacherDetails from "../comps/DashboardAdmin/AdminTeachers/AdminTeacherDetails";
+import UserAccounts from "../comps/DashboardAdmin/UserAccounts";
+
+// EXAM ROUTES
+import AdminExams from "../comps/DashboardAdmin/Exams/AdminExams";
+import ExamList from "../comps/DashboardAdmin/Exams/ExamList";
+import ExamDetails from "../comps/DashboardAdmin/Exams/ExamDetails";
+import ExamOngoing from "../comps/DashboardAdmin/Exams/ExamOngoing";
+import ExamCompleted from "../comps/DashboardAdmin/Exams/ExamCompleted";
+import Instructions from "../comps/DashboardAdmin/Exams/Instructions";
+import Questions from "../comps/DashboardAdmin/Exams/Questions";
+import QuestionsAdd from "../comps/DashboardAdmin/Exams/QuestionsAdd";
+import QuestionDetails from "../comps/DashboardAdmin/Exams/QuestionDetails";
+
+// TIMETABLE ROUTES
+import AdminTimetable from "../comps/DashboardAdmin/Timetable/AdminTimetable";
+
+// ATTENDANCE ROUTES
+import AttendanceHome from "../comps/DashboardAdmin/Attendance/AttendanceHome";
 import ClassesDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassesDailyAttendance";
 import ClassDailyAttendance from "../comps/DashboardAdmin/Attendance/ClassDailyAttendance";
 import ClassAttendanceDetails from "../comps/DashboardAdmin/Attendance/ClassAttendanceDetails";
 import StudentAttendanceDetails from "../comps/DashboardAdmin/Attendance/StudentAttendanceDetails";
-import ExamOngoing from "../comps/DashboardAdmin/Exams/ExamOngoing";
-import ExamCompleted from "../comps/DashboardAdmin/Exams/ExamCompleted";
+
+// REPORTS ROUTES
+import AdminReports from "../comps/DashboardAdmin/Reports/AdminReports";
+import ReportExamDetails from "../comps/DashboardAdmin/Reports/ReportExamDetails";
+import ReportStudentDetails from "../comps/DashboardAdmin/Reports/ReportStudentDetails";
 
 function AdminDashboard() {
   return (
@@ -75,7 +86,7 @@ function AdminDashboard() {
             <Route path="ongoing/:examId" element={<ExamOngoing />} />
             <Route path="completed/:examId" element={<ExamCompleted />} />
           </Route>
-
+          <Route path="instructions" element={<Instructions />} />
           <Route path="exam-subjects/:examId" />
         </Route>
 

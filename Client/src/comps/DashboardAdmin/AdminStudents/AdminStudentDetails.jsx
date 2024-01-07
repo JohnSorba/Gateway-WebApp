@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../../Contexts/UserContext";
 import Loader from "../../../Loader";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function AdminStudentDetails() {
   const [students, setStudents] = useState([]);
@@ -16,7 +17,7 @@ function AdminStudentDetails() {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `http://localhost:3000/admin/student/${studentId}`
+          `${baseURL}/admin/student/${studentId}`
         );
 
         setStudents(response.data);
@@ -35,7 +36,11 @@ function AdminStudentDetails() {
 
   return (
     <div>
-      <h1>Admin Student Details ({studentId})</h1>
+      <header className="header">
+        <h2>
+          {students[0]?.first_name} {students[0]?.last_name} Student Details
+        </h2>
+      </header>
 
       {isLoading ? (
         <Loader />

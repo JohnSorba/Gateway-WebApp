@@ -70,10 +70,10 @@ function QuestionsAdd() {
         return;
       }
 
-      const response = await axios.post(
-        `http://localhost:3000/exams/add-question`,
-        { newQuestions, options }
-      );
+      const response = await axios.post(`${baseURL}/exams/add-question`, {
+        newQuestions,
+        options,
+      });
 
       setMessage(response.data.message);
       setType(response.data.type);
@@ -90,7 +90,7 @@ function QuestionsAdd() {
   // manage the input of each form control
   const handleAddQuestionInput = (e) => {
     const { name, value } = e.target;
-    setNewQuestions({ ...newQuestions, [name]: value });
+    setNewQuestions((prevQuestions) => ({ ...prevQuestions, [name]: value }));
     setMessage("");
   };
 
@@ -112,10 +112,11 @@ function QuestionsAdd() {
         <div className="grid grid-cols-2 gap-8">
           {/* Class input */}
           <article className="form-group">
-            <label htmlFor="subjectId" className="form-label">
+            <label htmlFor="selectedClass" className="form-label">
               Select Class
             </label>
             <select
+              name="selectedClass"
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
               className="form-select"

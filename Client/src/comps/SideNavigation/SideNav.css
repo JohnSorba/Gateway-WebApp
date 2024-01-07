@@ -50,9 +50,17 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background-color: var(--color-medium);
-  background-color: #4e4e4e;
   padding: 1rem 0.5rem;
+}
+
+.sidebar .nav-links.admin {
+  background-color: var(--admin-accent-color);
+}
+.sidebar .nav-links.teacher {
+  background-color: var(--teacher-accent-color);
+}
+.sidebar .nav-links.student {
+  background-color: var(--student-accent-color);
 }
 
 .sidebar .nav-link {
@@ -67,16 +75,26 @@
   /* margin-bottom: 0.625rem; */
 }
 
-.sidebar .nav-link:hover {
-  background-color: var(--color-dark);
-  background-color: #5a5a5a;
-  background-color: #343434;
-  color: var(--color-light);
+.sidebar .nav-link.admin:hover {
+  background-color: var(--admin-bg-color);
+}
+.sidebar .nav-link.teacher:hover {
+  background-color: var(--teacher-bg-color);
+}
+.sidebar .nav-link.student:hover {
+  background-color: var(--student-bg-color);
 }
 
 .sidebar .nav-link.active {
-  /* font-weight: bold; */
-  background-color: #7a7a7a;
-  background-color: #343434;
   color: #ffffff;
+}
+
+.sidebar .nav-link.admin.active {
+  background-color: var(--admin-bg-color);
+}
+.sidebar .nav-link.teacher.active {
+  background-color: var(--teacher-bg-color);
+}
+.sidebar .nav-link.student.active {
+  background-color: var(--student-bg-color);
 }

@@ -127,14 +127,18 @@ function QuestionEdit({
       <section className="flex justify-between items-center">
         <div>
           {message && (
-            <p className="py-1 px-4 text-red-600 rounded-xl text-white">
+            <p className="py-1 px-4 bg-red-600 rounded-xl text-white">
               {message}
             </p>
           )}
         </div>
         <div className="flex gap-8">
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleEditQuestion}>Save Changes</button>
+          <button onClick={onClose} className="btn-black">
+            Cancel
+          </button>
+          <button onClick={handleEditQuestion} className="btn-black">
+            Save Changes
+          </button>
         </div>
       </section>
     </div>

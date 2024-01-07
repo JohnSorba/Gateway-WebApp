@@ -1,0 +1,173 @@
+Date : 2024-01-06 03:53:46
+Directory : c:\Dev\gateway-web-app\Client\src
+Total : 113 files,  10061 codes, 486 comments, 1294 blanks, all 11841 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         95 |      8,541 |        369 |      1,063 |      9,973 |
+| CSS        |         17 |      1,519 |        117 |        231 |      1,867 |
+| XML        |          1 |          1 |          0 |          0 |          1 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                 | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                    |        113 |     10,061 |        486 |      1,294 |     11,841 |
+| . (Files)                                                                                            |          5 |        353 |         25 |         54 |        432 |
+| Contexts                                                                                             |          3 |        185 |         26 |         41 |        252 |
+| Pages                                                                                                |         10 |        901 |         60 |        126 |      1,087 |
+| Pages (Files)                                                                                        |          6 |        430 |         28 |         71 |        529 |
+| Pages\Homepage                                                                                       |          2 |        159 |         23 |         16 |        198 |
+| Pages\Login                                                                                          |          2 |        312 |          9 |         39 |        360 |
+| assets                                                                                               |          1 |          1 |          0 |          0 |          1 |
+| comps                                                                                                |         94 |      8,621 |        375 |      1,073 |     10,069 |
+| comps (Files)                                                                                        |          4 |        302 |         67 |         37 |        406 |
+| comps\Charts                                                                                         |          4 |        140 |          4 |         15 |        159 |
+| comps\Charts\Barchart                                                                                |          1 |         30 |          1 |          3 |         34 |
+| comps\Charts\LineChart                                                                               |          1 |         28 |          1 |          3 |         32 |
+| comps\Charts\PieChart                                                                                |          2 |         82 |          2 |          9 |         93 |
+| comps\Dashboard                                                                                      |         24 |      1,314 |         69 |        169 |      1,552 |
+| comps\Dashboard (Files)                                                                              |         10 |        779 |         44 |         86 |        909 |
+| comps\DashboardAdmin                                                                                 |         35 |      4,619 |         92 |        575 |      5,286 |
+| comps\DashboardAdmin (Files)                                                                         |          3 |        514 |         12 |         58 |        584 |
+| comps\DashboardAdmin\AdminStudents                                                                   |          2 |        158 |          0 |         20 |        178 |
+| comps\DashboardAdmin\AdminTeachers                                                                   |          2 |        146 |          0 |         18 |        164 |
+| comps\DashboardAdmin\Attendance                                                                      |          6 |        599 |          5 |         67 |        671 |
+| comps\DashboardAdmin\Exams                                                                           |         14 |      2,357 |         47 |        300 |      2,704 |
+| comps\DashboardAdmin\Reports                                                                         |          3 |        271 |          7 |         36 |        314 |
+| comps\DashboardAdmin\Timetable                                                                       |          5 |        574 |         21 |         76 |        671 |
+| comps\DashboardHeader                                                                                |          2 |        211 |         16 |         25 |        252 |
+| comps\DashboardTeacher                                                                               |          6 |        793 |         17 |         93 |        903 |
+| comps\DashboardTeacher (Files)                                                                       |          2 |        278 |          6 |         32 |        316 |
+| comps\DashboardTeacher\AttendanceRecord                                                              |          4 |        515 |         11 |         61 |        587 |
+| comps\Dashboard\Exams                                                                                |         14 |        535 |         25 |         83 |        643 |
+| comps\Dashboard\Exams (Files)                                                                        |          3 |        328 |         13 |         45 |        386 |
+| comps\Dashboard\Exams\TakeExam                                                                       |         11 |        207 |         12 |         38 |        257 |
+| comps\NewsSection                                                                                    |          2 |        237 |         13 |         29 |        279 |
+| comps\RegistrationDetails                                                                            |         11 |        771 |         81 |         85 |        937 |
+| comps\SideNavigation                                                                                 |          2 |         86 |         10 |         16 |        112 |
+| comps\Utilities                                                                                      |          4 |        148 |          6 |         29 |        183 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                             | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Dev\gateway-web-app\Client\src\App.css                                                            | CSS        |         25 |          0 |          3 |         28 |
+| c:\Dev\gateway-web-app\Client\src\App.jsx                                                            | JavaScript |         19 |          0 |          3 |         22 |
+| c:\Dev\gateway-web-app\Client\src\Contexts\AuthContext.jsx                                           | JavaScript |         51 |         10 |         14 |         75 |
+| c:\Dev\gateway-web-app\Client\src\Contexts\SearchContext.jsx                                         | JavaScript |         16 |          4 |          7 |         27 |
+| c:\Dev\gateway-web-app\Client\src\Contexts\UserContext.jsx                                           | JavaScript |        118 |         12 |         20 |        150 |
+| c:\Dev\gateway-web-app\Client\src\Loader.jsx                                                         | JavaScript |          9 |          0 |          1 |         10 |
+| c:\Dev\gateway-web-app\Client\src\Pages\AdminDashboard.jsx                                           | JavaScript |         94 |          0 |         13 |        107 |
+| c:\Dev\gateway-web-app\Client\src\Pages\ComingSoon.jsx                                               | JavaScript |         35 |          0 |          4 |         39 |
+| c:\Dev\gateway-web-app\Client\src\Pages\Homepage\Home.css                                            | CSS        |         83 |          5 |          6 |         94 |
+| c:\Dev\gateway-web-app\Client\src\Pages\Homepage\HomePage.jsx                                        | JavaScript |         76 |         18 |         10 |        104 |
+| c:\Dev\gateway-web-app\Client\src\Pages\Login\Login.css                                              | CSS        |        113 |          2 |         17 |        132 |
+| c:\Dev\gateway-web-app\Client\src\Pages\Login\Login.jsx                                              | JavaScript |        199 |          7 |         22 |        228 |
+| c:\Dev\gateway-web-app\Client\src\Pages\PageNotFound.jsx                                             | JavaScript |          4 |          0 |          2 |          6 |
+| c:\Dev\gateway-web-app\Client\src\Pages\PupilDashboard.jsx                                           | JavaScript |         32 |          1 |          4 |         37 |
+| c:\Dev\gateway-web-app\Client\src\Pages\RegistrationPage.jsx                                         | JavaScript |        234 |         26 |         44 |        304 |
+| c:\Dev\gateway-web-app\Client\src\Pages\TeacherDashboard.jsx                                         | JavaScript |         31 |          1 |          4 |         36 |
+| c:\Dev\gateway-web-app\Client\src\assets\react.svg                                                   | XML        |          1 |          0 |          0 |          1 |
+| c:\Dev\gateway-web-app\Client\src\comps\AppRouter.jsx                                                | JavaScript |         90 |         59 |         17 |        166 |
+| c:\Dev\gateway-web-app\Client\src\comps\Charts\Barchart\BarChartBox.jsx                              | JavaScript |         30 |          1 |          3 |         34 |
+| c:\Dev\gateway-web-app\Client\src\comps\Charts\LineChart\LineChartBox.jsx                            | JavaScript |         28 |          1 |          3 |         32 |
+| c:\Dev\gateway-web-app\Client\src\comps\Charts\PieChart\PieChartBox.css                              | CSS        |         34 |          1 |          6 |         41 |
+| c:\Dev\gateway-web-app\Client\src\comps\Charts\PieChart\PieChartBox.jsx                              | JavaScript |         48 |          1 |          3 |         52 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\AdminDashboardHome.jsx                        | JavaScript |        199 |          1 |         12 |        212 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\AdminStudents\AdminStudentDetails.jsx         | JavaScript |         67 |          0 |         10 |         77 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\AdminStudents\AdminStudents.jsx               | JavaScript |         91 |          0 |         10 |        101 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\AdminTeachers\AdminTeacherDetails.jsx         | JavaScript |         68 |          0 |          9 |         77 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\AdminTeachers\AdminTeachers.jsx               | JavaScript |         78 |          0 |          9 |         87 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\AttendanceClassView.jsx            | JavaScript |         76 |          1 |         10 |         87 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\AttendanceHome.jsx                 | JavaScript |        211 |          3 |         22 |        236 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\ClassAttendanceDetails.jsx         | JavaScript |         72 |          0 |          8 |         80 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\ClassDailyAttendance.jsx           | JavaScript |         80 |          0 |          9 |         89 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\ClassesDailyAttendance.jsx         | JavaScript |         86 |          1 |         10 |         97 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Attendance\StudentAttendanceDetails.jsx       | JavaScript |         74 |          0 |          8 |         82 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\DashboardAdmin.css                            | CSS        |        138 |         10 |         26 |        174 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\AddExamSubject.jsx                      | JavaScript |        254 |          9 |         36 |        299 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\AdminExams.jsx                          | JavaScript |          9 |          0 |          3 |         12 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamCompleted.jsx                       | JavaScript |         93 |          1 |         11 |        105 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamDetails.jsx                         | JavaScript |        304 |          4 |         30 |        338 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamHome.css                            | CSS        |         47 |          0 |          9 |         56 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamHome.jsx                            | JavaScript |        133 |          1 |         15 |        149 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamList.jsx                            | JavaScript |        401 |          6 |         49 |        456 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamOngoing.jsx                         | JavaScript |         91 |          1 |         11 |        103 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamQuiz.css                            | CSS        |        225 |          4 |         38 |        267 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\ExamSubjectsEdit.jsx                    | JavaScript |        199 |          7 |         25 |        231 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\QuestionDetails.jsx                     | JavaScript |        142 |          1 |         20 |        163 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\QuestionEdit.jsx                        | JavaScript |        126 |          5 |         14 |        145 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\Questions.jsx                           | JavaScript |        106 |          1 |         13 |        120 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Exams\QuestionsAdd.jsx                        | JavaScript |        227 |          7 |         26 |        260 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Reports\AdminReports.jsx                      | JavaScript |         51 |          5 |         11 |         67 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Reports\ReportExamDetails.jsx                 | JavaScript |        104 |          1 |         12 |        117 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Reports\ReportStudentDetails.jsx              | JavaScript |        116 |          1 |         13 |        130 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Timetable\AdminTimetable.jsx                  | JavaScript |        236 |         13 |         31 |        280 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Timetable\SubjectAdd.jsx                      | JavaScript |        121 |          4 |         11 |        136 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Timetable\SubjectItem.jsx                     | JavaScript |        134 |          3 |         21 |        158 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Timetable\SubjectUpdate.jsx                   | JavaScript |         51 |          1 |          9 |         61 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\Timetable\Timetable.css                       | CSS        |         32 |          0 |          4 |         36 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardAdmin\UserAccounts.jsx                              | JavaScript |        177 |          1 |         20 |        198 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardHeader\Header.css                                   | CSS        |        120 |         12 |         17 |        149 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardHeader\Header.jsx                                   | JavaScript |         91 |          4 |          8 |        103 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\AttendanceRecord\AttendanceAdd.jsx          | JavaScript |        160 |          9 |         23 |        192 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\AttendanceRecord\AttendanceDaily.jsx        | JavaScript |         81 |          1 |          9 |         91 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\AttendanceRecord\StudentDailyAttendance.jsx | JavaScript |         78 |          0 |          9 |         87 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\AttendanceRecord\TeacherAttendance.jsx      | JavaScript |        196 |          1 |         20 |        217 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\TeacherProfile.jsx                          | JavaScript |        194 |          6 |         22 |        222 |
+| c:\Dev\gateway-web-app\Client\src\comps\DashboardTeacher\TeacherTimetable.jsx                        | JavaScript |         84 |          0 |         10 |         94 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Attendance.jsx                                     | JavaScript |         97 |          0 |         15 |        112 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\DashboardData.js                                   | JavaScript |        194 |          1 |         10 |        205 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\DashboardHome.css                                  | CSS        |         39 |          0 |          4 |         43 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\DashboardHome.jsx                                  | JavaScript |         21 |          0 |          3 |         24 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\DashboardLayout.css                                | CSS        |         24 |          3 |          5 |         32 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\DashboardLayout.jsx                                | JavaScript |         46 |         24 |         13 |         83 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\Exams.jsx                                    | JavaScript |         64 |          1 |         10 |         75 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\StudentExamDetails.jsx                       | JavaScript |         82 |          3 |         12 |         97 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam.jsx                                 | JavaScript |        182 |          9 |         23 |        214 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Error.jsx                           | JavaScript |          8 |          0 |          2 |         10 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\FinishScreen.jsx                    | JavaScript |         51 |          2 |          9 |         62 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Footer.jsx                          | JavaScript |          4 |          1 |          2 |          7 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Header.jsx                          | JavaScript |         11 |          0 |          2 |         13 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Main.jsx                            | JavaScript |          4 |          1 |          2 |          7 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\NextButton.jsx                      | JavaScript |         22 |          1 |          4 |         27 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Options.jsx                         | JavaScript |         30 |          1 |          3 |         34 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Progress.jsx                        | JavaScript |         23 |          1 |          3 |         27 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Question.jsx                        | JavaScript |         14 |          1 |          3 |         18 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\StartScreen.jsx                     | JavaScript |         21 |          1 |          2 |         24 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Exams\TakeExam\Timer.jsx                           | JavaScript |         19 |          3 |          6 |         28 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Flashcards.jsx                                     | JavaScript |          8 |          0 |          2 |         10 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\Reports.jsx                                        | JavaScript |         86 |         12 |         11 |        109 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\StudentProfile.jsx                                 | JavaScript |        180 |          4 |         13 |        197 |
+| c:\Dev\gateway-web-app\Client\src\comps\Dashboard\StudentTimetable.jsx                               | JavaScript |         84 |          0 |         10 |         94 |
+| c:\Dev\gateway-web-app\Client\src\comps\Navigation.jsx                                               | JavaScript |        177 |          4 |          9 |        190 |
+| c:\Dev\gateway-web-app\Client\src\comps\NewsSection\NewsSection.css                                  | CSS        |        125 |          7 |         20 |        152 |
+| c:\Dev\gateway-web-app\Client\src\comps\NewsSection\NewsSection.jsx                                  | JavaScript |        112 |          6 |          9 |        127 |
+| c:\Dev\gateway-web-app\Client\src\comps\PrivateRoute.jsx                                             | JavaScript |         13 |          4 |          6 |         23 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\ConfirmDetails.jsx                       | JavaScript |        125 |         15 |         17 |        157 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\CourseForm.jsx                           | JavaScript |         28 |          1 |          5 |         34 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\Modal.css                                | CSS        |         60 |          4 |          7 |         71 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\Modal.jsx                                | JavaScript |         10 |          1 |          3 |         14 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\ProfileInformation.jsx                   | JavaScript |        251 |          9 |         15 |        275 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\ProgressIndicator.css                    | CSS        |         50 |         33 |          8 |         91 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\ProgressIndicator.jsx                    | JavaScript |         38 |          6 |          6 |         50 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\RegistrationData.js                      | JavaScript |         51 |          6 |          9 |         66 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\StudentProfile.jsx                       | JavaScript |         35 |          1 |          2 |         38 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\TeacherProfile.jsx                       | JavaScript |         22 |          1 |          2 |         25 |
+| c:\Dev\gateway-web-app\Client\src\comps\RegistrationDetails\UserAccountInfo.jsx                      | JavaScript |        101 |          4 |         11 |        116 |
+| c:\Dev\gateway-web-app\Client\src\comps\Search.jsx                                                   | JavaScript |         22 |          0 |          5 |         27 |
+| c:\Dev\gateway-web-app\Client\src\comps\SideNavigation\SideNav.css                                   | CSS        |         64 |          9 |         10 |         83 |
+| c:\Dev\gateway-web-app\Client\src\comps\SideNavigation\SideNav.jsx                                   | JavaScript |         22 |          1 |          6 |         29 |
+| c:\Dev\gateway-web-app\Client\src\comps\Utilities\Alert.css                                          | CSS        |         49 |          2 |          6 |         57 |
+| c:\Dev\gateway-web-app\Client\src\comps\Utilities\Alert.jsx                                          | JavaScript |         39 |          1 |          9 |         49 |
+| c:\Dev\gateway-web-app\Client\src\comps\Utilities\ConfirmDelete.jsx                                  | JavaScript |         38 |          0 |          6 |         44 |
+| c:\Dev\gateway-web-app\Client\src\comps\Utilities\DateTimeDisplay.jsx                                | JavaScript |         22 |          3 |          8 |         33 |
+| c:\Dev\gateway-web-app\Client\src\index.css                                                          | CSS        |        291 |         25 |         45 |        361 |
+| c:\Dev\gateway-web-app\Client\src\main.jsx                                                           | JavaScript |          9 |          0 |          2 |         11 |
+| Total                                                                                                |            |     10,061 |        486 |      1,294 |     11,841 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

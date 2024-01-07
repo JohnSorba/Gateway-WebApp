@@ -94,9 +94,9 @@ function ExamHome() {
       title: "Exam Instructions",
       subtitle: "Instructions",
       icon: <FcViewDetails />,
-      value: 5,
+      value: "",
       backgroundColor: "#F4F27E",
-      link: "/dashboard/admin/exams",
+      link: "/dashboard/admin/exams/instructions",
     },
   ];
 

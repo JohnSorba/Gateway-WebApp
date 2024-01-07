@@ -2,11 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
-  font-family: Inter, systrem-ui, Avenir, Helvetica, Arial, sans-serif;
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   color: rgb(0, 0, 0);
-} */
+
+  --admin-bg-color: #454545;
+  --admin-accent-color: #343434;
+
+  --teacher-bg-color: #48535a;
+  --teacher-accent-color: #384247;
+
+  --student-bg-color: #35424a;
+  --student-accent-color: #263036;
+}
 
 /* h1,
 h2,
@@ -19,14 +28,6 @@ html {
   height: 100%;
 }
 
-a {
-  font-weight: 500;
-  color: #7476a0;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
 .intro-link {
   color: black;
   border-radius: 8px;
@@ -39,6 +40,7 @@ a:hover {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 .intro-link:hover {
   color: black;
   background-color: #52ff86c5;
@@ -92,7 +94,7 @@ button {
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: #3399ff;
+  background: var(--admin-accent-color);
   cursor: pointer;
   transition: border-color 0.25s;
   z-index: 5;
@@ -157,10 +159,10 @@ button:active {
   padding: 1.5rem 0.75rem;
   margin: 0 0 2rem;
   /* background-color: rgb(191, 219, 254); */
-  background: linear-gradient(to right, #9fdfff, #5fafff, #9fdfff);
   background: linear-gradient(to right, #66ccff, #3399ff);
-  background: linear-gradient(to right, #ffd700, #ffcc00);
   background: linear-gradient(to right, #66ff66, #72e972);
+  background: linear-gradient(to right, #9fdfff, #5fafff, #9fdfff);
+  background: linear-gradient(to right, #ffd700, #ffcc00);
 }
 
 .header h2 {

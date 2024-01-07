@@ -12,11 +12,19 @@ function SideNav({ isVisible }) {
 
   return (
     <nav className={`sidebar ${isVisible ? "" : "slide-in"}`}>
-      <section className="nav-links">
+      <section
+        className={`nav-links   ${
+          authState.role === "admin"
+            ? "admin"
+            : authState.role === "teacher"
+            ? "teacher"
+            : "student"
+        }`}
+      >
         {/* Navigation based on user role */}
         <Navigation role={role} />
 
-        <NavLink to="/logout" className="nav-link mt-auto" onClick={logout}>
+        <NavLink to="/logout" className={`nav-link mt-auto`} onClick={logout}>
           <BiLogOutCircle />
           Logout
         </NavLink>

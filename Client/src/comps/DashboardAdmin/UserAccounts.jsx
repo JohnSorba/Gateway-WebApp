@@ -79,16 +79,18 @@ function UserAccounts() {
 
   return (
     <div>
-      <h1>User Account Information</h1>
-      <div className="flex justify-end mb-8">
-        <button
-          className="bg-green-600 flex gap-2 items-center"
-          onClick={addNewUser}
-        >
-          <FaUserPlus />
-          <span>New Admission</span>
-        </button>
-      </div>
+      <header className="header">
+        <h2>User Account Information</h2>
+        <div>
+          <button
+            className="bg-green-600 flex gap-2 items-center"
+            onClick={addNewUser}
+          >
+            <FaUserPlus />
+            <span>New Admission</span>
+          </button>
+        </div>
+      </header>
 
       {isLoading ? (
         <Loader />

@@ -24,7 +24,6 @@ function StudentExamDetails() {
         );
 
         const data = await response.data;
-        console.log(data);
 
         setExamDetails(data);
       } catch (error) {
@@ -36,7 +35,7 @@ function StudentExamDetails() {
   }, [examId, classId, studentId]);
 
   if (examDetails.length < 1) {
-    return <h2>There are no subjects available for this exam!</h2>;
+    return <h2>You have completed all subjects in this exam!</h2>;
   }
 
   const handleTakeExam = async (subjectId, examId) => {
@@ -46,7 +45,7 @@ function StudentExamDetails() {
   return (
     <div>
       <header className="header">
-        <h2>{examDetails && examDetails[0].title} Details</h2>
+        <h2>{examDetails[0]?.title} Details</h2>
       </header>
 
       {examDetails.length < 1 ? (

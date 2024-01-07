@@ -78,7 +78,7 @@ export function AdminNav() {
           key={link.link}
           to={link.link}
           end // allows the active property to not be set to the index link
-          className="nav-link"
+          className="nav-link admin"
         >
           {link.icon}
           {link.title}
@@ -130,7 +130,7 @@ export function TeacherNav() {
           key={link.link}
           to={link.link}
           end // allows the active property to not be set to the index link
-          className="nav-link"
+          className="nav-link teacher"
         >
           {link.icon}
           {link.title}
@@ -178,7 +178,7 @@ export function StudentNav() {
           key={link.link}
           to={link.link}
           end // allows the active property to not be set to the index link
-          className="nav-link"
+          className="nav-link student"
         >
           {link.icon}
           {link.title}

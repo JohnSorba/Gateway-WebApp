@@ -29,7 +29,7 @@ const compareTime = (time) => {
   // Create a new Date object for 1:00 PM
   let schoolEndTime = new Date(date);
   schoolEndTime.setHours(12); // 13 is 1:00 PM in 24-hour format
-  schoolEndTime.setMinutes(0);
+  schoolEndTime.setMinutes(15);
   schoolEndTime.setSeconds(0);
   schoolEndTime.setMilliseconds(0);
 
