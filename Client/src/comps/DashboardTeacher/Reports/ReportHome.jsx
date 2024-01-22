@@ -3,13 +3,14 @@ import axios from "axios";
 import Loader from "../../../Loader";
 import { useUser } from "../../../Contexts/UserContext";
 import { useNavigate } from "react-router-dom";
-import { baseURL, localDateString } from "../../Dashboard/DashboardData";
+import { baseURL } from "../../Dashboard/DashboardData";
 
-function AdminReports() {
+function ReportHome() {
   const [result, setResult] = useState([]);
-  const { isLoading, setIsLoading } = useUser();
+  const { isLoading, setIsLoading, userDetails } = useUser();
 
   const navigate = useNavigate();
+  const classId = userDetails?.class_code;
 
   // console.log("results: ", result);
 
@@ -17,8 +18,10 @@ function AdminReports() {
     const fetchResults = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${baseURL}/admin/report/exam-result`);
-        console.log(response.data);
+        const response = await axios.get(
+          `${baseURL}/teacher/report/getAll/${classId}`
+        );
+        // console.log(response.data);
 
         setResult(response.data);
       } catch (error) {
@@ -29,7 +32,7 @@ function AdminReports() {
     };
 
     fetchResults();
-  }, []);
+  }, [classId, setIsLoading]);
 
   // if (!result) {
   //   return <Loader />;
@@ -48,15 +51,12 @@ function AdminReports() {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="reports">
+        <div className="exams">
           {result.map((data, i) => (
-            <div key={i} className="box shadow-xl">
-              <div className="details">
-                <p>{data.title}</p>
-                <span>{localDateString(data.date_created)}</span>
-              </div>
+            <div key={i} className="box">
+              <p>{data.title}</p>
               <button onClick={() => handleViewExamReportDetails(data.exam_id)}>
-                View Details
+                Details
               </button>
             </div>
           ))}
@@ -66,4 +66,4 @@ function AdminReports() {
   );
 }
 
-export default AdminReports;
+export default ReportHome;

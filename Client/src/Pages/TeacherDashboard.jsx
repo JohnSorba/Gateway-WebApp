@@ -4,6 +4,12 @@ import TeacherTimetable from "../comps/DashboardTeacher/TeacherTimetable";
 import TeacherAttendance from "../comps/DashboardTeacher/AttendanceRecord/TeacherAttendance";
 import AttendanceDaily from "../comps/DashboardTeacher/AttendanceRecord/AttendanceDaily";
 import StudentDailyAttendance from "../comps/DashboardTeacher/AttendanceRecord/StudentDailyAttendance";
+import ReportHome from "../comps/DashboardTeacher/Reports/ReportHome";
+import ClassReportDetails from "../comps/DashboardTeacher/Reports/ClassReportDetails";
+import StudentReportDetails from "../comps/DashboardTeacher/Reports/StudentReportDetails";
+import TeacherExamHome from "../comps/DashboardTeacher/Exams/TeacherExamHome";
+import ExamCompleted from "../comps/DashboardTeacher/Exams/ExamCompleted";
+import ExamOngoing from "../comps/DashboardTeacher/Exams/ExamOngoing";
 
 function TeacherDashboard() {
   return (
@@ -19,9 +25,23 @@ function TeacherDashboard() {
             element={<StudentDailyAttendance />}
           />
         </Route>
-        <Route path="grades" element={<TeacherGrades />} />
+
+        {/* REPORTS ROUTES */}
+        <Route path="grades">
+          <Route index element={<ReportHome />} />
+          <Route path="exam-details/:examId" element={<ClassReportDetails />} />
+          <Route
+            path="exam-details/:examId/:studentId"
+            element={<StudentReportDetails />}
+          />
+        </Route>
+
         <Route path="profile" element={<TeacherProfile />} />
-        <Route path="classes" element={<TeacherClasses />} />
+        <Route path="exam">
+          <Route index element={<TeacherExamHome />} />
+          <Route path="ongoing/:examId" element={<ExamOngoing />} />
+          <Route path="completed/:examId" element={<ExamCompleted />} />
+        </Route>
       </Routes>
     </>
   );
@@ -31,5 +51,3 @@ export default TeacherDashboard;
 
 // Teacher Components
 const TeacherDashboardHome = () => <div>Teacher Dashboard Content</div>;
-const TeacherClasses = () => <div>Classes Content</div>;
-const TeacherGrades = () => <div>Grades Content</div>;

@@ -2,11 +2,11 @@ function Instructions() {
   const instructions = [
     {
       title: "School Time",
-      text: "All exams must be scheduled within the school hours, specifically between 8:30 AM and 12:15 PM. This is to ensure that exams are completed before the school day ends.",
+      text: "All exams must be scheduled within the school hours, specifically between 8:30 AM and 12:15 PM. This is to ensure that exams are completed before the school day ends at 13:00.",
     },
     {
       title: "Exam Timing",
-      text: "It is recommended to schedule exams for a class at 8:30 AM and 11:00 AM.",
+      text: "It is recommended to schedule exams for a class during the following hours: 8:30 AM and 11:00 AM.",
     },
     {
       title: "Exam Duration",
@@ -18,11 +18,11 @@ function Instructions() {
     },
     {
       title: "Exams Per Day",
-      text: "A class can have a maximum of two exams per day.",
+      text: "A class should have a maximum of two exams per day.",
     },
     {
       title: "Scheduling Conflicts",
-      text: "When adding subjects, ensure to check the exam dates and times to avoid potential conflicts within a class. Two separate exams should not be scheduled at the same date and time for a class.",
+      text: "When adding subjects, ensure to check the exam dates and times to avoid potential conflicts within a class. Also, two separate exams should not be scheduled at the same date and time for a class.",
     },
     {
       title: "Exam Scheduling",
@@ -30,7 +30,7 @@ function Instructions() {
     },
     {
       title: "Publishing Exams",
-      text: "After adding subjects, the exam should be published for students to attempt based on their classes.",
+      text: "After adding subjects, the exam must be published for students to attempt based on their classes.",
     },
   ];
 

@@ -29,6 +29,20 @@ function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
       </h3>
       <form onSubmit={handleUpdateSubmit}>
         <article className="form-group">
+          <label htmlFor="subjectCode" className="form-label">
+            Subject Code
+          </label>
+          <input
+            type="text"
+            name="subjectCode"
+            id="subjectCode"
+            value={subject.subject_code}
+            placeholder={subject.subject_code}
+            className="form-input hover:cursor-not-allowed"
+            disabled
+          />
+        </article>
+        <article className="form-group">
           <label htmlFor="subjectName" className="form-label">
             Subject Name
           </label>
@@ -38,16 +52,20 @@ function SubjectUpdate({ subject, onSave, onCancel, onSetMessage, message }) {
             id="subjectName"
             value={subjectName}
             placeholder="Subject Name"
-            className="form-input"
+            className="form-input "
             onChange={changeSubject}
           />
         </article>
 
         <div className="flex gap-8 ">
-          <button className="form-button grow" type="button" onClick={onCancel}>
+          <button
+            className="form-button grow bg-red-500"
+            type="button"
+            onClick={onCancel}
+          >
             Cancel
           </button>
-          <button className="form-button grow" type="submit">
+          <button className="form-button grow bg-green-500" type="submit">
             Save
           </button>
         </div>

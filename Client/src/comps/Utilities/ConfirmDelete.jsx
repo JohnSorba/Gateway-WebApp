@@ -12,11 +12,10 @@ function ConfirmDelete({ item, onCancel, onDelete }) {
           <PiWarningCircleFill className="h-12 w-12 text-red-600" />
           <div>
             <p className="font-semibold text-lg">
-              Are you sure you want to delete this {item}?
+              Are you sure you want to delete {item}?
             </p>
             <p className="text-sm btn-danger mb-8">
-              Upon deletion, you will lose access to all data related to this{" "}
-              {item}.
+              Upon deletion, you will lose access to all data related to {item}.
             </p>
           </div>
         </div>

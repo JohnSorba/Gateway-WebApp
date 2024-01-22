@@ -51,11 +51,10 @@ function Questions() {
         <table className="relative">
           <thead className="sticky top-0">
             <tr>
-              <th className="w-[75px]">ID</th>
+              <th className="w-[45px]">ID</th>
               <th>Subject Code</th>
               <th>Subject Name</th>
               <th>Question</th>
-              <th>Mark</th>
               <th>Class</th>
               <th>Action</th>
             </tr>
@@ -85,7 +84,6 @@ function Questions() {
                     <td className="font-semibold text-md">
                       {question.question_text}
                     </td>
-                    <td>{question.marks}</td>
                     <td>{question.class_assigned}</td>
 
                     <td className="flex justify-center">

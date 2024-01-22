@@ -4,6 +4,8 @@ const router = Router();
 const {
   TeacherController,
   TeacherAttendanceController,
+  TeacherReportController,
+  TeacherExamController,
 } = require("../controllers/teachers");
 
 // retrieve personal details
@@ -51,5 +53,40 @@ router.get(
 
 // get attendance by student Id
 router.get("/get-attendance/:studentId");
+
+//////////////////////////////////////////
+// Report Routes
+router.get(
+  "/report/getAll/:classId",
+  TeacherReportController.getAllExamResultByClass
+);
+
+router.get(
+  "/report/exam/details/:examId/:classId",
+  TeacherReportController.getReportExamDetailsById
+);
+
+router.get(
+  "/report/student-result/:examId/:classId/:studentId",
+  TeacherReportController.getStudentResultById
+);
+
+////////////////////////////////////////////////////
+router.get(
+  "/exams/get-all-exams/:classId",
+  TeacherExamController.getAllExamsByClass
+);
+
+// get ongoing exam details
+router.get(
+  "/ongoing/:examId/:classId",
+  TeacherExamController.getOngoingExamDetails
+);
+
+// get mark exam complete
+router.get(
+  "/complete/:examId/:classId",
+  TeacherExamController.markExamComplete
+);
 
 module.exports = router;

@@ -10,7 +10,9 @@ const AdminReportModel = {
       FROM student_exam_grades seg
       JOIN exams e
       ON e.exam_id = seg.exam_id
-      WHERE seg.completed = true`;
+      WHERE seg.completed = true
+      AND e.status = 'completed'
+      `;
 
     try {
       const result = await pool.query(query);

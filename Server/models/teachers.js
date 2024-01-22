@@ -249,5 +249,257 @@ const TeacherAttendanceModel = {
   },
 };
 
-module.exports = { TeacherModel, TeacherAttendanceModel };
+const TeacherReportModel = {
+  // Get report by exam
+
+  async getAllExamResultByClass(classId) {
+    console.log(classId);
+
+    const query = `
+      SELECT DISTINCT e.*, seg.completed 
+      FROM student_exam_grades seg
+      JOIN exams e
+      ON e.exam_id = seg.exam_id
+      WHERE seg.completed = true
+      AND e.status = 'completed'
+      AND seg.class_code = $1
+      `;
+
+    try {
+      const result = await pool.query(query, [classId]);
+
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /////////////////////////////////////////////////
+  // GET ALL STUDENTS FOR A SPECIFIC EXAM
+  // Get report result for all students in class
+  async getReportExamDetailsById(examId, classId) {
+    const query = `
+      SELECT 
+        seg.student_id, AVG(seg.marks_obtained) AS average_grade, s.first_name, s.last_name, su.class_assigned 
+      FROM 
+        student_exam_grades seg
+      JOIN 
+        students s ON s.student_id = seg.student_id
+      LEFT JOIN 
+        subjects su ON su.subject_code = seg.subject_code
+      WHERE 
+        seg.exam_id = $1 and seg.class_code = $2
+      GROUP BY 
+        seg.student_id, s.first_name, s.last_name, su.class_assigned
+  
+      `;
+
+    try {
+      const result = await pool.query(query, [examId, classId]);
+
+      return result.rows;
+    } catch (error) {
+      console.log("Cannot display all student results");
+      throw error;
+    }
+  },
+
+  /////////////////////////////////////////////////
+  // GET DETAILS FOR INDIVIDUAL STUDENT
+  // Get Individaul Student Result
+  async getStudentResultById(studentId, classId, examId) {
+    const query = `
+        SELECT 
+          seg.*, e.title, e.date_created, s.first_name, s.last_name, s.age, su.*
+        FROM 
+          student_exam_grades seg
+        JOIN 
+          exams e ON e.exam_id = seg.exam_id
+        JOIN students s
+        ON s.student_id = seg.student_id
+        LEFT JOIN subjects su
+        ON su.subject_code = seg.subject_code
+        WHERE 
+          seg.student_id = $1 AND seg.exam_id = $2 AND seg.class_code = $3
+    
+        `;
+
+    try {
+      const result = await pool.query(query, [studentId, examId, classId]);
+
+      return result.rows;
+    } catch (error) {
+      console.log("Cannot display Individual results");
+      throw error;
+    }
+  },
+};
+
+const TeacherExamModel = {
+  // Get all exams for displaying list of all exams created
+  async getAllExamsByClass(classId) {
+    console.log(classId);
+
+    const query = `
+        SELECT DISTINCT(e.* )
+        FROM exams e
+        JOIN 
+          student_exam_grades seg
+        ON 
+          seg.exam_id = e.exam_id
+          WHERE seg.class_code = $1
+          AND seg.completed = true
+
+          ORDER BY e.date_created DESC
+        `;
+
+    try {
+      const result = await pool.query(query, [classId]);
+
+      return result.rows;
+    } catch (error) {
+      console.log(error);
+
+      return {
+        type: "failure",
+        message: "Cannot fetch exams",
+      };
+    }
+  },
+
+  // Get exam details for Ongoing exam for a class
+  async getOngoingExamDetails(examId, classId) {
+    // This query returns the total number of students in each class in an
+    // exam and also the total students who have not completed an exam
+    const query = `
+      WITH class_student_count AS (
+        SELECT c.class_code, COUNT(DISTINCT s.student_id) as total_students
+        FROM classes c
+        join student_admission sa on sa.class_code = c.class_code
+        JOIN students s ON s.student_id = sa.student_id
+        GROUP BY c.class_code
+      ),  
+      
+      exam_taken_count AS (
+        SELECT seg.class_code, COUNT(DISTINCT seg.student_id) as students_taken_exam
+        FROM student_exam_grades seg
+        WHERE seg.exam_id = $1 AND seg.class_code = $2
+        GROUP BY seg.class_code
+      )
+  
+      SELECT csc.class_code, csc.total_students, etc.students_taken_exam
+      FROM class_student_count csc
+      JOIN exam_taken_count etc ON csc.class_code = etc.class_code
+      `;
+
+    try {
+      const result = await pool.query(query, [examId, classId]);
+
+      return result.rows;
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Cannot retrieve details for ongoing exams!",
+      };
+    }
+  },
+
+  // know when all students have taken an exam and update the exam status for a class
+  async markExamComplete(examId, classId) {
+    // Fetch total students in exam class and total students
+    // who have completed the exam
+
+    const query = `
+    WITH class_student_count AS (
+      SELECT
+        c.class_code,
+        COUNT(DISTINCT s.student_id) as total_students
+      FROM classes c
+      JOIN student_admission sa ON sa.class_code = c.class_code
+      JOIN students s ON s.student_id = sa.student_id
+      WHERE c.class_code = $2
+      GROUP BY c.class_code
+    ),
+    exam_taken_count AS (
+      SELECT
+        seg.class_code,
+        COUNT(DISTINCT seg.student_id) as students_taken_exam
+      FROM student_exam_grades seg
+      WHERE seg.exam_id = $1 AND seg.class_code = $2
+      GROUP BY seg.class_code
+    )
+  
+    SELECT
+      csc.class_code,
+      csc.total_students,
+      etc.students_taken_exam
+    FROM class_student_count csc
+    JOIN exam_taken_count etc ON csc.class_code = etc.class_code;
+  `;
+
+    // check if examId has been updated for a class
+    const updatedExamIdQuery = await pool.query(
+      "SELECT * FROM exams where exam_id = $1",
+      [examId]
+    );
+
+    try {
+      const totalStudentsResult = await pool.query(query, [examId, classId]);
+
+      const { rows } = totalStudentsResult;
+
+      console.log("for teacher: ", totalStudentsResult.rows);
+
+      // Check if all students have completed the exam
+      const allStudentsCompleted = rows.every(
+        (row) => row.students_taken_exam === row.total_students
+      );
+
+      // Ensure the status doesn't get updated when both values equal zero
+      for (let row of rows) {
+        if (
+          row.total_students === row.total_students &&
+          row.students_taken_exam === 0
+        ) {
+          // Stops the function execution
+          return;
+        }
+
+        // Update status code here
+        if (!allStudentsCompleted) {
+          // If not all completed, update the exams table to mark the exam as incomplete
+          await pool.query("UPDATE exams SET status = $1 WHERE exam_id = $2", [
+            null,
+            examId,
+          ]);
+        } else if (allStudentsCompleted) {
+          // if all completed, update the exams table to mark the exam as complete
+          await pool.query("UPDATE exams SET status = $1 WHERE exam_id = $2", [
+            "completed",
+            examId,
+          ]);
+        }
+      }
+
+      return totalStudentsResult.rows;
+
+      const completeStatus = updatedExamIdQuery.rows[0].status;
+      if (completeStatus === "completed") {
+        return;
+      }
+    } catch (error) {
+      return {
+        type: "failure",
+        message: "Students have not completed the exams!",
+      };
+    }
+  },
+};
+
+module.exports = {
+  TeacherModel,
+  TeacherAttendanceModel,
+  TeacherReportModel,
+  TeacherExamModel,
+};
 //https://i.pravatar.cc/300?u=194533

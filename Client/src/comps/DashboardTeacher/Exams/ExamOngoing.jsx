@@ -6,21 +6,22 @@ import axios from "axios";
 import { baseURL } from "../../Dashboard/DashboardData";
 import Loader from "../../../Loader";
 
-function ExamCompleted() {
+function ExamOngoing() {
   const [examOngoing, setExamOngoing] = useState([]);
-  const { isLoading, setIsLoading } = useUser();
+  const { isLoading, setIsLoading, userDetails } = useUser();
   const { examId } = useParams();
+
+  const classId = userDetails?.class_code;
 
   useEffect(() => {
     const fetchExams = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `${baseURL}/exams/exam-details/ongoing/${examId}`
+          `${baseURL}/teacher/ongoing/${examId}/${classId}`
         );
 
         const data = response.data;
-        console.log("exam complete: ", data);
 
         setExamOngoing(data);
       } catch (error) {
@@ -46,7 +47,7 @@ function ExamCompleted() {
     <div>
       <header className="header">
         <div>
-          <h2>Completed Exam</h2>
+          <h2>Ongoing Exam</h2>
         </div>
 
         <div></div>
@@ -66,7 +67,6 @@ function ExamCompleted() {
                 <th>Exams Taken</th>
                 <th>Total Students In Class</th>
                 <th>Status</th>
-                <th>Action</th>
               </tr>
             </thead>
 
@@ -91,7 +91,6 @@ function ExamCompleted() {
                           : "Pending"}
                       </span>
                     </td>
-                    <td>View</td>
                   </tr>
                 ))}
             </tbody>
@@ -102,4 +101,4 @@ function ExamCompleted() {
   );
 }
 
-export default ExamCompleted;
+export default ExamOngoing;

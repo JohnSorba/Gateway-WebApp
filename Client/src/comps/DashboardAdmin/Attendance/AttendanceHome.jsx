@@ -92,7 +92,6 @@ export default function AttendanceHome() {
   };
 
   const viewStudentAttendanceDetails = (studentId) => {
-    2;
     navigate(`student-details/${studentId}`);
   };
 
@@ -127,11 +126,10 @@ export default function AttendanceHome() {
         <div></div>
         <h2>Attendance Summary</h2>
       </div>
-      {isLoading ? (
-        <Loader />
-      ) : attendanceData.length < 1 ? (
-        <h1>There are no records at this time!</h1>
-      ) : view === "date" ? (
+
+      {isLoading && <Loader />}
+
+      {view === "date" && (
         <div className="table-container">
           <table>
             <thead>
@@ -165,16 +163,15 @@ export default function AttendanceHome() {
             </tbody>
           </table>
         </div>
-      ) : view === "student" ? (
+      )}
+
+      {view === "student" && (
         <AttendanceStudentView
           studentAttendance={studentAttendance}
           onViewStudentDetails={viewStudentAttendanceDetails}
         />
-      ) : view === "classes" ? (
-        <AttendanceClassView view={view} />
-      ) : (
-        <div>Cannot display data at this moment!</div>
       )}
+      {view === "classes" && <AttendanceClassView view={view} />}
     </div>
   );
 }
@@ -184,6 +181,11 @@ export function AttendanceStudentView({
   onViewStudentDetails,
 }) {
   const { searchQuery } = useSearch();
+
+  // const notFound = studentAttendance.filter(
+  //   (data) => !data.first_name.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
+
   return (
     <div className="table-container h-[450px] overflow-y-scroll">
       <table className="relative">
@@ -221,13 +223,14 @@ export function AttendanceStudentView({
                     />
                   </span>
                 </td>
-                {!data.first_name
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) && (
-                  <p>No rows matches your query!</p>
-                )}
               </tr>
             ))}
+
+          {/* {notFound && (
+            <tr className="text-center col-span-full">
+              No rows matches your query!
+            </tr>
+          )} */}
         </tbody>
       </table>
     </div>

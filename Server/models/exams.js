@@ -637,7 +637,6 @@ const ExamModel = {
   },
 
   // Get all exams for displaying list of all exams created
-  // Also used to display total count stats on exam home page
   async getAllExams() {
     try {
       const result = await pool.query(
@@ -655,7 +654,7 @@ const ExamModel = {
       };
     }
   },
-  // Get all exams for displaying list of all exams created
+
   // Also used to display total count stats on exam home page
   async getTotalExams() {
     try {
@@ -803,8 +802,6 @@ const ExamModel = {
           row.total_students === row.total_students &&
           row.students_taken_exam === 0
         ) {
-          console.log("rows equal zero");
-
           return; // Stops the function execution
         }
         // Your status update code here...
@@ -823,10 +820,7 @@ const ExamModel = {
         }
       }
 
-      const completeStatus = updatedExamIdQuery.rows[0].status;
-      if (completeStatus === "completed") {
-        return;
-      }
+      return totalStudentsResult.rows;
     } catch (error) {
       return {
         type: "failure",

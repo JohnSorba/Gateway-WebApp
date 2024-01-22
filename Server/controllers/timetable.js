@@ -81,7 +81,6 @@ const SubjectController = {
 
       res.status(200).json(result);
     } catch (error) {
-      console.error("Error deleting subject: ", error);
       res
         .status(500)
         .json({ type: "failure", message: "Failed to delete subject!" });

@@ -28,4 +28,9 @@
   background-color: #fafafa;
 }
 
+.main-content .width {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 /* https://i.pravatar.cc/48?u=118836 */

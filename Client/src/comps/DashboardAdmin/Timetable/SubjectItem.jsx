@@ -7,6 +7,7 @@ import Alert from "../../Utilities/Alert";
 import { useState } from "react";
 import "./Timetable.css";
 import ConfirmDelete from "../../Utilities/ConfirmDelete";
+import { baseURL } from "../../Dashboard/DashboardData";
 
 function SubjectItem({
   subjects,
@@ -28,7 +29,7 @@ function SubjectItem({
   const handleDeleteSubject = async (subjectId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/timetable/subjects/${subjectId}`
+        `${baseURL}/timetable/subjects/${subjectId}`
       );
 
       setDeleteConfirm({ open: false, subjectId: null });
@@ -44,6 +45,7 @@ function SubjectItem({
 
   const startEditing = (subject) => {
     setEditingSubject(subject);
+    onSetMessage("");
   };
 
   const updateSubject = async (subjectId, updatedSubject) => {
@@ -57,7 +59,7 @@ function SubjectItem({
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/timetable/subjects/${subjectId}`,
+        `${baseURL}/timetable/subjects/${subjectId}`,
         updatedSubject
       );
       onUpdate();
@@ -138,7 +140,7 @@ function SubjectItem({
 
       {deleteConfirm.open && (
         <ConfirmDelete
-          item="subject"
+          item={deleteConfirm.subjectId}
           onCancel={() => setDeleteConfirm({ open: false, subjectId: null })}
           onDelete={() => handleDeleteSubject(deleteConfirm.subjectId)}
         />

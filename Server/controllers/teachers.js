@@ -1,4 +1,9 @@
-const { TeacherModel, TeacherAttendanceModel } = require("../models/teachers");
+const {
+  TeacherModel,
+  TeacherAttendanceModel,
+  TeacherReportModel,
+  TeacherExamModel,
+} = require("../models/teachers");
 
 const TeacherController = {
   async getTeacherById(req, res) {
@@ -141,4 +146,106 @@ const TeacherAttendanceController = {
   },
 };
 
-module.exports = { TeacherController, TeacherAttendanceController };
+const TeacherReportController = {
+  // Get By Class
+  async getAllExamResultByClass(req, res) {
+    const { classId } = req.params;
+
+    // console.log(classId);
+
+    try {
+      const result = await TeacherReportModel.getAllExamResultByClass(classId);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  },
+
+  // Get report results for all students in class
+  async getReportExamDetailsById(req, res) {
+    const { examId, classId } = req.params;
+
+    try {
+      const result = await TeacherReportModel.getReportExamDetailsById(
+        examId,
+        classId
+      );
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  },
+
+  // Get aindividual student report in class panel
+  async getStudentResultById(req, res) {
+    const { studentId, examId, classId } = req.params;
+
+    try {
+      const result = await TeacherReportModel.getStudentResultById(
+        studentId,
+        classId,
+        examId
+      );
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  },
+};
+
+const TeacherExamController = {
+  // Retrieve all exams for specific class
+  async getAllExamsByClass(req, res) {
+    const { classId } = req.params;
+
+    try {
+      const exams = await TeacherExamModel.getAllExamsByClass(classId);
+
+      res.status(201).json(exams);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  // Determine whether all students have taken an exam
+  async getOngoingExamDetails(req, res) {
+    const { examId, classId } = req.params;
+
+    try {
+      const ongoingExam = await TeacherExamModel.getOngoingExamDetails(
+        examId,
+        classId
+      );
+
+      res.status(200).json(ongoingExam);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  // Determine whether all students have taken an exam
+  async markExamComplete(req, res) {
+    const { examId, classId } = req.params;
+
+    try {
+      const examComplete = await TeacherExamModel.markExamComplete(
+        examId,
+        classId
+      );
+
+      res.status(200).json(examComplete);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+};
+
+module.exports = {
+  TeacherController,
+  TeacherAttendanceController,
+  TeacherReportController,
+  TeacherExamController,
+};

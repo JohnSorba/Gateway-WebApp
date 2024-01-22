@@ -12,6 +12,17 @@
   padding: 0.75rem 0rem 0rem;
   border-radius: 1rem;
   overflow: hidden;
+  background-color: var(--blue-bg);
+  background-color: rgb(64, 140, 191, 0.4);
+}
+
+.exams .box p {
+  font-size: 1.35rem;
+  font-weight: bold;
+}
+
+.exams .box button {
+  margin-top: auto;
 }
 
 .exam-list {
@@ -52,4 +63,35 @@
 
 .exam-item .icon {
   cursor: pointer;
+}
+
+/* REPORT STYLES */
+.reports {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.reports .box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 150px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: var(--blue-bg);
+  background-color: rgb(64, 140, 191, 0.4);
+}
+
+.reports .box .details {
+  padding: 1rem;
+}
+
+.reports .box p {
+  font-size: 1.35rem;
+  font-weight: bold;
+}
+
+.reports .box button {
+  margin-top: auto;
 }

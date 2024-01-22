@@ -106,8 +106,6 @@ const SubjectModel = {
 
     // check if the value received matches the value stored
     const sameValue = checkCodeExists.rows[0];
-    console.log("subject Id: ", subjectId);
-    console.log("same value: ", sameValue);
 
     if (sameValue.subject_name === subjectName) {
       return {
@@ -132,12 +130,29 @@ const SubjectModel = {
   },
 
   async deleteSubject(subjectId) {
-    // Database query to delete the subject based on subjectId
+    // check the questions table if subject contains questions
 
-    const query = "DELETE FROM subjects WHERE subject_code = $1";
-    await pool.query(query, [subjectId]);
+    const questionQuery = "SELECT * FROM questions WHERE subject_code = $1";
+    const questionResult = await pool.query(questionQuery, [subjectId]);
 
-    return { type: "success", message: "Subject Deleted Successfully!" };
+    if (questionResult.rows.length > 0) {
+      return {
+        type: "failure",
+        message:
+          "Subject Contains Questions and Cannot be Deleted. Delete associated Questions before deleting subject!",
+      };
+    }
+
+    try {
+      // Database query to delete the subject based on subjectId
+
+      const query = "DELETE FROM subjects WHERE subject_code = $1";
+      await pool.query(query, [subjectId]);
+
+      return { type: "success", message: "Subject Deleted Successfully!" };
+    } catch (error) {
+      throw error("Cannot Delete Subject!");
+    }
   },
 };
 
